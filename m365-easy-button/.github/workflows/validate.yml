@@ -1,0 +1,106 @@
+name: Validate M365 Easy Button
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+
+      - name: Verify SKILL.md exists and is non-empty
+        run: |
+          if [ ! -f SKILL.md ]; then
+            echo "::error::SKILL.md not found"
+            exit 1
+          fi
+          lines=$(wc -l < SKILL.md)
+          if [ "$lines" -lt 100 ]; then
+            echo "::error::SKILL.md is suspiciously small ($lines lines)"
+            exit 1
+          fi
+          echo "✅ SKILL.md exists ($lines lines)"
+
+      - name: Verify required sections present
+        run: |
+          missing=0
+          for section in \
+            "## Fast Start" \
+            "## Persona & Tone" \
+            "## Answer Format" \
+            "## Complete App Router" \
+            "## Mental Model Translations" \
+            "## Detailed Behavior Translations" \
+            "## Keyboard Shortcuts" \
+            "## Common Workflow Translations" \
+            "## First Week Survival Guide" \
+            "## Power User Tips" \
+            "## AI Features" \
+            "## Troubleshooting" \
+            "## What You Don't Do" \
+            "## Trigger Phrases"; do
+            if ! grep -q "$section" SKILL.md; then
+              echo "::error::Missing section: $section"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 1 ]; then exit 1; fi
+          echo "✅ All required sections present"
+
+      - name: Verify repo health files
+        run: |
+          for file in README.md LICENSE SECURITY.md CODE_OF_CONDUCT.md CONTRIBUTING.md CHANGELOG.md; do
+            if [ ! -f "$file" ]; then
+              echo "::error::Missing $file"
+              exit 1
+            fi
+          done
+          echo "✅ All repo health files present"
+
+      - name: Check for broken markdown tables
+        run: |
+          # Ensure tables have consistent pipe counts per row
+          python3 - <<'PY'
+          import re, sys
+          with open("SKILL.md", "r") as f:
+              lines = f.readlines()
+          errors = 0
+          in_table = False
+          table_cols = 0
+          for i, line in enumerate(lines, 1):
+              stripped = line.strip()
+              if stripped.startswith("|") and stripped.endswith("|"):
+                  cols = stripped.count("|") - 1
+                  if not in_table:
+                      in_table = True
+                      table_cols = cols
+                  elif cols != table_cols:
+                      # Skip separator rows with different formatting
+                      if not re.match(r'^\|[\s\-:|]+\|$', stripped):
+                          print(f"::warning::Line {i}: table column mismatch (expected {table_cols}, got {cols})")
+                          errors += 1
+              else:
+                  in_table = False
+                  table_cols = 0
+          if errors > 5:
+              print(f"::error::{errors} table formatting issues found")
+              sys.exit(1)
+          print(f"✅ Markdown tables look good ({errors} minor warnings)")
+          PY
+
+      - name: Lint markdown (advisory)
+        continue-on-error: true
+        run: |
+          npm install -g markdownlint-cli 2>/dev/null
+          markdownlint SKILL.md --disable MD013 MD033 MD036 MD041 MD024 || true
+          echo "ℹ️ Markdown lint complete (advisory only)"
