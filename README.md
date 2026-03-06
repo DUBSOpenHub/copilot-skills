@@ -15,7 +15,6 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [m365-expert](m365-expert/) | — |
 | [pitch-master](pitch-master/) | 🎤 Pitch Master — transforms ANY concept, repo README, or about section into a world-class Y Combinator / TechSta... |
 | [stampede](stampede/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
-| [test-skill](test-skill/) | A test skill to verify auto-sync and README generation. |
 
 ## Install
 
