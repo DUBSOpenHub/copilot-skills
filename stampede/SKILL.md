@@ -877,3 +877,4 @@ Offer: `stampede teardown RUN_ID`, `stampede resume RUN_ID`, branch links.
 - Every task has terminal result (done or failed)
 - state.json phase is `completed`
 - Synthesis includes conflict report (or explicit "none")
+# test change Thu Mar  5 21:06:08 PST 2026
