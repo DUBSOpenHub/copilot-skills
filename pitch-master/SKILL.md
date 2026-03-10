@@ -335,3 +335,4 @@ After delivering, offer: *"Want alternate versions — technical, investor, or n
 If the input is genuinely too vague (e.g., "make a pitch" with zero context), ask ONE targeted question: "What are you building, and who is it for?" Then deliver immediately on the answer.
 
 
+
