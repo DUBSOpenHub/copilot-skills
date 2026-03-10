@@ -1,0 +1,73 @@
+company:
+  name: "Agent Company"
+  default_mode: full        # "full" (5-phase pipeline) or "express" (CEO + CTO only)
+  max_agents_parallel: 6    # max concurrent agent dispatches per phase
+  agent_timeout_sec: 300    # per-agent timeout
+  workspace_dir: .company   # runtime artifact directory
+
+phases:
+  foundation:
+    agents: [ceo]
+    gate: true              # pause for user review after phase
+  strategy:
+    agents: [cto, cfo, vp-product]
+    gate: true
+  execution:
+    agents: [vp-engineering, head-of-design, vp-marketing, vp-sales, head-of-growth, head-of-data]
+    gate: true
+  operations:
+    agents: [head-of-people, head-of-cs, general-counsel, head-of-devops, head-of-security]
+    gate: true
+  board_review:
+    agents: [ceo]
+    gate: true
+
+models:
+  executive: claude-sonnet-4.6     # CEO, CTO, CFO
+  department: claude-sonnet-4.6    # VP/Head level agents
+  synthesis: claude-sonnet-4.6     # Final board review
+
+safety:
+  max_artifact_lines: 500          # per-artifact line limit
+  max_agent_prompt_lines: 200      # agent prompt size cap
+  require_gate_approval: true      # never skip gates
+
+artifacts:
+  vision:
+    - company-vision.md
+    - investor-memo.md
+  product:
+    - prd.md
+    - roadmap.md
+    - user-stories.md
+  engineering:
+    - architecture.md
+    - tech-stack.md
+    - sprint-plan.md
+    - team-structure.md
+  design:
+    - design-system.md
+    - user-flows.md
+  finance:
+    - financial-model.md
+    - unit-economics.md
+  gtm:
+    - marketing-plan.md
+    - sales-playbook.md
+    - pricing-strategy.md
+    - growth-plan.md
+  operations:
+    - hiring-plan.md
+    - org-chart.md
+    - cs-playbook.md
+    - legal-checklist.md
+  infrastructure:
+    - infra-plan.md
+    - monitoring-plan.md
+    - security-plan.md
+  data:
+    - metrics-framework.md
+    - dashboard-spec.md
+  synthesis:
+    - executive-summary.md
+    - 90-day-plan.md

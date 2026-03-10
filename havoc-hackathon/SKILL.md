@@ -2,7 +2,7 @@
 name: havoc-hackathon
 description: >
   🏟️ Havoc Hackathon — a multi-model orchestration skill that turns your terminal into a competitive arena.
-  Dispatches up to 14 AI models in tournament elimination heats, scores them with sealed judge panels,
+  Dispatches up to 18 AI models in tournament elimination heats, scores them with sealed judge panels,
   evolves the best ideas between rounds, and synthesizes the final output from collective intelligence.
   Say "run hackathon" to start.
 license: MIT
@@ -79,6 +79,13 @@ Then show task, contestants (with tier badge: 👑 PREMIUM or ⚡ STANDARD), rub
 ### Phase 0  -  Meta-Learning
 
 **Your very first text output must be the arena banner below. No text before it. No plan. No narration. Just the banner.**
+
+**Model Roster Auto-Check (mandatory, silent):**
+Before showing the leaderboard, cross-reference the models in the **Available Models** table below against the `model` parameter options listed in the `task` tool description. Do this comparison silently with no text output.
+- Any model ID in the `task` tool but NOT in the Available Models table → new model discovered. Add it to `hackathon_model_elo` at ELO 1500 (0 wins, 0 losses, 0 hackathons). Include it in the leaderboard with a 🆕 badge and one line of MC commentary: "🆕 {Model} enters the arena! Fresh blood at 1500 ELO."
+- Any model ID in the Available Models table but NOT in the `task` tool → retired model. Skip it from the leaderboard and note in MC commentary: "👋 {Model} has left the arena."
+- If any changes are detected, also update `~/.copilot/hackathon-elo.json` to reflect the new roster.
+This check runs every time Phase 0 executes. No user prompt needed — just detect, update, and show.
 
 Read `~/.copilot/hackathon-elo.json` with the `view` tool and seed SQL — but produce ZERO text output while doing so. Then output exactly this:
 
@@ -433,19 +440,23 @@ CREATE TABLE IF NOT EXISTS hackathon_tournament (
 | Display Name | Model ID | Tier |
 |-------------|----------|------|
 | Claude Opus 4.6 | `claude-opus-4.6` | Premium |
-| Claude Opus 4.6 (Fast) | `claude-opus-4.6-fast` | Premium |
 | Claude Opus 4.6 (1M) | `claude-opus-4.6-1m` | Premium |
 | Claude Opus 4.5 | `claude-opus-4.5` | Premium |
+| GPT-5.4 | `gpt-5.4` | Standard |
 | Codex Max (GPT-5.1) | `gpt-5.1-codex-max` | Standard |
 | Gemini 3 Pro | `gemini-3-pro-preview` | Standard |
 | Claude Sonnet 4.6 | `claude-sonnet-4.6` | Standard |
 | Claude Sonnet 4.5 | `claude-sonnet-4.5` | Standard |
 | Claude Sonnet 4 | `claude-sonnet-4` | Standard |
+| Claude Haiku 4.5 | `claude-haiku-4.5` | Standard |
 | Codex (GPT-5.3) | `gpt-5.3-codex` | Standard |
 | Codex (GPT-5.2) | `gpt-5.2-codex` | Standard |
 | Codex (GPT-5.1) | `gpt-5.1-codex` | Standard |
 | GPT-5.2 | `gpt-5.2` | Standard |
 | GPT-5.1 | `gpt-5.1` | Standard |
+| Codex Mini (GPT-5.1) | `gpt-5.1-codex-mini` | Budget |
+| GPT-5 Mini | `gpt-5-mini` | Budget |
+| GPT-4.1 | `gpt-4.1` | Budget |
 
 **Default contestants (Standard):** Claude Sonnet 4.6, Codex Max (GPT-5.1), GPT-5.2 ← STANDARD ⚡
 **Default contestants (Premium):** Codex (GPT-5.3), Claude Opus 4.6, Gemini 3 Pro ← PREMIUM 👑

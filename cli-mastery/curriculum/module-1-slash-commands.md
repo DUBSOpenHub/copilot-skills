@@ -42,6 +42,7 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 | `/resume` | Switch to different session | Continue previous work |
 | `/rename` | Rename current session | Better organization |
 | `/share` | Export session to markdown/gist | Share with team |
+| `/copy` | Copy last response to clipboard | Grab AI output quickly |
 | `/clear` | Clear conversation history | Fresh start |
 
 ## Permissions & Directories
@@ -74,12 +75,12 @@ Teach these categories one at a time, with examples and "when to use" guidance.
 | `/mcp` | Manage MCP servers | Add external tools |
 | `/plugin` | Manage plugins | Extend functionality |
 
-## Workflows
+## Workflows & Research
 
 | Command | What it does | When to use |
 |---------|-------------|-------------|
 | `/plan` | Create implementation plan | Before complex changes |
-| `/delegate` | Hand off to coding agent | Long-running background tasks |
+| `/research` | Run deep research investigation | Need thorough analysis with sources |
 | `/user` | Manage GitHub user list | Team context |
 
 ## Quiz (5+ questions, use ask_user with 4 choices each)

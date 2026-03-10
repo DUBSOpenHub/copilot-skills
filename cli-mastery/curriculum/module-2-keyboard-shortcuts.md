@@ -9,14 +9,14 @@
 | `Shift+Tab` | Cycle modes: Interactive → Plan |
 | `Ctrl+T` | Toggle model reasoning display |
 | `Ctrl+O` | Expand recent timeline (when no input) |
-| `Ctrl+E` | Expand all timeline / move to end of line |
+| `Ctrl+E` | Expand all timeline (when no input) / move to end of line (when typing) |
 | `↑` `↓` | Navigate command history |
 | `!` | Execute shell command directly (bypass AI) |
 | `Esc` | Cancel current operation |
 | `Ctrl+C` | Cancel operation / clear input / exit |
 | `Ctrl+D` | Shutdown session |
 | `Ctrl+L` | Clear the screen |
-| `Ctrl+X` → `Ctrl+E` | Edit prompt in $EDITOR |
+| `Ctrl+G` | Edit prompt in external editor ($EDITOR) |
 
 ## Line Editing
 
@@ -34,5 +34,5 @@
 - `@` is THE most important shortcut — it's how you give precise context
 - `!git status` runs git directly without AI processing
 - `Shift+Tab` into Plan mode BEFORE complex tasks
-- `Ctrl+X → Ctrl+E` opens your $EDITOR for long prompts — game changer
+- `Ctrl+G` opens your $EDITOR for long prompts — game changer
 - `Ctrl+S` lets you iterate on a prompt without retyping

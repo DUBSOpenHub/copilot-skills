@@ -1,0 +1,44 @@
+schema_version: "1"
+id: agent-company
+name: Agent Company
+description: >
+  A general-purpose AI-staffed startup framework. Deploy 15 specialist agents
+  as a full Series A/B executive team — CEO through Head of Security — that
+  collaborate through a 5-phase pipeline to produce a complete startup
+  operating package from any idea. Vision docs, PRDs, architecture, financial
+  models, GTM playbooks, hiring plans, security posture, and a 90-day action plan.
+  Say "startup" to launch.
+emoji: "🏢"
+codename: "The Org"
+category: specialist
+version: "0.1.0"
+tags:
+  - startup
+  - agents
+  - orchestration
+  - strategy
+  - business
+  - collaboration
+platforms:
+  - copilot-cli
+input_format: free-text
+links:
+  skill_file: SKILL.md
+  agents:
+    - agents/ceo.md
+    - agents/cto.md
+    - agents/cfo.md
+    - agents/vp-product.md
+    - agents/vp-engineering.md
+    - agents/head-of-design.md
+    - agents/vp-marketing.md
+    - agents/vp-sales.md
+    - agents/head-of-growth.md
+    - agents/head-of-people.md
+    - agents/head-of-cs.md
+    - agents/general-counsel.md
+    - agents/head-of-data.md
+    - agents/head-of-devops.md
+    - agents/head-of-security.md
+license: MIT
+owner: DUBSOpenHub

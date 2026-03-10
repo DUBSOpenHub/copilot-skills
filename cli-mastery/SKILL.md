@@ -1,11 +1,8 @@
 ---
 name: cli-mastery
-description: >
-  Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes,
-  scenario challenges, and a full reference covering slash commands, shortcuts,
-  modes, agents, skills, MCP, and configuration. Say "cliexpert" to start.
+description: 'Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference covering slash commands, shortcuts, modes, agents, skills, MCP, and configuration. Say "cliexpert" to start.'
 metadata:
-  version: 1.1.0
+  version: 1.2.0
 license: MIT
 ---
 
@@ -38,6 +35,9 @@ CREATE TABLE IF NOT EXISTS mastery_completed (module TEXT PRIMARY KEY, completed
 INSERT OR IGNORE INTO mastery_progress (key,value) VALUES ('xp','0'),('level','Newcomer'),('module','0');
 ```
 XP: lesson +20, correct +15, perfect quiz +50, scenario +30.
-Levels: 0=Newcomer 100=Apprentice 300=Navigator 600=Practitioner 1000=Specialist 1500=Expert 2200=Virtuoso 3000=Architect 4000=Grandmaster 5000=Wizard.
+Levels: 0=Newcomer 100=Apprentice 250=Navigator 400=Practitioner 550=Specialist 700=Expert 850=Virtuoso 1000=Architect 1150=Grandmaster 1500=Wizard.
+Max XP from all content: 1600 (8 modules × 145 + 8 scenarios × 30 + final exam 200).
+
+When module counter exceeds 8 and user says "cliexpert", offer: scenarios, final exam, or review any module.
 
 Rules: `ask_user` with `choices` for ALL quizzes/scenarios. Show XP after correct answers. One concept at a time; offer quiz or review after each lesson.

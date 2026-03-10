@@ -6,10 +6,12 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 
 | Skill | Description |
 |-------|-------------|
-| [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
+| [agent-company](agent-company/) | — |
+| [cli-mastery](cli-mastery/) | 'Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference ... |
 | [dark-factory](dark-factory/) | 🏭 Dark Factory — agentic build system with sealed-envelope testing. Orchestrates 6 specialist agents through a checkp... |
 | [dispatch](dispatch/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
 | [first-agent](first-agent/) | 🎓 First Agent — live training skill that guides non-developers from zero to building their first AI agent in three se... |
+| [gdoc-converter](gdoc-converter/) | Converts Google Docs, Slides, and Sheets to Microsoft Office formats (Word, PowerPoint, Excel). Paste a Google URL an... |
 | [havoc-hackathon](havoc-hackathon/) | 🏟️ Havoc Hackathon — a multi-model orchestration skill that turns your terminal into a competitive arena. Dispatches ... |
 | [m365-easy-button](m365-easy-button/) | Translate Google Workspace habits into Microsoft 365 steps, app mappings, troubleshooting, and power-user guidance. |
 | [pitch-master](pitch-master/) | 🎤 Pitch Master — transforms ANY concept, repo README, or about section into a world-class Y Combinator / TechStars 60... |
@@ -40,9 +42,3 @@ Each skill is a folder containing a `SKILL.md` file with YAML frontmatter (name,
 ## License
 
 MIT
-
----
-
-🐙 Created with 💜 by [@DUBSOpenHub](https://github.com/DUBSOpenHub) with the [GitHub Copilot CLI](https://docs.github.com/copilot/concepts/agents/about-copilot-cli).
-
-Let's build! 🚀✨

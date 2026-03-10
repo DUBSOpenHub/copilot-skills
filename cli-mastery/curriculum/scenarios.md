@@ -16,7 +16,7 @@ Use `ask_user` with choices for each step.
 ## Scenario 3: Autonomous Refactor Sprint
 > You want an agent to execute a refactor with minimal prompts, but only after reviewing a plan and setting permissions.
 
-**Answer:** `Shift+Tab` (Plan mode) → validate plan → `/delegate` → optionally `/allow-all`
+**Answer:** `Shift+Tab` (Plan mode) → validate plan → `/allow-all` → execute in Autopilot mode
 
 ## Scenario 4: Enterprise Onboarding
 > Set up custom agents, repo instructions, and MCP integration for a new team repository.
@@ -26,7 +26,7 @@ Use `ask_user` with choices for each step.
 ## Scenario 5: Power Editing Session
 > You're crafting a long prompt and need to edit quickly without losing context.
 
-**Answer:** `Ctrl+X → Ctrl+E` (open in editor), `Ctrl+A` (jump to start), `Ctrl+K` (trim)
+**Answer:** `Ctrl+G` (open in editor), `Ctrl+A` (jump to start), `Ctrl+K` (trim)
 
 ## Scenario 6: Agent Orchestration
 > You're leading a complex project: understand code, run tests, refactor, then review.
