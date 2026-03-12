@@ -16,6 +16,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [havoc-hackathon](havoc-hackathon/) | 🏟️ Havoc Hackathon — a multi-model orchestration skill that turns your terminal into a competitive arena. Dispatches ... |
 | [m365-easy-button](m365-easy-button/) | Translate Google Workspace habits into Microsoft 365 steps, app mappings, troubleshooting, and power-user guidance. |
 | [pitch-master](pitch-master/) | 🎤 Pitch Master — transforms ANY concept, repo README, or about section into a world-class Y Combinator / TechStars 60... |
+| [soss-skill-template](soss-skill-template/) | 🛡️ SOSS Fund Training — MODULE_TITLE. Interactive trainer with CTA tracking, security validation, and dashboard-ready... |
 | [stampede](stampede/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
 
 ## Install
