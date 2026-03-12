@@ -18,6 +18,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [pitch-master](pitch-master/) | 🎤 Pitch Master — transforms ANY concept, repo README, or about section into a world-class Y Combinator / TechStars 60... |
 | [soss-skill-template](soss-skill-template/) | 🛡️ SOSS Fund Training — MODULE_TITLE. Interactive trainer with CTA tracking, security validation, and dashboard-ready... |
 | [stampede](stampede/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
+| [swarm](swarm/) | — |
 
 ## Install
 
