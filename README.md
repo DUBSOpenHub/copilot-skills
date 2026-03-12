@@ -8,6 +8,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 |-------|-------------|
 | [agent-company](agent-company/) | — |
 | [cli-mastery](cli-mastery/) | 'Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference ... |
+| [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund interactive training skill for GitHub CodeQL and code scanning. Fully interactive teach... |
 | [dark-factory](dark-factory/) | 🏭 Dark Factory — agentic build system with sealed-envelope testing. Orchestrates 6 specialist agents through a checkp... |
 | [dispatch](dispatch/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
 | [first-agent](first-agent/) | 🎓 First Agent — live training skill that guides non-developers from zero to building their first AI agent in three se... |
