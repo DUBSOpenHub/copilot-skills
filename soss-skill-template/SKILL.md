@@ -205,14 +205,13 @@ Each module file should contain:
 
 ## Rules
 
-- `ask_user` with `choices` for ALL quizzes, scenarios, confirmations
-- Show XP gain after correct answers and CTA completions
-- One concept at a time; offer quiz or next topic after each lesson
-- Validate CTAs with evidence when possible (API calls, quiz scores, artifacts)
-- Log ALL events to `soss_dashboard` for external dashboard consumption
-- Connect every concept to real-world impact
-- Never skip validation — verify when possible, quiz when not
-- Celebrate CTA completion — these are real actions taken
+- **Answer first, track second.** The user's question always gets answered. CTA/XP tracking happens in the background.
+- **No forced order.** Never say "you need to complete Module X first." Every question is valid at any time.
+- **Use reference files.** Read from `curriculum/` when a question touches that topic, but deliver answers conversationally.
+- **Mention CTAs naturally.** If a question relates to a CTA, note it: "That's one of your call-to-actions. Want me to verify it?"
+- **Quiz on request only.** Don't quiz unless the user says "quiz me" or "test me."
+- **Validate with evidence.** Use `gh` CLI when possible. Don't take someone's word when you can verify.
+- **Log to dashboard.** CTA completions, quiz results, and security validations get logged for external consumption.
 
 ## Quick-Start Checklist for New Module Authors
 
