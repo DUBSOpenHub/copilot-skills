@@ -1,0 +1,122 @@
+[
+  {
+    "project": "curl/curl",
+    "ecosystem": "C",
+    "url": "https://github.com/curl/curl",
+    "dependents_estimate": "312K",
+    "maintainers_estimate": 12,
+    "notes": "HTTP client library used in virtually every connected device"
+  },
+  {
+    "project": "madler/zlib",
+    "ecosystem": "C",
+    "url": "https://github.com/madler/zlib",
+    "dependents_estimate": "198K",
+    "maintainers_estimate": 1,
+    "notes": "Compression library; dependency of Python, Node.js, Linux kernel builds"
+  },
+  {
+    "project": "shadow-maint/shadow",
+    "ecosystem": "C",
+    "url": "https://github.com/shadow-maint/shadow",
+    "dependents_estimate": "34K",
+    "maintainers_estimate": 1,
+    "notes": "Linux user auth utilities (passwd, useradd, groupadd)"
+  },
+  {
+    "project": "libexpat/libexpat",
+    "ecosystem": "C",
+    "url": "https://github.com/libexpat/libexpat",
+    "dependents_estimate": "19K",
+    "maintainers_estimate": 2,
+    "notes": "XML parser used by Python, Apache, Android, D-Bus"
+  },
+  {
+    "project": "jqlang/jq",
+    "ecosystem": "C",
+    "url": "https://github.com/jqlang/jq",
+    "dependents_estimate": "87K",
+    "maintainers_estimate": 8,
+    "notes": "Command-line JSON processor; used in CI/CD pipelines globally"
+  },
+  {
+    "project": "vim/vim",
+    "ecosystem": "C",
+    "url": "https://github.com/vim/vim",
+    "dependents_estimate": "42K",
+    "maintainers_estimate": 6,
+    "notes": "Text editor shipped with most Unix systems"
+  },
+  {
+    "project": "util-linux/util-linux",
+    "ecosystem": "C",
+    "url": "https://github.com/util-linux/util-linux",
+    "dependents_estimate": "28K",
+    "maintainers_estimate": 5,
+    "notes": "Essential Linux system utilities (mount, fdisk, lsblk)"
+  },
+  {
+    "project": "openssl/openssl",
+    "ecosystem": "C",
+    "url": "https://github.com/openssl/openssl",
+    "dependents_estimate": "450K",
+    "maintainers_estimate": 18,
+    "notes": "TLS/SSL library; Heartbleed demonstrated criticality"
+  },
+  {
+    "project": "sqlite/sqlite",
+    "ecosystem": "C",
+    "url": "https://github.com/sqlite/sqlite",
+    "dependents_estimate": "380K",
+    "maintainers_estimate": 3,
+    "notes": "Most widely deployed database engine in the world"
+  },
+  {
+    "project": "libuv/libuv",
+    "ecosystem": "C",
+    "url": "https://github.com/libuv/libuv",
+    "dependents_estimate": "45K",
+    "maintainers_estimate": 4,
+    "notes": "Async I/O library; powers Node.js event loop"
+  },
+  {
+    "project": "nothings/stb",
+    "ecosystem": "C",
+    "url": "https://github.com/nothings/stb",
+    "dependents_estimate": "25K",
+    "maintainers_estimate": 1,
+    "notes": "Single-header C libraries for image loading, fonts, etc."
+  },
+  {
+    "project": "yaml/libyaml",
+    "ecosystem": "C",
+    "url": "https://github.com/yaml/libyaml",
+    "dependents_estimate": "15K",
+    "maintainers_estimate": 2,
+    "notes": "C YAML parser; used by Ansible, Kubernetes configs, Ruby"
+  },
+  {
+    "project": "besser82/libxcrypt",
+    "ecosystem": "C",
+    "url": "https://github.com/besser82/libxcrypt",
+    "dependents_estimate": "12K",
+    "maintainers_estimate": 1,
+    "notes": "Password hashing library for glibc/Linux PAM"
+  },
+  {
+    "project": "DaveGamble/cJSON",
+    "ecosystem": "C",
+    "url": "https://github.com/DaveGamble/cJSON",
+    "dependents_estimate": "18K",
+    "maintainers_estimate": 1,
+    "notes": "Ultralightweight JSON parser for embedded/IoT"
+  },
+  {
+    "project": "Mbed-TLS/mbedtls",
+    "ecosystem": "C",
+    "url": "https://github.com/Mbed-TLS/mbedtls",
+    "dependents_estimate": "22K",
+    "maintainers_estimate": 8,
+    "notes": "TLS library for embedded devices; alternative to OpenSSL for constrained environments"
+  }
+]
