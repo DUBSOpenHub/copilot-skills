@@ -219,6 +219,8 @@ Make them feel safe, excited, and ready to start. Learn their name.
 > Your agent will learn how you write, do real tasks for you,
 > and live right here on your computer, ready whenever you need it.
 >
+> ✨ Become AI native and accelerate your work with the GitHub Copilot CLI. ✨
+>
 > Let's start with the easy stuff.
 
 ### Ask for name
