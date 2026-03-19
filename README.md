@@ -11,6 +11,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
 | [copilot-cli-quickstart](copilot-cli-quickstart/) | Use this skill when someone wants to learn GitHub Copilot CLI from scratch. Offers interactive step-by-step tutorials... |
 | [dark-factory](dark-factory/) | 🏭 Dark Factory — agentic build system with sealed-envelope testing. Orchestrates 6 specialist agents through a checkp... |
+| [design-auditor](design-auditor/) | 🔍 Design Auditor — paste a URL, get 5 ranked fixes to improve conversions. Analyzes layout, performance, accessibilit... |
 | [dispatch](dispatch/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
 | [first-agent](first-agent/) | 🎓 First Agent — live training skill that guides non-developers from zero to building their first AI agent in three se... |
 | [gdoc-converter](gdoc-converter/) | Converts Google Docs, Slides, and Sheets to Microsoft Office formats (Word, PowerPoint, Excel). Paste a Google URL an... |
