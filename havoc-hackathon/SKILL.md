@@ -1193,8 +1193,11 @@ The complete Kiloagent architecture (with code, schemas, and mathematical proofs
 - 🧑‍⚖️ **Consensus**  -  median of 3 judges
 - 🚦 **Quality gates**  -  automated go/no-go
 - 🛡️ **Anti-gaming**  -  calibration, stuffing, tampering checks
-- 🔄 **Retry once** before DQ
+- 🔄 **3-tier retry** before DQ (instant → delayed → model swap)
 - 💀 **DQ garbage** with flair
+- 🩺 **Health scores** — agents below 30 get preemptively replaced
+- 🔌 **Circuit breakers** — 3+ failures in 60s trips the breaker, prevents cascade
+- 🏥 **Dead agent recovery** — orphaned work is detected and reassigned automatically
 - 📈 **Update ELO** every hackathon
 - ⚡ **Parallel dispatch**  -  never sequential
 - 🧬 **Smart merging**  -  ensemble synthesis with voting across all finalists
