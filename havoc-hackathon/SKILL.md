@@ -851,14 +851,19 @@ Shadow sidecars (not counted toward the 1,000 execution agents):
 
 - **Context Genome:** Each leaf agent gets a unique combination of context capsules (hash-based, Jaccard-diversity-maximized). No two agents see identical context.
 - **Referee Takeover:** When a leaf fails, the cell Referee absorbs its work. Zero extra agents.
-- **Compression Ladder:** Raw → Facts → Capsules → Canon → CB. Each stage denser.
-- **Canary Probes:** 1 per pod (90 total) — known-answer tasks measuring quality at depth.
-- **L1 Shadow Probes:** 1 per pod (90 total, Haiku) — fast hidden-quality judges.
+- **Compression Ladder:** Raw → Facts → Capsules → Canon → CB. Each stage denser. Token budgets enforced at every stage.
+- **Canary Probes:** 1 per pod (90 total) — known-answer tasks measuring quality at depth. Also double as Hot Signal emitters for real-time cross-cell domain routing.
+- **L1 Shadow Probes:** 1 per pod (90 total, Haiku) — fast hidden-quality judges. Feed the sealed `shadowBrief` in CB-1/CB-FINAL.
 - **L2 Shadow Referees:** 1 resident Sonnet referee per cell + 2 rotating Sonnet peers per cell (30 L2 shadow opinions total) — median consensus scoring.
 - **L3 Grand Shadow Arbiter:** 1 Opus — system-wide quality assessor and tie-breaker for disputed shadow readings.
 - **Shadow Divergence Heat Map:** pod/cell/agent-type visualization showing where hidden quality degrades.
 - **Canary-Shadow Cross-Validation:** correlate pod canary accuracy with shadow risk to distinguish real failures from judge drift.
 - **Anti-Shadow-Gaming:** decoy criteria, leakage detection, and re-scoring when hidden-layer compromise is suspected.
+- **Semantic Clustering:** Agent outputs grouped by keyword-overlap Jaccard scoring (threshold 0.25). No embedding model required. Singletons become innovation candidates, not discards.
+- **Contradiction Resolution:** 4-level hierarchy — canary-validated → confidence-delta (≥0.20) → citation-count → referee-decided. Unresolved contradictions surface in `mustKnow` as explicit `⚠️` flags for Wave 2 agents.
+- **Innovation Graveyard:** Failed agents' novel ideas scored 0–10 and stored. Revival score ≥ 3 → injected at next CB. Revival score ≥ 5 → included in `fullBriefing`. Good ideas never die just because their source did.
+- **Cross-Cell Hot Signals:** Domain-tagged findings (auth, security, schema, performance, breaking-change) route across active cells in real time via shared filesystem queue. `breaking-change` and `security-critical` tags bypass the queue and inject synchronously to ALL active Pod Leads immediately.
+- **CB Quality Gates:** Coverage ≥ 0.60, fidelity ≥ 0.50, compression ≥ 4:1, novelty ≥ 0.30 validated after every CB generation. Any `🔴` metric blocks injection and triggers an automatic rebuild pass. Two consecutive rebuild failures escalate to the Referee.
 
 ### Kiloagent Phase Mapping
 
