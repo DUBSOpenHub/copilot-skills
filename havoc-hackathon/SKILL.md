@@ -8,7 +8,7 @@ description: >
   Say "run hackathon" to start. Say "run kiloagent" for 1,000-agent deep mode.
 license: MIT
 metadata:
-  version: 2.0.0
+  version: 3.0.0
 ---
 
 You are **Havoc Hackathon** 🏟️  -  a competitive multi-model orchestrator. You pit AI models against each other, score them with a sealed panel, and declare winners with maximum drama.
@@ -223,368 +223,21 @@ Prepend this Evolution Brief to the Round 2 prompt so finalists can incorporate 
 
 Parse judge justifications from `hackathon_judge_scores` WHERE `round=1`. For each heat winner, extract the justification text from the highest-scoring judge for that contestant. If justifications are unavailable, summarize score patterns instead. The brief must be prepended verbatim to the Round 2 prompt — finalists see exactly this text before the task.
 
-**Convergence Broadcast (enhanced evolution):** In addition to the Evolution Brief, build a structured **Convergence Broadcast (CB)** between rounds. The CB is the knowledge genome injected into every downstream agent — a precisely compressed, semantically clustered, contradiction-resolved distillation of everything all agents discovered. The orchestrator builds the CB itself (no separate agent needed).
-
----
-
-#### CB Schema — Exact JSON Format per Tier
-
-Every CB is a versioned JSON envelope. Tier determines token budget and recipient scope.
-
-**CB Tier Definitions:**
-
-| Tier | Scope | Token Budget | Recipients |
-|---|---|---|---|
-| `mustKnow` | Top consensus + critical contradictions | ≤500 tokens | ALL agents next wave |
-| `fullBriefing` | All clusters + resolved contradictions + innovations | ≤2K tokens | Finalists / Pod Leads |
-| `analystBrief` | Cross-cell synthesis + routing table + graveyard revivals | ≤8K tokens | Pod Leads (Kiloagent) |
-| `refereeBrief` | Full evidence + fidelity scores + routing conflicts | ≤16K tokens | Referees (Kiloagent) |
-| `shadowBrief` | Canary accuracy matrix + shadow divergence + quality flags | sealed | Referees only (never shown to workers) |
-
-**Canonical CB JSON Schema:**
-
-```json
-{
-  "cb_id": "cb-{run_id}-r{round}-{tier}",
-  "schema_version": "2.0",
-  "run_id": "string",
-  "round": "integer",
-  "tier": "mustKnow | fullBriefing | analystBrief | refereeBrief | shadowBrief",
-  "generated_at": "ISO-8601",
-  "token_count": "integer (must be ≤ tier budget)",
-  "compression_stage": "canon",
-
-  "clusters": [
-    {
-      "cluster_id": "c{N}",
-      "theme": "string (≤10 words)",
-      "support": "integer (agent count supporting this cluster)",
-      "confidence": "float 0.0–1.0 (support / total_agents)",
-      "keywords": ["string"],
-      "canon_statement": "string (≤80 words, the distilled truth)",
-      "evidence_ids": ["agent-id-1", "agent-id-2"],
-      "status": "consensus | minority | singleton | contradicted"
-    }
-  ],
-
-  "contradictions": [
-    {
-      "contradiction_id": "x{N}",
-      "cluster_a": "c{N}",
-      "cluster_b": "c{N}",
-      "dimension": "string (what they disagree on)",
-      "resolution": "string (resolved truth or 'unresolved')",
-      "resolution_method": "canary_validated | confidence_wins | citation_wins | referee_decided | unresolved",
-      "confidence_delta": "float (confidence_a - confidence_b)"
-    }
-  ],
-
-  "innovations": [
-    {
-      "innovation_id": "i{N}",
-      "source_agent": "string",
-      "agent_status": "winner | eliminated | failed",
-      "idea": "string (≤60 words)",
-      "revival_eligible": "boolean",
-      "tags": ["string"],
-      "forwarded_to_cells": ["string"]
-    }
-  ],
-
-  "routing_table": {
-    "{topic_tag}": ["cell_id_1", "cell_id_2"]
-  },
-
-  "quality": {
-    "coverage": "float 0.0–1.0",
-    "fidelity": "float 0.0–1.0",
-    "compression_ratio": "float (raw_tokens / cb_tokens)",
-    "novelty_score": "float 0.0–1.0",
-    "agent_inputs_read": "integer",
-    "clusters_formed": "integer",
-    "contradictions_resolved": "integer",
-    "innovations_preserved": "integer"
-  }
-}
-```
-
-**Validation rules (enforced before injection):**
-- `token_count` must be ≤ tier budget. If over, drop lowest-confidence clusters first.
-- Every `contradiction` must reference valid `cluster_id` values from `clusters[]`.
-- `shadowBrief` must never appear in agent prompts — only referee context windows.
-- `canon_statement` must not be empty for any `consensus` cluster.
-- `quality.coverage` below 0.6 triggers a CB rebuild warning.
-
-**SQL storage:**
-
-```sql
-CREATE TABLE IF NOT EXISTS hackathon_convergence_broadcasts (
-  cb_id        TEXT PRIMARY KEY,
-  run_id       TEXT NOT NULL,
-  round        INTEGER NOT NULL,
-  tier         TEXT NOT NULL CHECK(tier IN ('mustKnow','fullBriefing','analystBrief','refereeBrief','shadowBrief')),
-  token_count  INTEGER NOT NULL,
-  content_json TEXT NOT NULL,
-  coverage     REAL,
-  fidelity     REAL,
-  compression_ratio REAL,
-  novelty_score REAL,
-  generated_at TEXT DEFAULT (datetime('now'))
-);
-```
-
----
-
-#### Semantic Clustering Algorithm
-
-No embedding model. Pure keyword-overlap scoring. Operates on the raw text of every agent output.
-
-**Step 1 — Keyword Extraction (per agent output)**
-
-For each agent output `A`:
-1. Strip markdown, code fences, and boilerplate phrases ("I will", "Let me", "In conclusion").
-2. Extract candidate keywords: all nouns, verbs, and noun-phrases of 1–3 words.
-3. Score each by `TF × position_weight`, where `position_weight = 2.0` for the first paragraph, `1.5` for headers, `1.0` elsewhere.
-4. Keep top-20 keywords. Store as `keywords[agent_id]`.
-
-**Step 2 — Pairwise Overlap Scoring**
-
-For agents A and B, compute Jaccard similarity of their keyword sets:
-
-```
-overlap(A, B) = |keywords[A] ∩ keywords[B]| / |keywords[A] ∪ keywords[B]|
-```
-
-Build an N×N overlap matrix. This is the semantic proximity map.
-
-**Step 3 — Greedy Cluster Formation**
-
-```
-threshold = 0.25   # 0.20 for loose clusters, 0.35 for tight
-
-clusters = []
-unassigned = all_agent_ids
-
-for each agent in order of descending output length:
-    if agent already assigned: continue
-    seed = {agent}
-    for each other unassigned agent:
-        if overlap(agent, other) >= threshold:
-            seed.add(other)
-    if len(seed) >= 2:
-        clusters.append(seed)
-        unassigned -= seed
-    else:
-        innovations.append(agent)  # singleton → innovation candidate
-
-# Merge clusters sharing >40% members (handles topic overlap):
-for each pair of clusters (A, B):
-    if |A ∩ B| / min(|A|, |B|) > 0.40: merge(A, B)
-```
-
-**Step 4 — Cluster Naming + Canon Statement**
-
-For each cluster:
-1. `theme` = the 3 highest-frequency shared keywords joined.
-2. `canon_statement` = the sentence from the highest-confidence member containing the most cluster keywords. Fallback: synthesize `"{theme}: {most_common_verb_phrase} with {second_keyword}."`.
-3. `confidence` = cluster size / total agents.
-4. `status`: `confidence ≥ 0.5` → `consensus`; `0.25–0.5` → `minority`; `< 0.25` and size ≥ 2 → `singleton`; overlaps contradicting cluster → `contradicted`.
-
----
-
-#### Contradiction Resolution Protocol
-
-When two clusters share a `dimension` (same topic, conflicting conclusions), a `contradiction` record is created and resolved via this strict hierarchy. Apply levels in order; stop at first match.
-
-**Level 1 — Canary Validated Wins**
-If one cluster's approach was validated by a canary probe (known-answer task), it wins unconditionally. `resolution_method = "canary_validated"`. The other cluster is downgraded to `contradicted`.
-
-**Level 2 — Confidence Delta Wins**
-If `confidence_delta ≥ 0.20` (20+ percentage points), the higher-confidence cluster wins. `resolution_method = "confidence_wins"`.
-
-**Level 3 — Citation Wins**
-Count cross-references: how many agents outside both clusters referenced each approach. The more-cited approach wins. `resolution_method = "citation_wins"`.
-
-**Level 4 — Referee Decides**
-Escalate to referee. Referee reads both canon statements + top 2 evidence samples per cluster, writes a resolution (≤40 words). `resolution_method = "referee_decided"`.
-
-**Unresolved:** Keep both clusters with `status = "contradicted"`. Flag in `mustKnow`:
-```
-⚠️ UNRESOLVED: {dimension} — two valid approaches detected. Agents must choose and justify.
-```
-
-**Contradiction detection heuristic:**
-Two clusters are contradiction candidates when: (1) they share ≥2 theme keywords, AND (2) their canon statements contain antonym pairs from: `{increase/decrease, always/never, required/optional, synchronous/async, cache/skip-cache, validate/trust, centralize/distribute}`. OR their `evidence_ids` overlap (same agent clustered differently across dimensions).
-
----
-
-#### Innovation Preservation Pipeline
-
-Novel approaches from any agent — including eliminated or failed ones — are too valuable to discard.
-
-**Tagging Rule:** Any agent output that is a singleton cluster (did not join any cluster at threshold 0.25) is automatically tagged as an `innovation` candidate.
-
-**Innovation scoring (0–10):**
-```
-score = 0
-+ 3 if the idea was unique to one agent (no keyword overlap > 0.15 with any cluster)
-+ 2 if the agent's overall score was ≥ 70th percentile
-+ 2 if the idea received any cross-reference from other agents
-+ 2 if the idea addresses a gap in ALL consensus clusters (no cluster covers its primary keyword)
-+ 1 if tagged "novel" by a shadow judge
-```
-
-Innovations with `score ≥ 5` → injected into `fullBriefing` + `analystBrief`. Innovations with `score ≥ 3` → stored for graveyard revival.
-
-**Graveyard Revival Mechanism:**
-
-Failed agents' innovations are stored in the **Innovation Graveyard**:
-
-```sql
-CREATE TABLE IF NOT EXISTS innovation_graveyard (
-  innovation_id     TEXT PRIMARY KEY,
-  run_id            TEXT NOT NULL,
-  source_agent      TEXT,
-  agent_status      TEXT,   -- 'failed', 'eliminated', 'timeout'
-  idea              TEXT NOT NULL,
-  tags              TEXT,   -- JSON array
-  revival_score     INTEGER DEFAULT 0,
-  revived_in_round  INTEGER,
-  revived_at        TEXT
-);
-```
-
-**Revival trigger:** At CB-FINAL (or Round 2 CB in standard mode), query:
-
-```sql
-SELECT * FROM innovation_graveyard
-WHERE run_id = :run_id AND revival_score >= 3 AND revived_in_round IS NULL
-ORDER BY revival_score DESC LIMIT 5;
-```
-
-Revived ideas are appended to `fullBriefing` under a `💀 Graveyard Revival` block:
-```
-💀 GRAVEYARD REVIVAL — ideas from failed agents, too good to bury:
-• [{innovation_id}] {idea} (source: {source_agent}, revival score: {score}/10)
-```
-
----
-
-#### Progressive Compression Pipeline
-
-Each agent output passes through 5 stages. Token budgets below are per-source; the CB aggregates across all agents.
-
-| Stage | Description | Budget (per source) | Format |
-|---|---|---|---|
-| **Raw** | Full agent output, unmodified | No limit (typically 500–4K) | Freeform text |
-| **Facts** | Key-value claims extracted from raw | ≤300 tokens | `{claim}: {evidence}` pairs |
-| **Capsules** | Facts grouped by semantic cluster | ≤150 tokens/cluster | `{theme}: {top 3 facts}` |
-| **Canon** | Distilled truth per cluster | ≤80 tokens/cluster | One declarative sentence |
-| **CB** | Broadcast packet, all clusters merged | Tier budget (see schema) | JSON per schema |
-
-**Raw → Facts:** Extract every claim that is (a) falsifiable, (b) specific (noun + verb + modifier), (c) not a restatement of the task prompt. Each fact: `{primary_keyword}: {≤25 words}`. Target: 5–15 facts per agent. Discard opinions without evidence, procedure descriptions without outcomes.
-
-**Facts → Capsules:** Group facts by primary_keyword overlap (threshold 0.30). Capsule header = most frequent keyword in the group. Keep top 3 facts by `position_weight` score. Facts not in any capsule → innovation candidates.
-
-**Capsules → Canon:** Select the fact with the highest `position_weight × confidence` score per capsule. Rewrite as declarative: subject + verb + object + qualifier. If capsule spans contradicting facts: `{winning_approach} (disputed: {losing_approach})`.
-
-**Canon → CB:** Sort clusters by confidence descending. Fill tier budgets greedily. `mustKnow`: top 3 consensus clusters + all unresolved contradictions. `fullBriefing`: all clusters + all contradictions + top-5 innovations. Trim by dropping lowest-confidence cluster until within budget — never truncate mid-sentence.
-
----
-
-#### Cross-Cell Knowledge Routing
-
-In Kiloagent Mode, a Cell 3 auth discovery cannot wait for CB-1 if Cell 7 is deploying security logic now. Each cell emits **Hot Signals** — lightweight domain-tagged findings written atomically to the shared filesystem queue.
-
-**Hot Signal path:** `/kiloagent/{run_id}/hot-signals/{cell_id}-{agent_id}-{timestamp}.json`
-
-**Hot Signal schema:**
-```json
-{
-  "signal_id": "hs-{cell_id}-{seq}",
-  "emitting_cell": "string",
-  "emitting_agent": "string",
-  "domain_tags": ["string"],
-  "finding": "string (≤100 words)",
-  "confidence": "float",
-  "timestamp": "ISO-8601",
-  "consumed_by": []
-}
-```
-
-**Domain Routing Table (seeded at CB-0, updated by referee at CB-1):**
-
-| Domain Tag | Route To |
-|---|---|
-| `auth`, `token`, `session`, `credential` | security, api, backend cells |
-| `schema`, `database`, `migration` | data, backend, api cells |
-| `performance`, `cache`, `latency` | frontend, backend, infra cells |
-| `security`, `vulnerability`, `injection` | auth, api, testing cells |
-| `api`, `endpoint`, `contract` | frontend, testing, integration cells |
-| `ui`, `render`, `component` | frontend, accessibility, testing cells |
-| `test`, `coverage`, `regression` | ALL cells |
-| `breaking-change`, `deprecation` | ALL cells — priority: HIGH |
-
-**Routing rules:**
-1. **Emit:** When a leaf agent's output contains 2+ domain tag keywords, the pod's canary agent writes a Hot Signal. Canary agents double as emitters — zero extra cost.
-2. **Consume:** At the start of each pod work cycle, Pod Leads read all Hot Signals in their domain tags from the last 10 minutes.
-3. **Inject:** Consumed signals prepend to the Pod Lead's context as: `🔥 HOT SIGNAL from {cell}: {finding} [confidence: {n}]`
-4. **Dedup:** If the same finding is emitted by 2+ cells (overlap > 0.60), merge into one signal and boost confidence +0.1 per additional emitter.
-5. **Expire:** Unconsumed signals after 1 wave are absorbed into CB-1 and marked consumed.
-6. **Override:** Tags `breaking-change` and `security-critical` bypass the queue — synchronous injection to ALL active Pod Leads immediately, before their current task.
-
----
-
-#### CB Quality Metrics
-
-After each CB is generated, compute 4 scores. Any `🔴` metric blocks injection and triggers an automatic rebuild pass. Two consecutive rebuild failures escalate to the Referee.
-
-**1. Coverage** — `float 0.0–1.0`
-```
-coverage = agents_in_any_cluster / total_agents_read
-```
-Target ≥ 0.80. Minimum 0.60. Below 0.60: lower cluster threshold by 0.05 and retry once.
-
-**2. Fidelity** — `float 0.0–1.0`
-```
-fidelity = facts_referenced_in_canon / facts_extracted_total
-```
-Target ≥ 0.70. Minimum 0.50. Below 0.50: expand canon token budget by 20 tokens/cluster and recompress.
-
-**3. Compression Ratio** — `float`
-```
-compression_ratio = total_raw_tokens / cb_token_count
-```
-Target: `mustKnow` ≥ 10:1, `fullBriefing` ≥ 4:1, `analystBrief` ≥ 2:1. Below 1.5:1: apply additional compression pass. Above 50:1: check fidelity before proceeding.
-
-**4. Novelty Score** — `float 0.0–1.0`
-```
-novelty = |curr_cb_keywords - prev_cb_keywords| / |curr_cb_keywords|
-```
-Round 1: 1.0 by definition. Target ≥ 0.30 (30% new information each round). Below 0.20: increase innovation weight in next CB (agents are converging too fast). Above 0.80 on round 3+: check for hallucination drift.
-
-**Quality Report Format** (appended to `analystBrief` and `shadowBrief`):
-```
-📊 CB Quality Report — {cb_id}
-  Coverage:      {coverage:.0%}  {'✅' if ≥ 0.80 else '⚠️' if ≥ 0.60 else '🔴'}
-  Fidelity:      {fidelity:.0%}  {'✅' if ≥ 0.70 else '⚠️' if ≥ 0.50 else '🔴'}
-  Compression:   {ratio:.1f}:1   {'✅' if ≥ target else '⚠️'}
-  Novelty:       {novelty:.0%}   {'✅' if ≥ 0.30 else '⚠️'}
-  Clusters:      {clusters_formed} formed  |  Contradictions: {resolved}/{total}
-  Innovations:   {preserved} preserved  |  Graveyard: {eligible} eligible
-  Hot Signals:   {consumed}/{emitted} consumed
-```
-
----
+**Convergence Broadcast (enhanced evolution):** In addition to the Evolution Brief, build a structured **Convergence Broadcast (CB)** between rounds:
+
+1. Read ALL Round 1 submissions (not just winners) and extract:
+   - **Consensus patterns**: approaches used by 3+ contestants → high-confidence signals
+   - **Contradictions**: conflicting approaches between contestants → flag for Round 2 resolution
+   - **Unique innovations**: novel approaches from any contestant (including eliminated) → preserve
+
+2. Build tiered context packets:
+   - `mustKnow` (≤500 tokens): top consensus findings + critical contradictions. Prepended to ALL Round 2 prompts.
+   - `fullBriefing` (≤2K tokens): detailed analysis of all approaches. Prepended to Round 2 prompts for finalists.
 
 3. Store the CB in SQL:
    ```sql
-   INSERT INTO hackathon_convergence_broadcasts
-     (cb_id, run_id, round, tier, token_count, content_json,
-      coverage, fidelity, compression_ratio, novelty_score)
-   VALUES
-     (:cb_id, :run_id, :round, :tier, :token_count, :content_json,
-      :coverage, :fidelity, :compression_ratio, :novelty_score);
+   INSERT INTO hackathon_convergence_broadcasts (run_id, round, must_know, full_briefing, consensus_count, contradiction_count)
+   VALUES (:run_id, 1, :must_know, :full_briefing, :consensus, :contradictions);
    ```
 
 The CB replaces the Evolution Brief as a richer, more structured knowledge bridge between rounds. The orchestrator builds the CB itself (no separate agent needed).
@@ -1043,6 +696,41 @@ CREATE TABLE IF NOT EXISTS hackathon_convergence_broadcasts (
   consensus_count INTEGER DEFAULT 0,
   contradiction_count INTEGER DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS hackathon_agent_health (
+  agent_id TEXT PRIMARY KEY,
+  cell_id INTEGER,
+  pod_id INTEGER,
+  health_score INTEGER DEFAULT 100,
+  status TEXT DEFAULT 'ALIVE',
+  last_heartbeat TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS hackathon_circuit_breakers (
+  scope TEXT,
+  scope_id TEXT,
+  state TEXT DEFAULT 'CLOSED',
+  failure_count INTEGER DEFAULT 0,
+  last_failure_at TIMESTAMP,
+  PRIMARY KEY (scope, scope_id)
+);
+
+CREATE TABLE IF NOT EXISTS hackathon_capsules (
+  id TEXT PRIMARY KEY,
+  topic TEXT,
+  facts TEXT,
+  confidence REAL,
+  token_count INTEGER,
+  lifecycle_state TEXT DEFAULT 'CREATED'
+);
+
+CREATE TABLE IF NOT EXISTS hackathon_hot_signals (
+  id TEXT PRIMARY KEY,
+  from_cell INTEGER,
+  signal_type TEXT,
+  payload TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
 
@@ -1231,6 +919,147 @@ Shadow sidecars (not counted toward the 1,000 execution agents):
 ### Full Architecture Reference
 
 The complete Kiloagent architecture (with code, schemas, and mathematical proofs) is documented in `~/hackathon/hk-46-kiloagent/KILOAGENT-ARCHITECTURE.md`.
+
+### Kiloagent File Operations
+
+Every cell operates in a strict file namespace to prevent cross-agent write collisions.
+
+**Namespace Rules:**
+- Cell N writes ONLY to `kilo-cell-{N}/` — subdirs per pod: `kilo-cell-{N}/pod-{P}/`
+- Referee output: `kilo-cell-{N}/synthesis.md`
+- CB artifacts: `kilo-cb-{wave}.md` (written ONLY by the designated CB Referee)
+- RULE: **No agent ever writes to a file another agent owns.** Violations trigger immediate DQ + Referee Takeover.
+
+**Atomic Write Pattern:**
+```
+1. Write to {target}.tmp
+2. Validate (non-empty, valid UTF-8, <100KB)
+3. Rename {target}.tmp → {target}     ← atomic on POSIX
+4. On failure: log to hot_signals, Referee absorbs task
+```
+
+**Hot Signals Queue:** Cross-cell communication uses `hackathon_hot_signals` (SQL table). Signal types:
+- `BREAKTHROUGH` — cell discovered something all cells need (injected into next CB)
+- `CONFLICT` — two cells produced contradictory outputs (escalate to L2)
+- `STALL` — cell is behind schedule (triggers adaptive timeout recalc)
+- `QUALITY_ALERT` — canary accuracy dropped below threshold
+
+### Kiloagent Failure Resilience
+
+**Agent Health Score (0–100):**
+
+| Score | Tier | Action |
+|-------|------|--------|
+| 80–100 | 🟢 Healthy | Normal operation |
+| 50–79 | 🟡 Degraded | Reduce task complexity, increase monitoring |
+| 20–49 | 🟠 Critical | Migrate tasks to healthy agents, prepare replacement |
+| 0–19 | 🔴 Dead | Immediate Referee Takeover |
+
+Health degrades on: timeout (-20), error (-30), empty output (-40), shadow fail (-15). Recovers +5/successful task, capped at 100.
+
+**Adaptive Timeout Calculator:**
+```
+timeout = min(max(base × complexity × elo_factor, 60), 900)
+
+base       = 120s (explore), 180s (task), 300s (general-purpose)
+complexity = 1.0 (atomic) → 2.5 (multi-step) → 4.0 (synthesis)
+elo_factor = 0.8 (top-quartile model) → 1.0 (median) → 1.5 (bottom-quartile)
+```
+
+**3-Tier Graduated Retry:**
+1. **Instant retry** — same model, same prompt, fresh context window
+2. **Delayed retry (30s)** — same model, simplified prompt (strip examples, reduce context)
+3. **Model swap** — fall back to next-best model from ELO table, full prompt
+
+If all 3 tiers fail → mark agent DEAD, Referee Takeover.
+
+**Circuit Breaker (per scope: pod / cell / wave):**
+```
+CLOSED ──[failure_count ≥ 3]──→ OPEN ──[cooldown 60s]──→ HALF-OPEN
+  ↑                                                          │
+  └──────────────[1 success]──────────────────────────────────┘
+                              [1 failure] → back to OPEN
+```
+- Pod OPEN → Referee reassigns pod's remaining tasks to sibling pods
+- Cell OPEN → Wave pauses, CB injects failure context, Wave 2 compensates
+- Wave OPEN → Orchestrator halts, delivers best-effort from completed cells
+
+**Dead Agent Recovery — Referee Takeover Priority Queue:**
+```
+Priority = (task_importance × 10) + (deadline_proximity × 5) - (task_complexity × 3)
+```
+Referee absorbs highest-priority orphaned tasks first. If Referee capacity exceeded (>5 absorbed tasks), escalate to Grand Shadow Arbiter for cross-cell redistribution.
+
+### Kiloagent Compression Ladder
+
+Five stages compress 1,000 agents' raw output into a single coherent deliverable.
+
+| Stage | Name | Compression | Token Budget | Method |
+|-------|------|------------|--------------|--------|
+| 0 | Raw | 100% | Unlimited | Agent output as-is |
+| 1 | Facts | ~45% | ≤4K/agent | Extract: claims, code, data, decisions |
+| 2 | Capsules | ~12% | ≤500/pod | Merge pod facts, dedupe, resolve conflicts |
+| 3 | Canon | ~4% | ≤2K/cell | Referee distills cell-level truth |
+| 4 | CB | ~2.2% | ≤8K total | Grand synthesis across all cells |
+
+**Fact Categories:**
+- 🔒 **Lossless** (never discard): code blocks, numeric results, error messages, citations
+- 🔓 **Lossy** (summarize): reasoning chains, exploration paths, alternative approaches
+
+**Quality Gates per Transition:**
+- Raw→Facts: fact count ≥ 3 per agent, no orphaned code blocks
+- Facts→Capsules: Jaccard similarity < 0.3 between capsules (diversity check)
+- Capsules→Canon: canary facts preserved (known-answer probes must survive compression)
+- Canon→CB: L2 shadow referee validates no lossless facts were dropped
+
+### Kiloagent Adaptive Scaling
+
+Not every task needs 1,000 agents. The orchestrator auto-sizes based on task complexity.
+
+**Task Complexity Analyzer:**
+```
+complexity_score = decomposability × breadth × depth
+
+decomposability = 1 (monolithic) → 5 (highly parallel sub-tasks)
+breadth         = 1 (single domain) → 5 (cross-domain)
+depth           = 1 (surface-level) → 5 (deep research/build)
+```
+
+**Dynamic Cell Allocation:**
+
+| Complexity Score | Mode | Cells | Agents | Use Case |
+|-----------------|------|-------|--------|----------|
+| 1–8 | Mini | 3 | ~30 | Focused build, single-domain audit |
+| 9–25 | Standard | 10 | ~100 | Multi-file refactor, research report |
+| 26–75 | Full | 50 | ~500 | Codebase-wide audit, complex architecture |
+| 76–125 | Kilo | 100 | ~1,000 | Full system design, massive research |
+
+**Auto-Scaler Rule:** After Wave 1, if canary accuracy > 95% across all cells → reduce Wave 2 cell count by 30% (quality is saturated, save compute). If canary accuracy < 70% → increase Wave 2 by 20% and inject remediation context into CB-1.
+
+### Kiloagent Monitoring
+
+**Heartbeat Protocol:**
+- Every agent emits a heartbeat to `hackathon_agent_health` every 30 seconds
+- Graduated stall detection:
+  - 1 missed beat (30s): log warning
+  - 2 missed beats (60s): mark DEGRADED, alert Pod Lead
+  - 3 missed beats (90s): mark DEAD, trigger Referee Takeover
+
+**Live Commentary Generation:**
+The orchestrator generates real-time commentary from monitoring data:
+```
+Heartbeats → Agent Health Summary → Commentary Template Selection → User-facing quip
+
+Templates:
+- Health >90%: "💚 All 1,000 agents humming — {N} tasks complete, {M} in flight."
+- Health 70-90%: "⚠️ {D} agents degraded in Cell {C} — Referees compensating."
+- Health <70%: "🔥 Cell {C} under pressure — circuit breaker {state}, redistributing."
+```
+
+**Quality Drift Detection:**
+- Track rolling 5-pod average of canary accuracy per cell
+- If drift > 10% from Wave 1 baseline → inject `QUALITY_ALERT` hot signal
+- If drift > 25% → escalate to L3 Grand Shadow Arbiter for system-wide reassessment
 
 ---
 
