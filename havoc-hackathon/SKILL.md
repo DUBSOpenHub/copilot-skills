@@ -236,8 +236,8 @@ Parse judge justifications from `hackathon_judge_scores` WHERE `round=1`. For ea
 
 3. Store the CB in SQL:
    ```sql
-   INSERT INTO hackathon_convergence_broadcasts (run_id, round, must_know, full_briefing, consensus_count, contradiction_count)
-   VALUES (:run_id, 1, :must_know, :full_briefing, :consensus, :contradictions);
+   INSERT INTO hackathon_convergence_broadcasts (run_id, round, must_know, full_briefing, analyst_brief, referee_brief, shadow_brief, consensus_count, contradiction_count)
+   VALUES (:run_id, 1, :must_know, :full_briefing, :analyst_brief, :referee_brief, :shadow_brief, :consensus, :contradictions);
    ```
 
 The CB replaces the Evolution Brief as a richer, more structured knowledge bridge between rounds. The orchestrator builds the CB itself (no separate agent needed).
@@ -767,7 +767,7 @@ CREATE TABLE IF NOT EXISTS hackathon_hot_signals (
 - **Pod Leads** → Sonnet (`claude-sonnet-4.6`)
 - **Specialists** → Sonnet (`claude-sonnet-4.5`)
 - **Scouts / Canaries / Shadow Probes** → Haiku (`claude-haiku-4.5`)
-- **Executors** → GPT-Mini (`gpt-5.4-mini` or `gpt-5-mini`)
+- **Executors** → Fast models (`gpt-5.4-mini` or `gpt-5-mini`)
 
 **Default contestants (Standard):** Claude Sonnet 4.6, Codex Max (GPT-5.1), GPT-5.2 ← STANDARD ⚡
 **Default contestants (Premium):** Codex (GPT-5.3), Claude Opus 4.6, Gemini 3 Pro ← PREMIUM 👑
