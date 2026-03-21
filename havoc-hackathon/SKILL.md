@@ -231,8 +231,8 @@ Parse judge justifications from `hackathon_judge_scores` WHERE `round=1`. For ea
    - **Unique innovations**: novel approaches from any contestant (including eliminated) → preserve
 
 2. Build tiered context packets:
-   - `mustKnow` (≤500 tokens): top consensus findings + critical contradictions. Prepended to ALL Round 2 prompts.
-   - `fullBriefing` (≤2K tokens): detailed analysis of all approaches. Prepended to Round 2 prompts for finalists.
+   - `mustKnow` (≤500 tokens in Tournament Mode, ≤2K in Kiloagent Mode): top consensus findings + critical contradictions. Prepended to ALL Round 2 / Wave 2 prompts.
+   - `fullBriefing` (≤2K tokens in Tournament Mode, ≤8K in Kiloagent Mode): detailed analysis of all approaches. Prepended to finalist / Pod Lead prompts.
 
 3. Store the CB in SQL:
    ```sql
@@ -242,7 +242,7 @@ Parse judge justifications from `hackathon_judge_scores` WHERE `round=1`. For ea
 
 The CB replaces the Evolution Brief as a richer, more structured knowledge bridge between rounds. The orchestrator builds the CB itself (no separate agent needed).
 
-**Round 2  -  Finals:** Dispatch all finalists in parallel with the Evolution Brief prepended to their prompt. Same rubric, same context + Evolution Brief.
+**Round 2  -  Finals:** Dispatch all finalists in parallel with the Convergence Broadcast (`mustKnow` + `fullBriefing`) prepended to their prompt. Same rubric, same context + CB.
 
 **Classic Mode ("quick"/"fast"):** Dispatch 3 models in parallel, single round, no heats. Same as original behavior.
 
@@ -693,6 +693,9 @@ CREATE TABLE IF NOT EXISTS hackathon_convergence_broadcasts (
   round INTEGER NOT NULL,
   must_know TEXT,
   full_briefing TEXT,
+  analyst_brief TEXT,
+  referee_brief TEXT,
+  shadow_brief TEXT,
   consensus_count INTEGER DEFAULT 0,
   contradiction_count INTEGER DEFAULT 0
 );
@@ -754,6 +757,17 @@ CREATE TABLE IF NOT EXISTS hackathon_hot_signals (
 | Codex (GPT-5.1) | `gpt-5.1-codex` | Standard |
 | GPT-5.2 | `gpt-5.2` | Standard |
 | GPT-5.1 | `gpt-5.1` | Standard |
+| Claude Haiku 4.5 | `claude-haiku-4.5` | Fast/Cheap |
+| GPT-5.4 Mini | `gpt-5.4-mini` | Fast/Cheap |
+| GPT-5 Mini | `gpt-5-mini` | Fast/Cheap |
+| GPT-4.1 | `gpt-4.1` | Fast/Cheap |
+
+**Kiloagent Model Mapping:** In Kiloagent Mode, roles map to models as follows:
+- **Referees** → Opus (Premium tier: `claude-opus-4.6` or `claude-opus-4.6-1m`)
+- **Pod Leads** → Sonnet (`claude-sonnet-4.6`)
+- **Specialists** → Sonnet (`claude-sonnet-4.5`)
+- **Scouts / Canaries / Shadow Probes** → Haiku (`claude-haiku-4.5`)
+- **Executors** → GPT-Mini (`gpt-5.4-mini` or `gpt-5-mini`)
 
 **Default contestants (Standard):** Claude Sonnet 4.6, Codex Max (GPT-5.1), GPT-5.2 ← STANDARD ⚡
 **Default contestants (Premium):** Codex (GPT-5.3), Claude Opus 4.6, Gemini 3 Pro ← PREMIUM 👑
@@ -855,7 +869,7 @@ Century Cell (100 execution agents):
 └── 90 Leaf Workers  (mixed types)               — atomic execution
     └── Per Pod (10 leaves):
         ├── 5 Scouts       (explore, Haiku)      — research, extract
-        ├── 2 Executors    (task, GPT-Mini)       — run commands, validate
+        ├── 2 Executors    (task, gpt-5.4-mini)    — run commands, validate
         ├── 1 Specialist   (general-purpose, Sonnet) — solve hard sub-problems
         ├── 1 Canary       (explore, Haiku)       — known-answer quality probe
         └── 1 Shadow Probe (explore, Haiku)       — L1 hidden quality judge
@@ -875,10 +889,10 @@ Shadow sidecars (not counted toward the 1,000 execution agents):
    - `mustKnow` ≤2K tokens → injected into all Wave 2 workers
    - `analystBrief` ≤8K → Pod Leads
    - `refereeBrief` ≤16K → Referees
-   - `shadowBrief` (sealed) → Shadow Referees only (generated criteria, canary accuracy, divergence deltas, leakage alerts)
+   - `shadowBrief` ≤4K (sealed) → Shadow Referees only (generated criteria, canary accuracy, divergence deltas, leakage alerts)
 5. **Wave 2 (Cells 6-10, 500 agents):** Same structure, but every agent receives CB-1. Wave 2 stands on Wave 1's shoulders.
 6. **L2 Consensus Pass:** Each cell's resident shadow referee plus 2 rotating Sonnet peers rescore the cell packet. Final cell-level shadow verdict = median of the 3 L2 scores.
-7. **CB-FINAL (Grand Synthesis):** Cell-10 Referee (Opus 1M) reads all 10 cells. Produces final merged output.
+7. **CB-FINAL (Grand Synthesis):** Cell-10 Referee (Opus 1M) reads all 10 cell synthesis outputs. Produces the final merged deliverable containing: executive summary, all consensus findings with confidence levels, resolved contradictions with rationale, unresolved items flagged for user decision, and provenance table mapping each finding to its source cells.
 8. **L3 Grand Shadow Arbitration:** Opus reviews the full heat map, worst cells, low-correlation pods, and leakage alerts. Produces system-wide quality verdict.
 9. **Shadow Quality Report:** Aggregate canary accuracy, L1/L2/L3 divergence, leakage alerts, and the heat map across all 1,000 agents.
 
@@ -906,7 +920,7 @@ Shadow sidecars (not counted toward the 1,000 execution agents):
 | Phase 4 — Judge | L1 pod probes → L2 median cell referees → L3 grand shadow arbiter |
 | Phase 5 — Winner | CB-FINAL grand synthesis + multi-layer shadow quality report + heat map |
 | Phase 6 — Merge | Already merged via Convergence Broadcasts |
-| Phase 7 — ELO | Update ELO for all 19 models based on cell performance |
+| Phase 7 — ELO | Update ELO for all contestant models based on cell performance |
 | Phase 8 — Closing | Standard ceremony with Kiloagent stats (agents run, canary accuracy, shadow correlation, coverage) |
 
 ### Commentary Lines (Kiloagent-specific)
