@@ -856,7 +856,7 @@ Century Cell (100 execution agents):
     └── Per Pod (10 leaves):
         ├── 5 Scouts       (explore, Haiku)      — research, extract
         ├── 2 Executors    (task, GPT-Mini)       — run commands, validate
-        ├── 1 Specialist   (general-purpose)      — solve hard sub-problems
+        ├── 1 Specialist   (general-purpose, Sonnet) — solve hard sub-problems
         ├── 1 Canary       (explore, Haiku)       — known-answer quality probe
         └── 1 Shadow Probe (explore, Haiku)       — L1 hidden quality judge
 
@@ -1027,12 +1027,17 @@ depth           = 1 (surface-level) → 5 (deep research/build)
 
 **Dynamic Cell Allocation:**
 
-| Complexity Score | Mode | Cells | Agents | Use Case |
-|-----------------|------|-------|--------|----------|
-| 1–8 | Mini | 3 | ~30 | Focused build, single-domain audit |
-| 9–25 | Standard | 10 | ~100 | Multi-file refactor, research report |
-| 26–75 | Full | 50 | ~500 | Codebase-wide audit, complex architecture |
-| 76–125 | Kilo | 100 | ~1,000 | Full system design, massive research |
+| Complexity Score | Mode | Cells | Agents/Cell | Total Agents | Use Case |
+|-----------------|------|-------|-------------|--------------|----------|
+| 1–8 | Mini | 3 | ~10 | ~30 | Focused build, single-domain audit |
+| 9–25 | Standard | 5 | ~20 | ~100 | Multi-file refactor, research report |
+| 26–75 | Full | 10 | ~50 | ~500 | Codebase-wide audit, complex architecture |
+| 76–125 | Kilo | 10 | ~100 | ~1,000 | Full system design, massive research |
+
+**Scaling Note:** The execution flow references "Cell-5 Referee" for CB-1 and "Cell-10 Referee" for CB-FINAL. In scaled-down modes, substitute the mid-wave and final-wave cell's Referee:
+- **Mini (3 cells):** CB-1 = Cell-2 Referee, CB-FINAL = Cell-3 Referee
+- **Standard (5 cells):** CB-1 = Cell-3 Referee, CB-FINAL = Cell-5 Referee
+- **Full/Kilo (10 cells):** CB-1 = Cell-5 Referee, CB-FINAL = Cell-10 Referee
 
 **Auto-Scaler Rule:** After Wave 1, if canary accuracy > 95% across all cells → reduce Wave 2 cell count by 30% (quality is saturated, save compute). If canary accuracy < 70% → increase Wave 2 by 20% and inject remediation context into CB-1.
 
