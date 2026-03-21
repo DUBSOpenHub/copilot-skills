@@ -248,11 +248,202 @@ The CB replaces the Evolution Brief as a richer, more structured knowledge bridg
 
 **Build mode:** Each model commits to `hackathon/{model-name}`. Independent work. Scope boundaries.
 
-**Failure Recovery:** Poll via `read_agent` every 15s. Adaptive timeouts (300-900s). Retry once on failure. DQ after 2 failures. If an entire heat is DQ'd, highest-scoring eliminated model from another heat gets a wildcard entry.
+**Failure Recovery & Resilience System (v2):**
 
-**Stall Detection:** If a contestant produces no output after 180 seconds, pause and ask the user via `ask_user`: "⏳ {Model} has been silent for 3 minutes. Want to keep waiting or DQ and continue with the others?" Choices: **Keep waiting (60s more)**, **DQ and continue**. If the user extends and it stalls again, auto-DQ with commentary: "💀 {Model} went AFK. No mercy in this arena."
+This system replaces simple retry-and-DQ with a multi-layered resilience architecture. Every agent is monitored, scored, and recoverable. Cascading failures are structurally impossible.
 
-**Graceful Degradation:** 3+ = normal. 2 = head-to-head. 1 = solo evaluation vs threshold. 0 = abort with details.
+**1. Agent Health Score (0-100):**
+
+Every dispatched agent maintains a rolling health score, updated on each poll cycle. The score determines intervention thresholds:
+
+```
+health_score = base(100)
+  − (poll_misses × 10)          # no output on expected poll
+  − (retry_count × 15)          # each retry costs credibility
+  − (latency_penalty)           # see Adaptive Timeout below
+  + (output_received × 5)       # partial output = signs of life, cap +20
+```
+
+| Health Range | Status | Action |
+|---|---|---|
+| 70-100 | 🟢 Healthy | Normal operation |
+| 50-69 | 🟡 Degraded | Increase poll frequency to 8s, log warning |
+| 30-49 | 🟠 Critical | Prepare replacement agent, alert MC |
+| 0-29 | 🔴 Terminal | **Preemptive replacement** — swap to backup model before DQ. Transfer any partial output to the replacement via prompt injection. Commentary: "🔄 {Model} is fading — {Replacement} tapping in!" |
+
+Store per-run: `INSERT INTO hackathon_agent_health (run_id, model, round, health_score, poll_count, retry_count, status, timestamp) VALUES (...)`.
+
+**2. Adaptive Timeout Calculator:**
+
+Timeouts are model-specific, computed from ELO history and historical completion times. No more one-size-fits-all 300s.
+
+```
+timeout(model) = base_timeout(model) × complexity_multiplier × round_multiplier
+
+where:
+  base_timeout(model):
+    - If model has ≥3 prior hackathon entries:
+        p75_completion = 75th-percentile completion time from hackathon_elo_history
+        base = max(180, min(p75_completion × 1.5, 900))
+    - If model is new (<3 entries):
+        base = 600  (generous default for unknowns)
+
+  complexity_multiplier:
+    - Classic mode: 1.0
+    - Tournament heats: 1.0
+    - Tournament finals: 1.5  (finals get more time — stakes are higher)
+    - Kiloagent leaf: 0.6  (small atomic tasks = tighter deadline)
+    - Kiloagent Referee: 2.0  (synthesis is slow and critical)
+
+  round_multiplier:
+    - Round 1: 1.0
+    - Round 2+: 1.2  (Evolution Brief adds processing overhead)
+```
+
+Model-tier defaults when no history exists:
+
+| Tier | Models | Default Base Timeout |
+|---|---|---|
+| Fast (Haiku, Mini) | claude-haiku-4.5, gpt-5.4-mini, gpt-5-mini, gpt-4.1, gpt-5.1-codex-mini | 240s |
+| Standard (Sonnet, GPT) | claude-sonnet-4.6, claude-sonnet-4.5, claude-sonnet-4, gpt-5.1, gpt-5.1-codex, gpt-5.2, gpt-5.2-codex, gemini-3-pro-preview | 420s |
+| Heavy (Opus, Codex-Max) | claude-opus-4.6, claude-opus-4.5, gpt-5.1-codex-max, gpt-5.3-codex, gpt-5.4 | 600s |
+
+**Latency penalty for health score:** If elapsed > 0.8 × timeout(model), apply `latency_penalty = 20`. If elapsed > 0.5 × timeout, `latency_penalty = 5`. Otherwise 0.
+
+**3. Graduated Retry with Backoff (3-Tier):**
+
+On failure, agents get up to 3 recovery attempts with escalating strategy:
+
+| Tier | Trigger | Wait | Strategy | Commentary |
+|---|---|---|---|---|
+| T1 — Instant Retry | First failure or timeout | 0s | Same model, same prompt, fresh agent | "⚡ {Model} stumbled — instant retry!" |
+| T2 — Delayed Retry | T1 fails | 30s | Same model, simplified prompt (strip Evolution Brief, reduce context by 40%) | "🔄 {Model} gets a second wind... lighter prompt incoming." |
+| T3 — Model Swap | T2 fails | 15s | **Different model** from same tier, full original prompt. Pick the highest-ELO available model not already in the heat. | "🔀 {Model} is out — {Replacement} drafted from the bench!" |
+
+After T3 failure → hard DQ with ceremony: "💀 Three strikes. {Model} has been eliminated. The arena shows no mercy."
+
+**Model Swap Pool:** Maintain a ranked list of standby models (sorted by ELO descending, excluding already-competing models). T3 draws from this pool. If pool is empty, skip T3 and DQ after T2.
+
+**4. Stall Detection & Heartbeat Tracking:**
+
+Poll via `read_agent` with adaptive frequency based on health score:
+- 🟢 Healthy: every 15s
+- 🟡 Degraded: every 8s
+- 🟠 Critical: every 5s
+
+**Heartbeat protocol:** Each poll that returns new output resets the stall timer. A "heartbeat" is any new content — even partial. Track:
+
+```sql
+INSERT INTO hackathon_heartbeats (run_id, model, round, last_output_at, bytes_received, poll_count)
+VALUES (:run_id, :model, :round, datetime('now'), :bytes, :count)
+ON CONFLICT(run_id, model, round) DO UPDATE SET
+  last_output_at = datetime('now'), bytes_received = bytes_received + :bytes, poll_count = poll_count + 1;
+```
+
+**Stall escalation:**
+- **120s silent** (no new bytes): Health score drops to 🟡. MC commentary: "⏳ {Model} has gone quiet..."
+- **180s silent**: Health drops to 🟠. Ask user via `ask_user`: "⏳ {Model} has been silent for 3 minutes. Want to keep waiting or start recovery?" Choices: **Keep waiting (90s more)**, **Start recovery (T1 retry)**, **DQ and continue**.
+- **270s silent** (or user-extended + stalled again): Auto-trigger T1 retry. No more user prompts — the system handles it. Commentary: "💀 {Model} went AFK. Recovery protocol engaged."
+- **After T3 exhausted**: Hard DQ.
+
+**5. Circuit Breaker Pattern:**
+
+Prevents cascading failures when infrastructure degrades (API outages, rate limits, provider issues).
+
+```
+Circuit states: CLOSED (normal) → OPEN (halted) → HALF-OPEN (probing)
+
+TRIGGER: If 3+ agents in the same wave/heat fail within a 60-second window:
+  → Circuit trips to OPEN
+  → ALL pending dispatches in that wave pause immediately
+  → MC commentary: "🚨 CIRCUIT BREAKER TRIPPED — 3 agents down in 60s. Pausing to diagnose..."
+
+OPEN state (max 90s):
+  1. Log failure signatures (error types, models affected, timing)
+  2. Identify failure pattern:
+     a) Same model failing → model-specific issue → exclude model, redistribute work
+     b) Same provider failing (e.g., all Claude or all GPT) → provider outage → switch to other providers
+     c) All models failing → systemic issue (rate limit, network) → exponential backoff: wait 30s, retry 1 probe agent
+     d) Unknown pattern → wait 30s, retry with smallest possible dispatch
+  3. Reconfigure the wave: remove failing models, rebalance heats, update brackets
+
+HALF-OPEN state:
+  → Dispatch 1 probe agent (lowest-cost model, simple known-answer task)
+  → If probe succeeds within 60s → circuit CLOSES, resume wave with reconfigured lineup
+  → If probe fails → circuit stays OPEN, extend wait by 60s, retry probe (max 3 probes)
+  → After 3 failed probes → abort wave, report to user:
+     "🚨 Arena infrastructure is degraded. {N} models are unreachable. Options: retry with available models, or postpone."
+```
+
+Track: `INSERT INTO hackathon_circuit_events (run_id, wave, state, trigger_models, failure_pattern, resolution, timestamp) VALUES (...)`.
+
+**6. Dead Agent Recovery Protocol:**
+
+Agents can die silently (process killed, context overflow, API disconnect). The heartbeat system detects this, and the recovery protocol handles reassignment.
+
+```
+Detection:
+  - Agent status via read_agent returns "failed" or "cancelled" → immediate recovery
+  - Agent returns empty/null after 3 consecutive polls → presumed dead
+  - Agent health score hits 0 → confirmed dead
+
+Recovery steps:
+  1. Capture partial output (if any) from the dead agent's last successful poll
+  2. Mark agent as DEAD in hackathon_agent_health
+  3. Calculate remaining work:
+     - If partial output ≥ 60% of expected (heuristic: word count vs typical output) →
+       mark as "partial_complete", feed to judges with penalty flag (-5 points)
+     - If partial output < 60% → reassign to recovery agent
+  4. Dispatch recovery agent:
+     - Use T3 model swap logic (highest-ELO available standby)
+     - Inject partial output as context: "A previous agent produced this partial work: {output}. Complete the task."
+     - Recovery agent gets 0.7× original timeout (tighter deadline, less work remaining)
+  5. If recovery agent also fails → absorb into Referee synthesis (Kiloagent) or DQ slot (Tournament)
+```
+
+Commentary: "🏥 {Model} flatlined. Partial work recovered. {Replacement} picking up the pieces..."
+
+**7. Cascade Prevention — Isolation Boundaries:**
+
+Failures are structurally contained. No single failure can propagate beyond its boundary.
+
+```
+Isolation hierarchy:
+  ┌─────────────────────────────────────────┐
+  │ Tournament: Heat boundary               │
+  │  - Each heat is an independent circuit  │
+  │  - Heat 1 failure cannot affect Heat 2  │
+  │  - Heats share nothing except the rubric│
+  ├─────────────────────────────────────────┤
+  │ Kiloagent: Cell boundary                │
+  │  - Each Century Cell is isolated        │
+  │  - Cell 1 crash ≠ Cell 2 impact         │
+  │  - Cells share only Convergence Broadcasts│
+  │  - CB delivery is fire-and-forget       │
+  ├─────────────────────────────────────────┤
+  │ Within Cell: Pod boundary               │
+  │  - Pod failure stays within pod         │
+  │  - Referee absorbs failed pod work      │
+  │  - Other pods continue unaffected       │
+  └─────────────────────────────────────────┘
+
+Cross-boundary communication is read-only and asynchronous:
+  - Convergence Broadcasts: produced once, consumed read-only by downstream agents
+  - Evolution Briefs: same — read-only context injection
+  - No agent can write to another agent's workspace
+  - No agent can trigger another agent's retry/failure
+```
+
+**Graceful Degradation (upgraded):**
+
+| Surviving Agents | Mode | Behavior |
+|---|---|---|
+| N ≥ 3 | Normal | Full competition, standard judging |
+| N = 2 | Head-to-head | Direct comparison, 3-judge panel maintained |
+| N = 1 | Solo evaluation | Score against absolute threshold (≥70/100 to pass). If passes, output is used with caveat. If fails, offer re-run. |
+| N = 0 | Abort | Full diagnostic dump: which models failed, at what tier, circuit breaker events, health scores. Offer: "Retry with different models?" or "Try Classic mode?" |
+
+Store degradation events: `INSERT INTO hackathon_degradation_events (run_id, round, original_count, surviving_count, mode, models_lost, timestamp) VALUES (...)`.
 
 **Stream progress** with live commentary, progress bars, and finish-line celebrations. In Tournament Mode, show mini-ceremonies for each heat winner advancing: "🏅 {Model} takes Heat {N}! Moving to the finals..."
 
