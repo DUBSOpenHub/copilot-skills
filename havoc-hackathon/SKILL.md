@@ -1251,16 +1251,22 @@ Century Cell (100 agents):
 
 ### Execution Flow
 
-1. **CB-0 (Initial Broadcast):** Orchestrator decomposes the problem into 10 cell missions + global rubric + shadow spec.
-2. **Wave 1 (Cells 1-5, 500 agents):** Launch 5 cells in parallel. Each cell runs: Pod Leads → Workers (with canaries + shadow judges) → Referee synthesis.
-3. **CB-1 (Mid-Point Convergence):** Cell-5 Referee (Opus 1M) reads ALL Wave 1 outputs. Produces tiered context packets:
-   - `mustKnow` ≤2K tokens → injected into all Wave 2 workers
-   - `analystBrief` ≤8K → Pod Leads
-   - `refereeBrief` ≤16K → Referees
-   - `shadowBrief` (sealed) → Referees only (canary accuracy, shadow divergence)
-4. **Wave 2 (Cells 6-10, 500 agents):** Same structure, but every agent receives CB-1. Wave 2 stands on Wave 1's shoulders.
-5. **CB-FINAL (Grand Synthesis):** Cell-10 Referee (Opus 1M) reads all 10 cells. Produces final merged output.
-6. **Shadow Quality Report:** Aggregate canary accuracy + shadow divergence across all 1,000 agents. Flag quality issues.
+1. **CB-0 (Initial Broadcast):** Orchestrator decomposes the problem into 10 cell missions + global rubric + shadow spec. Seeds the Cross-Cell Domain Routing Table. Writes the innovation graveyard schema. Every Wave 1 worker receives CB-0 as their first context line.
+
+2. **Wave 1 (Cells 1-5, 500 agents):** Launch 5 cells in parallel. Each cell runs: Pod Leads → Workers (with canaries + shadow judges) → Referee synthesis. Canary agents double as Hot Signal emitters — domain-tagged findings route to relevant cells in real time via the Cross-Cell Knowledge Routing system. No waiting for wave boundaries for critical signals.
+
+3. **CB-1 (Mid-Point Convergence):** Cell-5 Referee (Opus 1M) reads ALL Wave 1 outputs (all 500 agents). Runs the full Progressive Compression Pipeline (Raw → Facts → Capsules → Canon → CB) and Semantic Clustering Algorithm across all outputs. Resolves contradictions via the 4-level hierarchy. Preserves innovations, seeds graveyard. Produces tiered context packets validated against quality thresholds before injection:
+   - `mustKnow` ≤2K tokens → injected into ALL Wave 2 workers (top clusters + unresolved contradictions)
+   - `analystBrief` ≤8K → Pod Leads (full cluster map + routing table + graveyard revivals)
+   - `refereeBrief` ≤16K → Referees (full evidence + fidelity scores + hot signal digest)
+   - `shadowBrief` (sealed) → Referees only (canary accuracy matrix + shadow divergence + quality metrics report)
+   - CB-1 quality gates: coverage ≥ 0.60, fidelity ≥ 0.50, compression ≥ 4:1. Failure triggers one rebuild pass.
+
+4. **Wave 2 (Cells 6-10, 500 agents):** Same structure, but every agent receives CB-1. Wave 2 stands on Wave 1's shoulders — no agent re-solves what Wave 1 already proved. Graveyard revivals are injected into relevant Pod Leads. Hot Signals continue routing cross-cell. Wave 2 novelty score is tracked: if `novelty < 0.30`, increase innovation weight in cell missions.
+
+5. **CB-FINAL (Grand Synthesis):** Cell-10 Referee (Opus 1M) reads all 10 cells — all 1,000 agent outputs distilled through the full CB pipeline. Produces the final merged output: a `canon` document where every claim is supported by consensus evidence, every contradiction is resolved, and every high-value innovation is surfaced. Includes the full quality metrics report across both waves.
+
+6. **Shadow Quality Report:** Aggregate canary accuracy + shadow divergence across all 1,000 agents. Report: `canary_accuracy_wave1`, `canary_accuracy_wave2`, `shadow_divergence_rate`, `hot_signals_emitted`, `hot_signals_consumed`, `graveyard_revivals_adopted`, `coverage_wave1`, `coverage_wave2`, `novelty_wave2`. Flag quality issues with `🔴` markers and root-cause each.
 
 ### Key Mechanisms
 
