@@ -832,11 +832,326 @@ Century Cell (100 agents):
 
 ### Key Mechanisms
 
-- **Context Genome:** Each leaf agent gets a unique combination of context capsules (hash-based, Jaccard-diversity-maximized). No two agents see identical context.
-- **Referee Takeover:** When a leaf fails, the cell Referee absorbs its work. Zero extra agents.
+- **Context Genome (implemented below):** Deterministic, hash-based capsule assignment + Jaccard-diversity repair so no two leaf workers receive identical context.
+- **Referee Takeover (Enhanced):** When a leaf fails, recovery follows a priority queue — not first-come-first-served.
+
+  **Priority Queue for Failed Work:**
+  ```
+  Priority levels (highest first):
+    P0 — Canary or Shadow Judge failure (quality infrastructure — must recover)
+    P1 — Specialist failure (hard sub-problems, no easy substitute)
+    P2 — Executor failure (commands/validation — Pod Lead can partially absorb)
+    P3 — Scout failure (research — other scouts have overlapping coverage)
+
+  Queue processing:
+    1. Failed work enters priority queue with: task_description, partial_output, priority, source_pod
+    2. Referee checks own capacity (already absorbed ≤ 2 tasks? → can absorb)
+    3. If Referee at capacity (3+ absorbed tasks) → trigger Cross-Cell Load Balancing
+    4. P0 items always processed by Referee regardless of capacity
+  ```
+
+  **Cross-Cell Load Balancing:**
+  When one cell is degraded (Referee at capacity, 3+ pods failing), surplus work is redistributed:
+  ```
+  Detection:
+    - Cell health = average health score of all agents in cell
+    - If cell health < 50 → cell is "degraded"
+    - If cell health < 25 → cell is "critical"
+
+  Rebalancing protocol:
+    1. Degraded cell's Referee broadcasts a HELP request to Wave Coordinator (CB channel)
+    2. Wave Coordinator identifies healthiest cell in the same wave (highest average health)
+    3. Healthy cell's Referee receives overflow tasks via CB injection:
+       - Max 2 overflow tasks per healthy cell (prevent overload cascade)
+       - Overflow tasks are tagged with source_cell_id for traceability
+    4. If no healthy cell has capacity → overflow tasks enter CB-FINAL as "partial/unresolved"
+       with flag: "⚠️ {N} tasks could not be completed due to cell degradation"
+
+  Critical cell protocol:
+    - If a cell drops to critical AND it's Wave 1 → Wave 2 inherits its mission in CB-1
+    - If a cell drops to critical AND it's Wave 2 → CB-FINAL notes the gap
+    - Commentary: "🚑 Cell {N} is critical — redistributing {M} tasks across healthy cells."
+  ```
+
+  **Kiloagent Circuit Breaker (cell-scoped):**
+  The circuit breaker operates at cell level in Kiloagent mode:
+  - 3+ leaf failures in a pod within 30s → pod circuit trips, Referee absorbs all pod work
+  - 3+ pod circuits tripping in a cell within 60s → cell circuit trips, cross-cell rebalancing activates
+  - 3+ cell circuits tripping in a wave within 120s → wave circuit trips, user notified:
+    "🚨 Wave {N} is severely degraded. {M}/5 cells are failing. Options: continue with remaining cells, or restart wave."
+
+  Store: `INSERT INTO hackathon_kiloagent_recovery (run_id, cell_id, pod_id, event_type, priority, source_agent, target_agent, partial_output_bytes, timestamp) VALUES (...)`.
 - **Compression Ladder:** Raw → Facts → Capsules → Canon → CB. Each stage denser.
 - **Canary Probes:** 1 per pod (90 total) — known-answer tasks measuring quality at depth.
 - **Shadow Judges:** 1 per pod (90 total) — score pod-mates against hidden criteria.
+
+#### Context Genome (Production Spec)
+
+**Goal:** Ensure *coverage + diversity* across the 900 leaf workers. Every leaf receives a **unique** subset of “context capsules” so the swarm explores more of the solution space, avoids correlated failures, and makes provenance auditable.
+
+##### 1) Context Capsule Definition
+
+A **context capsule** is a small, atomic, deduplicated unit of context injected into a leaf worker’s prompt. Capsules are designed to be:
+- **Composable:** multiple capsules can be combined without rewriting.
+- **Attributable:** each capsule carries provenance (`source_agent`) and confidence.
+- **Token-aware:** each capsule estimates its token footprint so we can budget per role.
+
+**Canonical capsule schema (JSON):**
+```json
+{
+  "id": "cap_01J9...", 
+  "type": "fact", 
+  "content": "...",
+  "source_agent": "cell-3/pod-2/scout-4",
+  "confidence": 0.0,
+  "tokens": 0
+}
+```
+
+**Field semantics:**
+- `id` — Stable, content-addressed identifier (recommended: `cap_` + base32(sha256(type + "\n" + content))).
+- `type` — One of:
+  - `fact` — Verified claim about the world/repo/output (ideally evidence-backed)
+  - `code` — Snippet, symbol, signature, or exact file/line excerpt
+  - `constraint` — Non-negotiable requirement (rubric item, interface contract, SLA)
+  - `example` — Input/output example, reproduction steps, expected behavior
+  - `prior_discovery` — A past finding/hypothesis that may guide search but is not yet fully verified
+- `content` — The payload text (keep tight; prefer bullets, exact strings, file paths).
+- `source_agent` — Producer agent id (cell/pod/role/index).
+- `confidence` — Float in `[0,1]`:
+  - `≥0.85`: validated (tests/logs/citations)
+  - `0.60–0.84`: plausible (cross-agent agreement)
+  - `<0.60`: exploratory (mark as hypothesis)
+- `tokens` — Estimated tokens of `content` (approx; used for budgeting).
+
+**How capsules are created from decomposition:**
+1. **CB-0 decomposition** yields a task tree (missions → pods → leaves) plus a shared rubric.
+2. Each Pod Lead emits candidate capsules from:
+   - rubric constraints (`constraint`)
+   - target files/symbols (`code`)
+   - known pitfalls/previous failures (`prior_discovery`)
+   - minimal examples or repro recipes (`example`)
+3. Scouts/Executors/Specialists continuously mint capsules from their findings.
+4. The Referee deduplicates + validates capsules before promoting them (see Context Evolution).
+
+##### 2) Jaccard-Diversity Algorithm (900 leaf workers)
+
+We assign capsules to leaf workers in **two stages**:
+
+**Stage A — Deterministic hash-based sampling (fast, reproducible):**
+- Inputs:
+  - `capsules`: list of `N` capsules
+  - `agents`: 900 leaf agent ids
+  - `K(agent)`: role-based capsule budget
+  - `bucket_count` (e.g. 10,000)
+- Idea: each agent owns a contiguous **bucket range**; a capsule belongs to an agent if the combined hash falls in that range.
+
+**Stage B — Jaccard repair (enforce diversity constraint):**
+- For any two agents `A,B`, define:
+  - `J(A,B) = |A ∩ B| / |A ∪ B|`
+- Constraint: `J(A,B) ≤ 0.30` for all pairs.
+- If violated, iteratively swap/reseed capsules for the “more-colliding” agent.
+
+**Pseudocode:**
+```text
+function build_context_genome(capsules, agents, role_of, K_for_role, threshold=0.30):
+  bucket_count = 10000
+  N = len(capsules)
+
+  # ---------- Stage A: hash-based initial assignment ----------
+  assignments = map agent_id -> set(capsule_id)
+
+  for agent in agents:
+    K = K_for_role[ role_of(agent) ]
+
+    # Expected selected ≈ N * (range_size / bucket_count)
+    range_size = ceil(K * bucket_count / max(N, 1))
+    start = hash64("agent:" + agent) % bucket_count
+    end = (start + range_size) % bucket_count
+
+    for cap in capsules:
+      h = hash64("agent:" + agent + "|cap:" + cap.id) % bucket_count
+      in_range = (start <= end) ? (start <= h < end) : (h >= start OR h < end)
+      if in_range:
+        assignments[agent].add(cap.id)
+
+    # If hash sampling underfilled (common when N small), top-up deterministically
+    if size(assignments[agent]) < K:
+      fill = deterministic_ranked_fill(agent, capsules, K - size(assignments[agent]))
+      assignments[agent] = assignments[agent] ∪ fill
+
+    # If overfilled, downsample deterministically
+    if size(assignments[agent]) > K:
+      assignments[agent] = deterministic_downsample(agent, assignments[agent], K)
+
+  # ---------- Stage B: Jaccard diversity repair ----------
+  # Build a collision score per agent: how many peers exceed threshold
+  repeat up to MAX_ITERS (e.g. 25):
+    violating_pairs = []
+    collision_degree = map agent -> 0
+
+    for each unordered pair (a,b) of agents:
+      J = jaccard(assignments[a], assignments[b])
+      if J > threshold:
+        violating_pairs.append((a,b,J))
+        collision_degree[a] += 1
+        collision_degree[b] += 1
+
+    if violating_pairs is empty:
+      break
+
+    # Greedy repair: fix the worst offender first
+    offender = argmax_agent(collision_degree)
+
+    # Remove capsules that cause the most overlap; replace with farthest capsules
+    candidates_remove = overlap_heavy_capsules(offender, assignments, violating_pairs)
+    candidates_add = farthest_capsules(offender, capsules, assignments, threshold)
+
+    assignments[offender] = repair_swap(assignments[offender], candidates_remove, candidates_add,
+                                        K_for_role[role_of(offender)])
+
+  # Hard guarantee: no two agents identical
+  enforce_uniqueness(assignments, capsules)
+
+  return assignments
+
+function jaccard(S, T):
+  return |S ∩ T| / max(|S ∪ T|, 1)
+```
+
+**Notes (implementation-level):**
+- `hash64` should be stable across runs (e.g., xxHash64 or SipHash with fixed key).
+- The initial hash sampling creates near-random, reproducible subsets.
+- The repair loop is intentionally *local*: it preserves determinism while breaking high-overlap clusters.
+- `enforce_uniqueness` can append a single “salt capsule” (low-priority `prior_discovery`) if two sets end up identical after downsampling.
+
+##### 3) Capsule Budget Calculator (by leaf type)
+
+Capsule budgets are **role-specific** to prevent prompt bloat and keep leaf workers focused.
+
+| Leaf role | Capsule budget | Intent |
+|---|---:|---|
+| **Scouts** | **3–5** | narrow, exploratory; bias toward `code`/`example` targets |
+| **Executors** | **2–3** | action-oriented; bias toward `constraint` + exact command context |
+| **Specialists** | **8–12** | deep context; can hold multiple constraints + code + prior discoveries |
+| **Canaries** | **1 + known-answer** | calibration; single capsule + a sealed expected answer |
+| **Shadow Judges** | **ALL capsules (full set)** | need complete picture to score fairly |
+
+**Budget selection rule:**
+```text
+K(agent) = clamp(role_min, role_max,
+                 floor( token_budget(agent) / (avg_capsule_tokens + overhead_tokens) ))
+```
+Recommended defaults:
+- `avg_capsule_tokens ≈ 120`, `overhead_tokens ≈ 60`
+- token budgets: scouts 600, executors 450, specialists 1800, canaries 250 (+known-answer), judges full.
+
+##### 4) Context Injection Format (exact prompt template)
+
+Every leaf prompt MUST include a **Context Genome block** with strict delimiters to enable logging and provenance replay.
+
+**Template string:**
+```text
+=== CONTEXT GENOME :: CAPSULES (v1) ===
+agent_id: {AGENT_ID}
+role: {ROLE}
+assignment_seed: {ASSIGNMENT_SEED}
+capsule_count: {K}
+
+Rules:
+- Treat capsules with confidence ≥0.85 as strong evidence.
+- Treat capsules <0.60 as hypotheses; validate before relying.
+- Do NOT assume missing context; if needed, derive from your own work.
+
+Capsules:
+{CAPSULE_LINES}
+
+=== END CONTEXT GENOME ===
+
+You MUST include this JSON block in your final answer:
+{"agent_id":"{AGENT_ID}","capsules_used":[{CAPSULE_ID_LIST}],"notes":"..."}
+```
+
+Where each capsule line is:
+```text
+- id={id} type={type} conf={confidence} src={source_agent} tok={tokens}\n  {content}
+```
+
+##### 5) Provenance Tracking (result schema)
+
+Every leaf output MUST record which capsules it had access to *and which it actually used*.
+
+**Leaf result schema (JSON):**
+```json
+{
+  "run_id": "run_2026-...",
+  "agent_id": "cell-7/pod-1/specialist-1",
+  "role": "specialist",
+  "capsules_assigned": ["cap_...", "cap_..."],
+  "capsules_used": ["cap_..."],
+  "claims": [
+    {
+      "claim_id": "clm_...",
+      "text": "...",
+      "confidence": 0.78,
+      "evidence": ["cap_...", "log:...", "file:...#L120-L142"],
+      "conflicts_with": ["clm_..."]
+    }
+  ],
+  "artifacts": {"files": [], "commands": [], "urls": []},
+  "timestamp": "2026-..."
+}
+```
+
+This enables queries like: **“Which conclusions were reached only by agents who saw capsules X,Y,Z?”** and **“Which capsules are correlated with wrong answers?”**
+
+##### 6) Context Evolution (capsule lifecycle)
+
+Capsules evolve as the swarm learns. Lifecycle:
+
+1. **created** — minted by any agent from an observation (scout finding, executor log, specialist reasoning).
+2. **validated** — verified via at least one of:
+   - executor command output / tests
+   - corroboration by ≥2 independent pods
+   - referee spot-check
+3. **promoted** — accepted into the cell’s **Canon** and eligible for Convergence Broadcast packets (`mustKnow`, etc.).
+4. **archived** — retired due to staleness, refutation, or supersession.
+
+**Promotion rule-of-thumb:**
+- Promote only if it reduces future work (reusable) or prevents a known failure mode.
+- Archive aggressively to avoid context drag.
+
+##### 7) Collision Detection (contradictions under overlapping context)
+
+A **collision** occurs when two agents with overlapping capsules emit **incompatible claims** about the same entity (file, function, requirement, metric).
+
+**Detection:**
+- Cluster claims by `(topic_key)` where `topic_key = stable_hash(normalize(entity + predicate))`.
+- If two claims in a cluster are logically contradictory (negation, mismatched numeric bounds, incompatible diffs), open a `collision_event`.
+
+**Resolution protocol:**
+1. **Trace provenance:** compare `capsules_used` sets; identify the smallest conflicting capsule subset.
+2. **Escalate to arbiter:** assign a Specialist (or Pod Lead) to reproduce/validate with fresh context.
+3. **Evidence wins:** prioritize claims backed by executor logs/tests or higher-confidence capsules.
+4. **Patch the genome:**
+   - if a capsule is wrong → downgrade confidence, mark `archived`, and create a replacement capsule with correct evidence.
+   - if both are plausible → mint a `constraint` capsule describing the ambiguity + required validation step.
+5. **Referee finalizes:** Referee updates Canon and broadcasts the resolved capsule in the next CB packet.
+
+**Collision event schema (JSON):**
+```json
+{
+  "event_id": "col_...",
+  "topic_key": "tpk_...",
+  "claims": ["clm_a", "clm_b"],
+  "agents": ["cell-2/...", "cell-9/..."],
+  "capsules_overlap": ["cap_..."],
+  "status": "open|resolved",
+  "resolution": {"winner_claim": "clm_a", "evidence": ["log:...", "cap_..."]}
+}
+```
+
+**Hard rule:** contradictions are never “hand-waved” — they either get validated, or explicitly recorded as uncertainty.
 
 ### Kiloagent Phase Mapping
 
