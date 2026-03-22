@@ -1,0 +1,17 @@
+{"type": "narration", "text": "Welcome to the demo! Let's watch a developer run quality checks on their code.", "delay_ms": 2000}
+{"type": "command", "text": "$ npm test", "delay_ms": 1000}
+{"type": "output", "text": "PASS src/utils/format.test.ts\n  ✓ formats currency correctly (3ms)\n  ✓ handles null values (1ms)\n\nPASS src/auth/token.test.ts\n  ✓ generates valid JWT (12ms)\n  ✓ rejects expired tokens (4ms)", "delay_ms": 1500}
+{"type": "narration", "text": "🧪 QUALITY CHECK — The first batch of checks passed! These automated checks verify that specific features work correctly. Like a teacher grading a quiz — each check is one question, and so far every answer is right.", "delay_ms": 4000}
+{"type": "prompt", "text": "Press Enter to continue, or ask a question..."}
+{"type": "output", "text": "FAIL src/auth/login.test.ts\n  ✕ should reject invalid password (8ms)\n  ✕ should lock account after 5 failed attempts (3ms)\n\n  ● should reject invalid password\n    Expected: 401\n    Received: 200\n\n  ● should lock account after 5 failed attempts\n    Expected: true\n    Received: false", "delay_ms": 1000}
+{"type": "narration", "text": "🧪 QUALITY CHECK — Two checks failed! The login code has problems: it's accepting invalid passwords (it should reject them) and it's not locking accounts after too many wrong attempts. This is normal during development — it's exactly why these checks exist.", "delay_ms": 5000}
+{"type": "prompt", "text": "Press Enter to continue, or ask a question..."}
+{"type": "output", "text": "\nTest Suites: 1 failed, 2 passed, 3 total\nTests:       2 failed, 4 passed, 6 total\nTime:        2.847s", "delay_ms": 500}
+{"type": "narration", "text": "📋 PROGRESS CHECK — Final score: 4 out of 6 checks passed. Two failed in the login area. The developer will fix those next. This is completely normal — finding problems early is the whole point of running these checks.", "delay_ms": 4000}
+{"type": "command", "text": "$ code src/auth/login.ts", "delay_ms": 1500}
+{"type": "output", "text": "", "delay_ms": 300}
+{"type": "narration", "text": "⚙️ WORKING — The developer opened the file that needs fixing. They'll edit the login code and then run the checks again to make sure the fixes work.", "delay_ms": 3000}
+{"type": "command", "text": "$ npm test -- --testPathPattern=login", "delay_ms": 1500}
+{"type": "output", "text": "PASS src/auth/login.test.ts\n  ✓ should reject invalid password (5ms)\n  ✓ should lock account after 5 failed attempts (7ms)\n\nTests: 2 passed, 2 total", "delay_ms": 1000}
+{"type": "narration", "text": "✅ All fixed! The developer re-ran only the failed checks and they all pass now. This fix-and-recheck cycle is how developers make sure code is solid before sharing it with the team.", "delay_ms": 4000}
+{"type": "narration", "text": "🎬 That's how quality checks work! Developers run automated checks, fix any failures, and re-check until everything passes. It's like proofreading — find issues, fix them, read again.", "delay_ms": 3000}

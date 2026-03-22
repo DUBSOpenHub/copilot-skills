@@ -1,0 +1,16 @@
+{"type": "narration", "text": "Welcome to the demo! Let's watch a developer check what files they've changed.", "delay_ms": 2000}
+{"type": "command", "text": "$ git status", "delay_ms": 1000}
+{"type": "output", "text": "On branch main\nChanges not staged for commit:\n  modified:   src/auth/login.ts\n  modified:   src/auth/middleware.ts\n\nUntracked files:\n  src/auth/password-reset.ts", "delay_ms": 500}
+{"type": "narration", "text": "📋 PROGRESS CHECK — The developer asked 'what files have I changed?' Three files show up: two were edited and one is brand new. Think of it like checking your to-do list before wrapping up.", "delay_ms": 4000}
+{"type": "prompt", "text": "Press Enter to continue, or ask a question..."}
+{"type": "command", "text": "$ git diff src/auth/login.ts", "delay_ms": 1500}
+{"type": "output", "text": "diff --git a/src/auth/login.ts b/src/auth/login.ts\n--- a/src/auth/login.ts\n+++ b/src/auth/login.ts\n@@ -12,7 +12,9 @@\n-  const token = generateToken(user);\n+  const token = generateToken(user, { expiresIn: '24h' });\n+  await saveLoginEvent(user.id);", "delay_ms": 500}
+{"type": "narration", "text": "🔍 CODE CHECK — The developer compared the current login code to the last saved version. Two small changes: login tokens now expire after 24 hours (for security), and logins are now recorded. Like comparing two drafts of a letter to see what's new.", "delay_ms": 4000}
+{"type": "prompt", "text": "Press Enter to continue, or ask a question..."}
+{"type": "command", "text": "$ git add .", "delay_ms": 1000}
+{"type": "output", "text": "", "delay_ms": 300}
+{"type": "narration", "text": "⚙️ WORKING — The developer selected all changed files to include in the next save point. Think of it like putting documents into an envelope before mailing them.", "delay_ms": 3000}
+{"type": "command", "text": "$ git commit -m \"Add login expiry and event logging\"", "delay_ms": 1500}
+{"type": "output", "text": "[main a1b2c3d] Add login expiry and event logging\n 3 files changed, 47 insertions(+), 12 deletions(-)", "delay_ms": 500}
+{"type": "narration", "text": "💾 SAVING PROGRESS — Done! The developer saved a checkpoint with a short note describing what changed. The project now has another save point they can return to if anything breaks later. Like hitting 'Save' on a document — but this version is remembered forever.", "delay_ms": 4000}
+{"type": "narration", "text": "🎬 That's the basics of checking code! The developer looked at what changed, reviewed the details, and saved a checkpoint. This happens dozens of times a day.", "delay_ms": 3000}
