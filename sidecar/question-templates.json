@@ -1,0 +1,52 @@
+{
+  "test_failure": [
+    "What do these test failures mean?",
+    "Is this a real problem or just a minor issue?",
+    "What would fixing this involve?"
+  ],
+  "build_error": [
+    "What's broken and why?",
+    "How serious is this error?",
+    "Can I still use the app while this is broken?"
+  ],
+  "file_created": [
+    "What is {filename} for?",
+    "How does this file connect to the rest?",
+    "Is this file important or just temporary?"
+  ],
+  "git_commit": [
+    "What changes were just saved?",
+    "Can these changes be undone later?",
+    "Who will see this commit?"
+  ],
+  "long_silence": [
+    "Is something still running or is it stuck?",
+    "Should I be worried about this silence?",
+    "What's the overall progress?"
+  ],
+  "git_push": [
+    "Who will see these changes now?",
+    "Can this be reversed if something is wrong?",
+    "What happens on the shared server after a push?"
+  ],
+  "git_diff": [
+    "What parts of the code were changed?",
+    "Are these changes big or small?",
+    "Is this a risky change?"
+  ],
+  "npm_install": [
+    "What helper code was just downloaded?",
+    "Why does the project need this new tool?",
+    "Could this change anything about how the app works?"
+  ],
+  "file_deleted": [
+    "Is it safe that files were deleted?",
+    "Can these files be recovered?",
+    "Why would they delete these files?"
+  ],
+  "command_unknown": [
+    "What is the main session working on right now?",
+    "Why did that last command run?",
+    "Is anything broken?"
+  ]
+}

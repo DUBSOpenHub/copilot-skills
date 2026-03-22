@@ -1,0 +1,91 @@
+{
+  "cards": [
+    {
+      "pattern": "^git diff",
+      "emoji": "🔍",
+      "title": "CODE CHECK",
+      "what": "Compared the current code to the last saved version.",
+      "why": "Helps catch mistakes before they're permanent.",
+      "next": "Will probably save these changes next."
+    },
+    {
+      "pattern": "^git commit",
+      "emoji": "💾",
+      "title": "SAVING PROGRESS",
+      "what": "Saved a checkpoint — like hitting 'Save' but it remembers every version.",
+      "why": "If anything breaks later, we can go back to this exact point.",
+      "next": "The code is now safely saved."
+    },
+    {
+      "pattern": "^npm test|^jest|^pytest|^go test",
+      "emoji": "🧪",
+      "title": "QUALITY CHECK",
+      "what": "Running automated checks to make sure the code works correctly.",
+      "why": "Like a spell-checker but for logic — catches bugs before users do.",
+      "next": "Results coming shortly."
+    },
+    {
+      "pattern": "^npm install|^pip install|^yarn add|^brew install",
+      "emoji": "📦",
+      "title": "INSTALLING TOOLS",
+      "what": "Downloading helper code that other people already wrote.",
+      "why": "Saves time — no need to reinvent the wheel.",
+      "next": "Usually takes 30–60 seconds."
+    },
+    {
+      "pattern": "^npm run build|^make|^cargo build|^go build",
+      "emoji": "🏗️",
+      "title": "BUILDING",
+      "what": "Converting human-readable code into something the computer can run.",
+      "why": "Like compiling a recipe into an actual meal.",
+      "next": "If it succeeds, the code is ready to run."
+    },
+    {
+      "pattern": "^git push",
+      "emoji": "🚀",
+      "title": "SHARING CODE",
+      "what": "Sending the saved code to a shared server so the team can see it.",
+      "why": "Like uploading a document to a shared drive.",
+      "next": "The team can now review these changes."
+    },
+    {
+      "pattern": "^git checkout|^git switch",
+      "emoji": "🔀",
+      "title": "SWITCHING VERSIONS",
+      "what": "Jumping to a different version of the code.",
+      "why": "Like opening a different draft of a document.",
+      "next": "Now working on a different set of changes."
+    },
+    {
+      "pattern": "^git status",
+      "emoji": "📋",
+      "title": "PROGRESS CHECK",
+      "what": "Asking 'what files have I changed so far?'",
+      "why": "A quick inventory before deciding what to do next.",
+      "next": "Usually followed by saving or reviewing changes."
+    },
+    {
+      "pattern": "^curl|^wget",
+      "emoji": "🌐",
+      "title": "TALKING TO A SERVER",
+      "what": "Sending a request to another computer over the internet.",
+      "why": "Checking if an online service is working, or getting data.",
+      "next": "Waiting for a response."
+    },
+    {
+      "pattern": "^rm |^del ",
+      "emoji": "🗑️",
+      "title": "REMOVING FILES",
+      "what": "Deleting files that are no longer needed.",
+      "why": "Cleaning up — like throwing away rough drafts.",
+      "next": "These files are gone, but saved versions still exist."
+    }
+  ],
+  "fallback": {
+    "emoji": "⚙️",
+    "title": "WORKING",
+    "what": "The main session ran a command.",
+    "why": "Part of the current task.",
+    "next": "Watching for the result."
+  }
+}

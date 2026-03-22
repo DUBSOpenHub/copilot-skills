@@ -1,0 +1,25 @@
+{
+  "demos": [
+    {
+      "id": "01",
+      "title": "Checking the Code",
+      "file": "01-checking-code.jsonl",
+      "duration_s": 30,
+      "teaches": "git status, git diff"
+    },
+    {
+      "id": "02",
+      "title": "Running Quality Checks",
+      "file": "02-running-tests.jsonl",
+      "duration_s": 30,
+      "teaches": "npm test, test failures"
+    },
+    {
+      "id": "03",
+      "title": "AI Helpers Working Together",
+      "file": "03-ai-agents.jsonl",
+      "duration_s": 30,
+      "teaches": "sub-agents, explore"
+    }
+  ]
+}
