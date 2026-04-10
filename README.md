@@ -14,6 +14,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [dark-factory](dark-factory/) | 🏭 Dark Factory — agentic build system with sealed-envelope testing. Orchestrates 6 specialist agents through a checkp... |
 | [design-auditor](design-auditor/) | 🔍 Design Auditor — paste a URL, get 5 ranked fixes to improve conversions. Analyzes layout, performance, accessibilit... |
 | [dispatch](dispatch/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
+| [evo-forge](evo-forge/) | 🧬 Evo Forge — breeds better agents through evolutionary selection. Mutates agent prompts, tournaments them, selects s... |
 | [first-agent](first-agent/) | 🎓 First Agent — live training skill that guides non-developers from zero to building their first AI agent in three se... |
 | [gdoc-converter](gdoc-converter/) | Converts Google Docs, Slides, and Sheets to Microsoft Office formats (Word, PowerPoint, Excel). Paste a Google URL an... |
 | [havoc-hackathon](havoc-hackathon/) | 🏟️ Havoc Hackathon — a multi-model orchestration skill that turns your terminal into a competitive arena. Dispatches ... |
