@@ -732,7 +732,70 @@ Ready-to-use commands and code changes. Copy and run directly.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
----
+After displaying the report, ALWAYS prompt the user for what to do next. This is the closing ceremony — never end without it.
+
+Use `ask_user` with these choices:
+
+```
+ask_user:
+  question: "🐝 The swarm has spoken. What would you like to do?"
+  choices:
+    - "⚡ Apply Quick Wins — let me fix the easy ones right now"
+    - "🔀 Smart Merge — synthesize the best findings into actual file changes"
+    - "🔍 Deep Dive — explore a specific domain in detail"
+    - "📋 Export Report — save the full Action Report to a file"
+    - "🐝 Run Another Swarm — new mission, same hive"
+    - "✅ Done — I'll take it from here"
+```
+
+### Handling each choice:
+
+**⚡ Apply Quick Wins:** Iterate through the Quick Wins table. For each one, show the proposed change and ask:
+```
+ask_user:
+  question: "Apply this fix? <description of change>"
+  choices:
+    - "✅ Yes — apply it"
+    - "⏭️ Skip — move to next"
+    - "🛑 Stop — done applying"
+```
+Make the actual file edits for each accepted fix. After all fixes, show a summary of what was applied and re-prompt the main menu.
+
+**🔀 Smart Merge:** Take the CONSENSUS-tier findings that all commanders agreed on and generate concrete file edits (code changes, config fixes, doc updates). Show a preview of each change, then ask:
+```
+ask_user:
+  question: "Ready to apply these consensus-backed changes?"
+  choices:
+    - "✅ Apply all consensus changes"
+    - "👀 Review one by one"
+    - "📋 Show as a diff first"
+    - "↩️ Back to menu"
+```
+
+**🔍 Deep Dive:** Ask which domain to explore:
+```
+ask_user:
+  question: "Which domain do you want to explore?"
+  choices:
+    - "🏗️ Architecture"
+    - "⚙️ Implementation"
+    - "🧪 Testing"
+    - "📝 Documentation"
+    - "🔗 Integration"
+```
+Then display the full domain report with all findings, issues, and recommendations for that domain. After, re-prompt the main menu.
+
+**📋 Export Report:** Save the complete Action Report as a markdown file to the current working directory (e.g., `swarm-report-<timestamp>.md`). Confirm the file path and re-prompt the main menu.
+
+**🐝 Run Another Swarm:** Return to Phase 0 — show the opening banner and swarm size picker again.
+
+**✅ Done:** Display a brief sign-off:
+```
+🐝 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Mission complete, Commander.
+   The hive stands ready.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 # CIRCUIT BREAKER RULES (applies to ALL phases)
 
