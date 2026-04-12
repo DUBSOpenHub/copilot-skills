@@ -404,6 +404,43 @@ DIV-DELTA (Cross-cutting + Special Missions): agent_type="general-purpose", mode
 
 **H-500/H-1K:** Launch Division Commanders in PARALLEL using the `task` tool. Each Division Commander then deploys its own Commanders.
 
+### ⚠️ MANDATORY SPAWN ENFORCEMENT — NON-NEGOTIABLE
+
+**The hierarchy IS the product.** A Division Commander that does work directly instead of spawning Commanders has failed its mission. A Commander that reads files itself instead of spawning Squad Leads has failed its mission. Every layer MUST delegate downward — no shortcuts, no "efficiency" optimizations, no collapsing the hierarchy.
+
+**HARD MINIMUMS PER SCALE:**
+
+| Scale | Division Commanders | Commanders | Squad Leads | Workers | Total Min |
+|-------|--------------------:|----------:|------------:|--------:|----------:|
+| H-250 | 0 | 5 | 25 | 125 | 155 |
+| H-500 | 2 | 10 | 50 | 250 | 312 |
+| H-1K  | 4 | 20 | 100 | 500 | 624 |
+
+**Enforcement rules:**
+1. **Division Commanders MUST NOT perform any file reads, greps, or analysis themselves.** Their ONLY job is to spawn Commanders, collect Bundles, merge, and report. If a Division Commander prompt contains grep/view/bash tool calls on repo files, it has violated protocol.
+2. **Commanders MUST NOT perform any file reads or analysis themselves.** Their ONLY job is to spawn Squad Leads, collect results, merge, and emit a Bundle. Direct work is a protocol violation.
+3. **Squad Leads MUST spawn at least 3 workers** (canary + 2 minimum). The default is 5 per squad (canary + 4).
+4. **Only Workers (leaf nodes) perform actual file reads, greps, bash commands, and analysis.**
+
+**Include this EXACT block in every Division Commander and Commander prompt:**
+
+```
+⚠️ ORCHESTRATION-ONLY ROLE — CRITICAL
+You are an ORCHESTRATOR, not a worker. You MUST NOT:
+- Read files directly (no grep, glob, view, bash on repo files)
+- Analyze code yourself
+- Skip spawning sub-agents "for efficiency"
+
+Your ONLY permitted actions:
+1. Spawn your required sub-agents via the task tool
+2. Collect their results
+3. Merge and synthesize their outputs
+4. Report upward
+
+If you perform direct work instead of spawning, your output will be
+REJECTED by Nexus. The hierarchy is mandatory. Spawn count is audited.
+```
+
 ### Commander Prompt Construction
 
 Each Commander prompt MUST include:
@@ -412,7 +449,11 @@ Each Commander prompt MUST include:
 
 2. **Context Capsule**: The JSON capsule from Phase 2.
 
-3. **Spawning rules (DEPTH GUARD)**:
+3. **The ORCHESTRATION-ONLY block** (above) — Commanders orchestrate Squad Leads, they do NOT do direct work.
+
+4. **Mandatory spawn count**: "You MUST spawn exactly {{SQUAD_COUNT}} Squad Leads. Each Squad Lead MUST spawn 3-5 Workers. Report your total agent count in telemetry. Spawn count below minimum = protocol violation."
+
+5. **Spawning rules (DEPTH GUARD)**:
    - H-250: "You are at depth 1. You MAY spawn Squad Leads."
    - H-500/H-1K: "You are at depth 2. You MAY spawn Squad Leads."
    - "Use agent_type: general-purpose for Squad Leads."
@@ -422,11 +463,11 @@ Each Commander prompt MUST include:
    - "Squad Leads MUST use agent_type explore or task for workers."
    - "Include in every worker prompt: DO NOT use the task tool. You are a LEAF NODE."
 
-4. **Canary requirement**: "Deploy 1 canary worker before full pod deployment."
+6. **Canary requirement**: "Deploy 1 canary Squad Lead before full deployment. If canary succeeds, deploy remaining Squad Leads in parallel."
 
-5. **Output format**: Strict JSON Bundle schema with bundle_id, domain, status, summary, atoms_merged, conflicts, content, confidence, wall_clock_s.
+7. **Output format**: Strict JSON Bundle schema with bundle_id, domain, status, summary, atoms_merged, conflicts, content, confidence, wall_clock_s, **telemetry.squads_spawned, telemetry.total_workers**.
 
-6. **Circuit breaker**: "If more than 50% of squad leads fail, STOP and report failure."
+8. **Circuit breaker**: "If more than 50% of squad leads fail, STOP and report failure."
 
 ### Squad Lead Instructions (embedded in Commander prompt)
 
@@ -486,7 +527,38 @@ Show deployment progress:
 
 ---
 
-# PHASE 3.5 — ADAPTIVE SCALE PROMOTION (optional)
+# PHASE 3.5a — DEPLOYMENT VERIFICATION GATE
+
+**Before ANY execution proceeds, Nexus MUST verify spawn counts from each Division Commander's telemetry.**
+
+As each Division Commander returns its report, extract `telemetry.commanders_spawned` and verify each Commander's `telemetry.squads_spawned` and total worker count. Compare against the hard minimums:
+
+```
+🐝 PHASE 3.5a — DEPLOYMENT VERIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ┌──────────────┬──────────┬──────────┬────────┐
+  │ Division     │ Cmdr     │ SqLeads  │ Workers│
+  ├──────────────┼──────────┼──────────┼────────┤
+  │ DIV-ALPHA    │ 5 ✅     │ 50 ✅    │ 250 ✅ │
+  │ DIV-BETA     │ 5 ✅     │ 50 ✅    │ 250 ✅ │
+  │ DIV-GAMMA    │ 5 ✅     │ 50 ✅    │ 250 ✅ │
+  │ DIV-DELTA    │ 5 ✅     │ 50 ✅    │ 250 ✅ │
+  ├──────────────┼──────────┼──────────┼────────┤
+  │ TOTAL        │ 20       │ 200      │ 1000   │
+  └──────────────┴──────────┴──────────┴────────┘
+
+  Verification: ✅ PASS — all spawn minimums met
+```
+
+**If a Division Commander reports fewer than the minimum agents:**
+1. **Log the violation**: "⚠️ DIV-{X} deployed {actual} agents — minimum is {required}. PROTOCOL VIOLATION."
+2. **Re-deploy**: Launch a replacement Division Commander with the ORCHESTRATION-ONLY block reinforced and this additional instruction: "Your predecessor was rejected for performing direct work instead of spawning sub-agents. You MUST spawn {N} Commanders. Each Commander MUST spawn {M} Squad Leads. Each Squad Lead MUST spawn 3-5 Workers. No exceptions."
+3. **Maximum re-deploy attempts**: 1. If the replacement also violates, accept partial results and note the gap.
+
+---
+
+# PHASE 3.5b — ADAPTIVE SCALE PROMOTION (optional)
 
 After canary Commanders (or canary Division Commanders) complete, evaluate complexity:
 
