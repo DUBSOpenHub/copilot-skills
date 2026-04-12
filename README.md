@@ -28,6 +28,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [soss-skill-template](soss-skill-template/) | 🛡️ SOSS Fund Training — MODULE_TITLE. Interactive trainer with CTA tracking, security validation, and dashboard-ready... |
 | [stampede](stampede/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent CLI... |
 | [swarm](swarm/) | — |
+| [swarm-command](swarm-command/) | 🐝 Swarm Command — multi-model consensus swarm orchestrator. Launches 50-250+ AI agents across 16 models with hierarch... |
 | [weekly-ai-report](weekly-ai-report/) | 📡 Weekly AI Report — researches frontier model releases from the past week, stack-ranks new capabilities by power/imp... |
 
 ## Install
