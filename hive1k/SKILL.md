@@ -619,6 +619,94 @@ Track:
   Wall-clock: 48s / 120s
 ```
 
+### 🐝 LIVE SWARM DASHBOARD (display after EVERY phase transition)
+
+**This dashboard is MANDATORY.** After every phase transition (Phase 0→1→1.5→2→3→3.5→4→5→6→7→8), display the current swarm state. The user must always be able to see the full agent count, model distribution, and ELO rankings in real-time.
+
+```
+🐝 ━━━ SWARM DASHBOARD ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Phase: <current phase> │ Wall-clock: <elapsed>s / <timeout>s
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  AGENT TALLY
+  ┌─────────────────────┬──────────┬───────────┬────────┐
+  │ Layer               │ Deployed │ Completed │ Failed │
+  ├─────────────────────┼──────────┼───────────┼────────┤
+  │ Nexus               │ 1        │ —         │ 0      │
+  │ Division Commanders │ <N>      │ <N>       │ <N>    │
+  │ Commanders          │ <N>      │ <N>       │ <N>    │
+  │ Squad Leads         │ <N>      │ <N>       │ <N>    │
+  │ Workers             │ <N>      │ <N>       │ <N>    │
+  │ Reviewers           │ <N>      │ <N>       │ <N>    │
+  ├─────────────────────┼──────────┼───────────┼────────┤
+  │ TOTAL               │ <sum>    │ <sum>     │ <sum>  │
+  └─────────────────────┴──────────┴───────────┴────────┘
+
+  MODEL DISTRIBUTION
+  ┌──────────────────────┬───────┬─────────┬──────────┬─────────┐
+  │ Model                │ Role  │ Active  │ Avg Conf │ ELO     │
+  ├──────────────────────┼───────┼─────────┼──────────┼─────────┤
+  │ claude-opus-4.6      │ DC    │ <N>     │ <0.XX>   │ <NNNN>  │
+  │ claude-opus-4.5      │ DC    │ <N>     │ <0.XX>   │ <NNNN>  │
+  │ claude-sonnet-4.6    │ CMD   │ <N>     │ <0.XX>   │ <NNNN>  │
+  │ gpt-5.4              │ CMD   │ <N>     │ <0.XX>   │ <NNNN>  │
+  │ claude-haiku-4.5     │ WKR   │ <N>     │ <0.XX>   │ <NNNN>  │
+  │ gpt-5.4-mini         │ WKR   │ <N>     │ <0.XX>   │ <NNNN>  │
+  │ ...                  │       │         │          │         │
+  └──────────────────────┴───────┴─────────┴──────────┴─────────┘
+
+  CIRCUIT BREAKER: <CLOSED ✅ | OPEN ⚠️ | HALF-OPEN 🔄>
+  COST ESTIMATE:   $<running total> / $<ceiling or "no cap">
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+### 🏆 MODEL ELO LEADERBOARD
+
+Track model performance across the run using an ELO rating system. Every model starts at **1200 ELO**. Ratings update after each phase based on agent outcomes.
+
+**ELO Update Rules:**
+1. **Commander/DC returns `status: success` with `confidence ≥ 0.80`**: +25 ELO
+2. **Commander/DC returns `status: success` with `confidence < 0.80`**: +10 ELO
+3. **Commander/DC returns `status: partial`**: −5 ELO
+4. **Commander/DC returns `status: failed`**: −30 ELO
+5. **Worker returns successful atom**: +5 ELO (aggregated per model)
+6. **Worker returns failed atom**: −10 ELO (aggregated per model)
+7. **Reviewer consensus score ≥ 0.70**: +15 ELO to both reviewer models
+8. **Reviewer scores conflict (IRR < 0.60)**: −15 ELO to both reviewer models
+9. **Shadow scoring pass (bundle Shadow Score ≤ 15%)**: +20 ELO to the Commander's model
+10. **Shadow scoring fail (bundle Shadow Score > 30%)**: −25 ELO to the Commander's model
+
+**Display the ELO leaderboard after Phase 5, Phase 6, and Phase 8:**
+
+```
+🏆 MODEL ELO LEADERBOARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  #   Model                  ELO    Δ     W/L    Role
+  ─────────────────────────────────────────────────────────
+  1.  claude-opus-4.6       1285   +85    5/0    DC · REV
+  2.  gpt-5.4               1260   +60    4/0    CMD · REV
+  3.  claude-sonnet-4.6     1255   +55    4/1    CMD · REV
+  4.  claude-opus-4.5       1245   +45    3/0    DC · REV
+  5.  gpt-5.2               1240   +40    3/0    CMD · REV
+  6.  claude-sonnet-4.5     1235   +35    3/1    CMD · REV
+  7.  gpt-5.1               1230   +30    3/0    CMD · REV
+  8.  claude-sonnet-4       1225   +25    3/0    CMD
+  9.  goldeneye             1220   +20    2/0    CMD · REV
+  10. claude-haiku-4.5      1215   +15   48/2    WKR · SL · REV
+  11. gpt-5.4-mini          1210   +10   45/3    WKR · SL · REV
+  12. gpt-5.3-codex         1205    +5   22/1    WKR · REV
+  13. gpt-5.2-codex         1200    ±0   20/2    WKR · REV
+  14. gpt-5-mini            1195    −5   18/4    WKR · REV
+  15. gpt-4.1               1190   −10   15/3    WKR · REV
+  16. claude-opus-4.6-1m    1185   −15    1/1    DC · REV
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  🥇 MVP: <top model> (<role>) — <highlight stat>
+  🔻 Underperformer: <bottom model> — <issue>
+```
+
+**ELO persistence:** ELO ratings are ephemeral to each run. For cross-run persistence, Nexus may optionally write final ELO rankings to `~/.copilot/hive1k-elo.json` if the user requests `hive1k elo` after a run.
+
 ---
 
 # PHASE 5 — PIPELINE-OVERLAP CROSS-REVIEW
@@ -671,6 +759,41 @@ Show review progress:
   Reviews complete: 4/5
   Average consensus score: 0.76
 ```
+
+---
+
+# PHASE 5.5 — META-REVIEW (Reviewer Quality Gate)
+
+> Implements the [Meta-Reviewer Protocol](protocols/meta-reviewer.md). This is Nexus-internal — no separate agents are spawned.
+
+After all reviewer outputs are collected (end of Phase 5), Nexus evaluates the reviewers themselves before their scores flow into consensus synthesis.
+
+### Meta-Review Checks
+
+1. **Inter-Reviewer Reliability (IRR)**: For each bundle scored by multiple reviewers, compute per-axis score range. If `IRR < 0.60` → flag as unreliable, weight those reviewers' scores at 0.5× in Phase 7.
+
+2. **Score Inflation Detection**: If mean reviewer score across all bundles > 8.5 → apply deflation correction: `adjusted_score = score × 0.85`. Display: "⚠️ Inflation detected — reviewer scores deflated by 15%"
+
+3. **Score Deflation Detection**: If mean reviewer score < 3.5 → apply inflation correction: `adjusted_score = score × 1.15`. Display: "⚠️ Deflation detected — reviewer scores inflated by 15%"
+
+4. **Rubber-Stamping Detection**: If reviewer scores match Commander bundle confidence within ±0.05 for 3+ bundles → flag as rubber-stamp, weight at 0.5× in Phase 7.
+
+Show meta-review results:
+
+```
+🐝 PHASE 5.5 — META-REVIEW (reviewer quality gate)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Inter-Reviewer Reliability:  0.82 ✅ (threshold: 0.60)
+  Inflation check:             ✅ PASS (mean: 7.2, threshold: 8.5)
+  Deflation check:             ✅ PASS (mean: 7.2, threshold: 3.5)
+  Rubber-stamp check:          ✅ PASS (0/8 reviewers flagged)
+
+  Reviewer adjustments: <none | list of adjustments>
+  Proceeding to Shadow Scoring with <original | adjusted> reviewer scores.
+```
+
+Update the ELO leaderboard and display the SWARM DASHBOARD after this phase.
 
 ---
 
