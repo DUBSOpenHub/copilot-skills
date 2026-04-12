@@ -154,22 +154,69 @@ Then STOP. Do not execute Phases 3-8.
 
 ---
 
-Display the mission briefing:
+Display the mission briefing based on scale:
+
+**For H-250 (Scout Swarm):**
 
 ```
-🐝 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   H I V E 1 K
-   Recursive Multi-Model Swarm Orchestrator
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ·  · ·  ·    ·  · ·  ·    ·  · ·  ·
+       · ·bzz· ·  · ·bzz· ·
+  ·  · · ·  ·  · ·  · · ·  ·  · ·
+╔══════════════════════════════════════════╗
+║  🐝  H I V E  —  S C O U T  M O D E   ║
+║     ·  · 316 eyes opening  · ·          ║
+╚══════════════════════════════════════════╝
 
-📋 Mission:    <task summary>
-⚡ Scale:      <H-250 | H-500 | H-1K>
-🤖 Agents:     <agent count>
-🧬 Models:     <model count>
-💰 Cost cap:   user-configurable
-⏱️  Timeout:    <timeout>s
+  ▸ MISSION    <task summary>
+  ▸ SCALE      H-250 ░░▓▓░░░░░░░░ Scout Swarm
+  ▸ AGENTS     ~316 scouts deployed across <model count> models
+  ▸ COST CAP   <cost cap> · ⏱️ <timeout>s
 
-Deploying swarm in 5... 4... 3... 2... 1...
+  zzz··· scouts away ···zzz
+  ▸▸▸ SWARM LAUNCHED ▸▸▸
+```
+
+**For H-500 (Worker Swarm):**
+
+```
+  ·🐝· ·🐝· ·🐝· ·🐝· ·🐝· ·🐝· ·🐝·
+     BZZZZZ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ZZZZB
+  ·🐝· ·🐝· ·🐝· ·🐝· ·🐝· ·🐝· ·🐝·
+╔══════════════════════════════════════════╗
+║  🐝🐝  H I V E  1 K  —  W O R K E R  ║
+║     ▓▓▓  625 minds converging  ▓▓▓      ║
+╚══════════════════════════════════════════╝
+
+  ▸ MISSION    <task summary>
+  ▸ SCALE      H-500 ░░░░▓▓▓▓▓▓░░ Worker Swarm
+  ▸ AGENTS     ~625 workers across <model count> models
+  ▸ COST CAP   <cost cap> · ⏱️ <timeout>s
+
+  ··BZZZZZZZ·· hive is WORKING ··BZZZZZZZ··
+  ▸▸▸▸▸ SWARM DEPLOYED ▸▸▸▸▸
+```
+
+**For H-1K (Full Hive):**
+
+```
+  🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  ██ BZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ ██
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+  🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝🐝
+╔══════════════════════════════════════════════╗
+║  🐝🐝🐝  H  I  V  E     1  K  🐝🐝🐝    ║
+║  ▓▓▓ 1,245 AGENTS ONLINE — FULL SWARM ▓▓▓  ║
+║      T H E   H I V E   I S   A W A K E     ║
+╚══════════════════════════════════════════════╝
+
+  ▸ MISSION    <task summary>
+  ▸ SCALE      H-1K  ▓▓▓▓▓▓▓▓▓▓▓▓ MAXIMUM
+  ▸ AGENTS     ~1,245 across <model count> models
+  ▸ COST CAP   <cost cap> · ⏱️ <timeout>s
+
+  ██ BZZZZZZZZZZZZZZZZZ ██ ALL DIVISIONS ARMED ██
+  ▸▸▸▸▸▸▸▸▸ FULL HIVE UNLEASHED ▸▸▸▸▸▸▸▸▸
 ```
 
 ---
