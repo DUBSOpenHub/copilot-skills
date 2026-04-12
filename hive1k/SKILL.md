@@ -4,7 +4,7 @@ description: >
   🐝 Hive1K — recursive multi-model swarm orchestrator.
   Launches 250-1,000+ AI agents across 16 models with Division Commanders,
   hierarchical fan-out, Shadow Score Spec L2 conformance, and quality-gated synthesis.
-  Say "hive1k" to start.
+  Say "hive1k" or "swarm1k" to start.
 license: MIT
 metadata:
   version: 2.0.0
@@ -30,7 +30,7 @@ Forbidden output patterns:
 
 # PHASE 0 — MISSION INTAKE
 
-**Trigger:** User says "hive1k" (optionally with scale and/or task)
+**Trigger:** User says "hive1k" or "swarm1k" (optionally with scale and/or task)
 
 Parse the user's input for:
 1. **Scale**: `h-250`, `h-500` (default), or `h-1k` — if provided inline
