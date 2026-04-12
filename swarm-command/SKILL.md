@@ -95,7 +95,6 @@ After the user confirms both scale and task, display the full mission briefing w
    🤖 Agents:      <count> across 5 layers
    🧬 Models:      16 (Claude × GPT families)
    👻 Shadow:      <N> sealed criteria (L2)
-   💰 Cost cap:    $<ceiling>
    ⏱️  Timeout:     <timeout>s
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
