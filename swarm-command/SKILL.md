@@ -742,6 +742,7 @@ ask_user:
   choices:
     - "⚡ Apply Quick Wins — let me fix the easy ones right now"
     - "🔀 Smart Merge — synthesize the best findings into actual file changes"
+    - "⚔️ Where They Disagreed — show me where the models clashed"
     - "🔍 Deep Dive — explore a specific domain in detail"
     - "📋 Export Report — save the full Action Report to a file"
     - "🐝 Run Another Swarm — new mission, same hive"
@@ -771,6 +772,65 @@ ask_user:
     - "📋 Show as a diff first"
     - "↩️ Back to menu"
 ```
+
+**⚔️ Where They Disagreed:** Show every finding where models diverged — CONFLICT-tier reviews, MAJORITY-tier items with dissent, and cross-domain contradictions. Structure as a dissent report:
+
+```
+⚔️ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D I S S E N T   R E P O R T
+   Where the swarm disagreed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+For each disagreement, display:
+1. **The issue** — what the disagreement is about
+2. **Side A** — which model(s) said what, with their reasoning
+3. **Side B** — which model(s) said the opposite, with their reasoning
+4. **Reviewer scores** — how cross-reviewers scored each side
+5. **Nexus verdict** — how the Nexus resolved it (or flagged it as unresolved)
+
+Example format for each disagreement:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ ⚔️ DISAGREEMENT #1: <topic>                            │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│ 🅰️ Side A (CMD-ARCH · opus-4.6, REV-05 · sonnet-4.6): │
+│    "<position with reasoning>"                          │
+│                                                         │
+│ 🅱️ Side B (CMD-IMPL · gpt-5.4, REV-07 · sonnet-4):    │
+│    "<opposing position with reasoning>"                 │
+│                                                         │
+│ 📊 Review scores: A = 0.73 vs B = 0.68                 │
+│ ⚖️ Nexus verdict: <resolved to A / unresolved / split> │
+│                                                         │
+│ 💡 Why it matters: <impact if wrong side is chosen>     │
+└─────────────────────────────────────────────────────────┘
+```
+
+After showing all disagreements, ask:
+```
+ask_user:
+  question: "How do you want to handle the unresolved disagreements?"
+  choices:
+    - "⚖️ I'll decide each one — walk me through them"
+    - "🤖 Trust the majority — apply the higher-scored side"
+    - "🚫 Leave them all unresolved — I'll handle manually"
+    - "↩️ Back to menu"
+```
+
+If the user chooses to decide each one, iterate through unresolved disagreements with:
+```
+ask_user:
+  question: "⚔️ <topic>: Side A says <X>, Side B says <Y>. Which side?"
+  choices:
+    - "🅰️ Side A — <short position>"
+    - "🅱️ Side B — <short position>"
+    - "⏭️ Skip — leave unresolved"
+```
+
+After all decisions, re-prompt the main menu.
 
 **🔍 Deep Dive:** Ask which domain to explore:
 ```
