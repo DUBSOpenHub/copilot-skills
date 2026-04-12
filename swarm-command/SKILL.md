@@ -605,16 +605,16 @@ Show synthesis:
 
 ---
 
-# PHASE 8 — FINAL OUTPUT
+# PHASE 8 — FINAL OUTPUT (ACTION REPORT)
 
-Structure the final output as:
+Structure the final output as an **actionable report** the user can immediately execute on. The goal is ZERO interpretation needed — every finding becomes a concrete action with priority, effort, and (where possible) a copy-paste command or code block.
 
 ```
-🐝 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🐝 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    S W A R M   C O M P L E T E
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## 📊 Results Summary
+## 📊 Swarm Metrics
 
 | Metric | Value |
 |---|---|
@@ -625,43 +625,112 @@ Structure the final output as:
 | Atoms merged | XXX |
 | Wall-clock time | XXs |
 | Estimated cost | $X.XX |
-| Shadow verdict | ✅ Perfect / 🟢 Minor / 🟡 Moderate / 🟠 Significant / 🔴 Critical |
+| Shadow verdict | ✅ / 🟢 / 🟡 / 🟠 / 🔴 |
 
-## 🏗️ Architecture
-<merged content from CMD-ARCH>
+---
 
-## ⚙️ Implementation
+## 🎯 START HERE — The #1 Action
+
+> <One sentence: the single most impactful thing to do right now>
+>
+> **Why:** <one-line justification from swarm evidence>
+> **How:** <concrete command, file edit, or step>
+
+---
+
+## 🔴🟡🟢 Risk Heatmap
+
+| Domain | Correct | Complete | Consistent | Risk |
+|--------|---------|----------|------------|------|
+| Architecture | 🟢/🟡/🔴 | 🟢/🟡/🔴 | 🟢/🟡/🔴 | LOW/MED/HIGH |
+| Implementation | ... | ... | ... | ... |
+| Testing | ... | ... | ... | ... |
+| Documentation | ... | ... | ... | ... |
+| Integration | ... | ... | ... | ... |
+
+---
+
+## ⚡ Quick Wins (< 30 min each)
+
+| # | Action | Domain | Impact | Effort |
+|---|--------|--------|--------|--------|
+| 1 | <action with specific file + line> | ARCH | 🔴 High | ~5 min |
+| 2 | ... | ... | ... | ... |
+
+## 🔨 Deep Work (> 30 min each)
+
+| # | Action | Domain | Impact | Effort |
+|---|--------|--------|--------|--------|
+| 1 | <action with scope description> | IMPL | 🔴 High | ~2 hr |
+| 2 | ... | ... | ... | ... |
+
+## 🔮 Future Considerations
+
+| # | Idea | Domain | Why Later |
+|---|------|--------|-----------|
+| 1 | <idea> | ... | <reason to defer> |
+
+---
+
+## 📝 Copy-Paste Actions
+
+Ready-to-use commands and code changes. Copy and run directly.
+
+### Action 1: <title>
+```bash
+<exact command or code change>
+```
+
+### Action 2: <title>
+```bash
+<exact command or code change>
+```
+
+(Continue for each actionable finding that can be expressed as a command or edit.)
+
+---
+
+## 📋 Domain Reports
+
+### 🏗️ Architecture
+<merged content from CMD-ARCH — findings, issues, recommendations>
+
+### ⚙️ Implementation
 <merged content from CMD-IMPL>
 
-## 🧪 Testing
+### 🧪 Testing
 <merged content from CMD-TEST>
 
-## 📝 Documentation
+### 📝 Documentation
 <merged content from CMD-DOCS>
 
-## 🔗 Integration
+### 🔗 Integration
 <merged content from CMD-INTG>
 
+---
+
 ## ⚡ Conflicts & Resolutions
-<any CONFLICT-tier items and how they were resolved>
-<any Shadow Score Gap Reports and hardening results>
+<any CONFLICT-tier items and how Nexus resolved them>
+<Shadow Score Gap Reports and hardening results>
 
 ## 📋 Gaps
-<any sub-tasks that were not completed, with reasons>
+<sub-tasks no domain addressed, with reasons>
+
+---
 
 ### Agent Tally
 | Layer | Role | Count |
 |-------|------|-------|
 | L0 | Nexus | 1 |
 | L1 | Commanders | <count> |
-| L2 | Squad Leads | <count or "—"> |
+| L2 | Squad Leads | <count> |
 | L3 | Workers | <count> |
 | L4 | Reviewers | <count> |
 | **Total** | | **<total>** |
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🐝 "The swarm is smarter than any single model."
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
 ---
