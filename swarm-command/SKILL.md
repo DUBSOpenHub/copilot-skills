@@ -223,7 +223,7 @@ For each domain, construct a Context Capsule (max 2048 tokens):
   },
   "depth_config": {
     "current_depth": 1,
-    "max_depth": 3,
+    "max_depth": "<SS-50/100: 2 | SS-250: 3>",
     "can_launch": true
   },
   "parent_context": "Nexus: <one-line task summary>"
@@ -349,7 +349,6 @@ Show deployment progress:
   CMD-INTG  ▸ claude-sonnet-4.5  ▸ Integration     ✅ deployed
 
   Commanders active: 5/5
-  Squad Leads spawning...
   Workers deploying (canary-first)...
 ```
 
@@ -395,7 +394,7 @@ Track:
   CMD-IMPL  ▸ ████████████████░░░░  80%  ⏳ workers completing...
   CMD-TEST  ▸ ████████████████████ 100%  ✅ confidence: 0.91
   CMD-DOCS  ▸ ████████████████████ 100%  ✅ confidence: 0.84
-  CMD-INTG  ▸ ██████████░░░░░░░░░░  50%  ⏳ squad leads merging...
+  CMD-INTG  ▸ ██████████░░░░░░░░░░  50%  ⏳ workers merging...
 
   Bundles received: 3/5
   Total atoms merged: 187
