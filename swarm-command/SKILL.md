@@ -999,10 +999,10 @@ Apply these 7 critical optimizations:
 
 1. **Pipeline overlap** — Start reviewers as soon as first 2 Commanders return (don't wait for all 5)
 2. **Canary pre-flight** — 1 canary worker per pod before full deployment
-3. **Parallel squad launch** — All Squad Leads per Commander launch simultaneously
+3. **Parallel squad/worker launch** — All Squad Leads (SS-250) or Workers (SS-50/100) per Commander launch simultaneously
 4. **Micro-brief compression** — 128-token worker prompts for fast processing
 5. **Haiku/Mini for workers** — Cheapest/fastest models at leaf level
-6. **Timeout cascade** — Nexus: 90s, Commander: 60s, Squad Lead: 40s, Worker: 30s
+6. **Timeout cascade** — Nexus: 90s, Commander: 60s, Squad Lead: 40s (SS-250 only), Worker: 30s
 7. **Content-hash dedup** — Identical results merged automatically
 
 ---
