@@ -284,7 +284,9 @@ Each Commander prompt MUST include:
 
 2. **Context Capsule**: The JSON capsule from Phase 2.
 
-3. **Spawning rules (DEPTH GUARD)**:
+3. **Spawning rules (DEPTH GUARD)** — scale-conditional:
+
+   **SS-250 (with Squad Leads):**
    - "You are at depth 1. You MAY spawn Squad Leads."
    - "Use agent_type: general-purpose for Squad Leads."
    - "Set depth_config.current_depth = 2, max_depth = 3, can_launch = true for Squad Leads."
@@ -292,13 +294,22 @@ Each Commander prompt MUST include:
    - "Squad Leads MUST use agent_type explore or task for workers."
    - "Include in every worker prompt: DO NOT use the task tool. You are a LEAF NODE."
 
+   **SS-50 / SS-100 (no Squad Leads — flat hierarchy):**
+   - "You are at depth 1. You spawn workers DIRECTLY (no Squad Leads)."
+   - "Use agent_type: explore or task for ALL workers — NEVER general-purpose."
+   - "Set depth_config.current_depth = 2, max_depth = 2, can_launch = false for workers."
+   - "Limit to 15 workers maximum."
+   - "Include in every worker prompt: DO NOT use the task tool. You are a LEAF NODE."
+
 4. **Canary requirement**: "Deploy 1 canary worker before full pod deployment."
 
 5. **Output format**: Strict JSON Bundle schema with bundle_id, domain, status, summary, atoms_merged, conflicts, content, confidence, wall_clock_s.
 
-6. **Circuit breaker**: "If more than 50% of squad leads fail, STOP and report failure."
+6. **Circuit breaker**: "If more than 50% of squad leads fail (SS-250) or 50% of workers fail (SS-50/SS-100), STOP and report failure."
 
-### Squad Lead Instructions (embedded in Commander prompt)
+### Squad Lead Instructions (SS-250 only — embedded in Commander prompt)
+
+> **Note:** Squad Leads are only used at SS-250 scale. At SS-50/SS-100, Commanders spawn workers directly — skip this section for those scales.
 
 Each Commander must instruct its Squad Leads to:
 
@@ -310,7 +321,7 @@ Each Commander must instruct its Squad Leads to:
 6. **Merge** — Group by sub-task, classify CONSENSUS/MAJORITY/CONFLICT
 7. **Emit** structured JSON result
 
-### Worker Instructions (embedded through Squad Lead)
+### Worker Instructions (embedded through Squad Lead at SS-250, or directly by Commander at SS-50/SS-100)
 
 Every worker prompt MUST contain:
 
