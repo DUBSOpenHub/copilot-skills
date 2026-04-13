@@ -216,7 +216,7 @@ For each domain, construct a Context Capsule (max 2048 tokens):
   "task_brief": "<domain-specific task description, max 1500 chars>",
   "domain": "<architecture|implementation|testing|documentation|integration>",
   "constraints": {
-    "timeout_s": 60,
+    "timeout_s": "<SS-50: 60 | SS-100: 75 | SS-250: 90>",
     "max_workers": 50,
     "token_ceiling": 64000,
     "retry_budget": 1
