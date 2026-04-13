@@ -913,7 +913,7 @@ These rules are ABSOLUTE and may never be violated:
 - Total: ~36-52 agents (depends on 2 or 3 commanders)
 
 ## SS-100 — Standard (default)
-- Commanders: 5 (selected domains)
+- Commanders: 5 (all 5 domains)
 - Workers per Commander: 15 (no Squad Leads)
 - Reviewers: 8
 - Shadow: 8 sealed criteria, hardening at > 15%
