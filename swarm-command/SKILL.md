@@ -891,7 +891,15 @@ Monitor continuously during execution:
 1. **Commander failure**: If 3+ of 5 Commanders fail → STOP all spawning → return partial results from successful Commanders
 2. **Wall-clock timeout**: If wall-clock exceeds 90s (SS-250) / 75s (SS-100) / 60s (SS-50) → STOP → return whatever is complete
 3. **Cost ceiling**: If estimated cost approaches $20 (SS-250) / $10 (SS-100) / $5 (SS-50) → STOP → return partial results
-4. **Recovery escalation**: Retry → Simplify → Model Swap → Scope Reduce → Graceful Degrade
+4. **Recovery escalation**: Apply levels in order until recovery succeeds or L5 is reached:
+
+| Level | Name | Trigger | Action |
+|---|---|---|---|
+| L1 | Retry | First failure of any agent | Re-launch the failed agent with same prompt and model |
+| L2 | Simplify | L1 retry also fails | Re-launch with simplified prompt (shorter context, fewer sub-tasks) |
+| L3 | Model Swap | L2 also fails | Re-launch with a different model from the same pool |
+| L4 | Scope Reduce | L3 also fails | Remove lowest-priority sub-tasks from the domain and re-launch |
+| L5 | Graceful Degrade | L4 also fails | Mark domain as partial/failed, proceed with available results |
 
 When circuit breaker trips, show:
 
