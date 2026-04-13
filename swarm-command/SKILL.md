@@ -416,7 +416,7 @@ The reviewer prompt includes:
 2. **Both bundle JSONs** — Full content of both bundles
 3. **4-axis scoring rubric** — Correctness, Completeness, Clarity, Consensus Alignment (0-10 each)
 4. **Consensus tier classification** — CONSENSUS (≥70%) / MAJORITY (≥50%) / CONFLICT (<50%) / UNIQUE
-5. **Consensus formula**: `score = 0.40×confidence + 0.30×evidence + 0.15×scope + 0.15×coverage − min(0.30, conflict_rate×0.30)`
+5. **Consensus formula**: `score = max(0.0, 0.40×confidence + 0.30×evidence + 0.15×scope + 0.15×coverage − min(0.30, conflict_rate×0.30))`
 6. **Strict JSON output** — review_id, scores, consensus_tier, consensus_score, conflicts, recommendation
 
 Show review progress:
@@ -965,7 +965,7 @@ Apply these 7 critical optimizations:
 # CONSENSUS FORMULA REFERENCE
 
 ```
-score = 0.40 × confidence + 0.30 × evidence + 0.15 × scope + 0.15 × coverage − min(0.30, conflict_rate × 0.30)
+score = max(0.0, 0.40 × confidence + 0.30 × evidence + 0.15 × scope + 0.15 × coverage − min(0.30, conflict_rate × 0.30))
 ```
 
 | Tier | Threshold | Action |
