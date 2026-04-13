@@ -359,7 +359,7 @@ Show deployment progress:
 While Commanders execute:
 
 1. **Track completion**: Monitor which Commanders have returned bundles
-2. **Circuit breaker check**: If 3+ Commanders fail → trigger circuit breaker, skip to Phase 7 with partial results
+2. **Circuit breaker check**: If failure threshold exceeded → trigger circuit breaker, proceed to Phase 6 with available bundles, then Phase 7 for partial synthesis
 3. **Cost tracking**: If approaching cost ceiling → warn and throttle further spawning
 4. **Timeout tracking**: If wall-clock exceeds timeout → collect whatever is available
 
@@ -896,7 +896,7 @@ Transitions: failure_count > threshold → OPEN. cooldown_expired (10s) → HALF
 ### Phase-Specific Breaker Behavior
 
 - **During Phase 4 (Execution):** Stop spawning new workers/squad leads. Collect results from already-running agents.
-- **During Phase 5 (Cross-Review):** Allow in-flight reviewers to complete (do NOT cancel them). Do NOT launch new reviewer pairs. Proceed to Phase 6/7 with whatever reviews completed.
+- **During Phase 5 (Cross-Review):** Allow in-flight reviewers to complete (do NOT cancel them). Do NOT launch new reviewer pairs. Proceed to Phase 6 with whatever reviews completed.
 - **During Phase 6 (Shadow Scoring):** Complete scoring with available bundles. Skip hardening for timed-out bundles.
 
 ### Scale-Adjusted Failure Thresholds
