@@ -646,7 +646,7 @@ Then display the full report:
 
 | Metric | Value |
 |---|---|
-| Domains completed | X/5 |
+| Domains completed | X/<N per scale: SS-50=2-3, SS-100/250=5> |
 | Overall consensus | CONSENSUS / MAJORITY / CONFLICT |
 | Overall confidence | 0.XX |
 | Agents deployed | XXX |
