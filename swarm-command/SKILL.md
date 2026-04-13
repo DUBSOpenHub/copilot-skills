@@ -515,7 +515,9 @@ If Shadow Score > 15% (configurable via `config.yml → shadow_scoring.hardening
 2. Commander gets one fix cycle to address the failures
 3. **Re-validate** the updated bundle against the same sealed criteria
 4. **Re-compute Shadow Score** — record both pre-hardening and post-hardening scores
-5. Maximum hardening cycles: 1 (configurable via `config.yml → shadow_scoring.hardening.max_cycles`)
+5. **Regression check**: If post-hardening score is WORSE than pre-hardening score, **revert to the pre-hardening bundle** and use the original score
+6. Maximum hardening cycles: 1 (configurable via `config.yml → shadow_scoring.hardening.max_cycles`)
+7. **Concurrent hardening**: If multiple commanders need hardening, launch all fix cycles in parallel
 
 **Hardening isolation rule:** Commanders receive failure messages like:
 ```
@@ -529,7 +531,7 @@ They do NOT receive: the criteria list, the scoring formula, the pass/fail break
 
 | Scale | Sealed Criteria | Hardening | Notes |
 |---|---|---|---|
-| SS-50 | 6 | Disabled | Shadow score computed but no fix cycle |
+| SS-50 | 6 | Disabled | Shadow score computed and reported but no fix cycle; Stage 3 gates still apply (warn/quarantine based on score) |
 | SS-100 | 8 | 1 cycle if > 15% | Moderate hardening |
 | SS-250 | 10 | 1 cycle if > 15% | Full hardening |
 
