@@ -608,6 +608,15 @@ Show synthesis:
 
 Structure the final output as an **actionable report** the user can immediately execute on. The goal is ZERO interpretation needed — every finding becomes a concrete action with priority, effort, and (where possible) a copy-paste command or code block.
 
+Show the phase banner first, then the completion banner:
+
+```
+🐝 PHASE 8 — FINAL OUTPUT (ACTION REPORT)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Then display the full report:
+
 ```
 🐝 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    S W A R M   C O M P L E T E
