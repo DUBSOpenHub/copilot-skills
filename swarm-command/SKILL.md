@@ -139,7 +139,7 @@ Generate sealed acceptance criteria from the task specification. These are the h
 
 ### Sealed Criteria Generation Rules
 
-1. **Generate 10 sealed acceptance criteria** (configurable via `config.yml → shadow_scoring.sealed_criteria_count`)
+1. **Generate sealed acceptance criteria per scale** — SS-50: 6, SS-100: 8, SS-250: 10 (configurable via `config.yml → shadow_scoring.sealed_criteria_count`)
 2. **Distribute across 4 categories:**
    - `happy_path` — Does the output satisfy the core requirements of the task?
    - `edge_case` — Does the output handle boundary conditions and unusual inputs?
@@ -156,7 +156,7 @@ Generate sealed acceptance criteria from the task specification. These are the h
     "generated_at": "<ISO 8601 timestamp>",
     "task_hash": "sha256:<hash of task decomposition>",
     "sealed_hash": "sha256:<hash of this criteria set>",
-    "criteria_count": 10,
+    "criteria_count": "<6|8|10 per scale>",
     "criteria": [
       {
         "id": "sc-01",
@@ -196,8 +196,8 @@ Show sealed envelope generation:
 🐝 PHASE 1.5 — SEALED CRITERIA GENERATION (Shadow Score Spec L2)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  Sealed criteria generated: 10
-  Categories: happy_path (3) · edge_case (3) · error_handling (2) · completeness (2)
+  Sealed criteria generated: <N per scale: SS-50=6, SS-100=8, SS-250=10>
+  Categories: happy_path · edge_case · error_handling · completeness
   Sealed hash: sha256:a3f2...
   Tamper protection: ✅ locked
 
