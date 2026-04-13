@@ -496,7 +496,7 @@ For each bundle, produce a Gap Report conforming to the Shadow Score Spec format
 }
 ```
 
-### Hardening Loop (Shadow Score Spec — Phase 4: HARDENING)
+### Hardening Loop (Shadow Score Spec: HARDENING)
 
 If Shadow Score > 15% (configurable via `config.yml → shadow_scoring.hardening.threshold`):
 
