@@ -379,6 +379,13 @@ If a Commander returns unparseable output:
 3. If retry_budget > 0: re-launch with simplified prompt
 4. If retry_budget exhausted: proceed without this Commander's domain
 
+### Schema Validation Recovery
+If a Commander returns valid JSON but fails schema validation (missing required fields, wrong types, invalid values):
+1. Attempt field-level recovery — extract whatever valid content exists
+2. If `content` field is present and meaningful: wrap in a partial bundle with status='partial', confidence=0.50
+3. If `content` is missing or empty: treat as unparseable (follow JSON Recovery above)
+4. Partial bundles are included in synthesis but flagged for lower weighting
+
 Track:
 ```
 🐝 PHASE 4 — EXECUTION
