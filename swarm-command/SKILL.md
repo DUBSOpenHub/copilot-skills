@@ -1013,7 +1013,7 @@ Apply these 7 critical optimizations:
 |---|---|---|
 | Nexus (you) | `claude-opus-4.6` | Always opus — top reasoning model |
 | Commander (pool: 9) | `claude-opus-4.6`, `claude-opus-4.5`, `claude-opus-4.6-1m`, `claude-sonnet-4.6`, `claude-sonnet-4.5`, `claude-sonnet-4`, `gpt-5.4`, `gpt-5.2`, `gpt-5.1` | Draw in order; alternate Claude↔GPT for diversity |
-| Squad Lead | `claude-haiku-4.5`, `gpt-5.4-mini` | Alternate within commander for cross-family diversity |
+| Squad Lead (SS-250 only) | `claude-haiku-4.5`, `gpt-5.4-mini` | Alternate within commander for cross-family diversity |
 | Worker (pool: 6) | `claude-haiku-4.5`, `gpt-5.4-mini`, `gpt-5-mini`, `gpt-4.1`, `gpt-5.3-codex`, `gpt-5.2-codex` | Mix within pod; Codex variants for build/test tasks |
 | Reviewer (7 pairs) | `claude-opus-4.6`↔`gpt-5.4`, `claude-opus-4.5`↔`gpt-5.2`, `claude-opus-4.6-1m`↔`gpt-5.1`, `claude-sonnet-4.6`↔`gpt-5.3-codex`, `claude-sonnet-4.5`↔`gpt-5.2-codex`, `claude-sonnet-4`↔`gpt-5.4-mini`, `claude-haiku-4.5`↔`gpt-5-mini` | Always cross-family pairs |
 | Shadow Scoring | Nexus-internal | Nexus validates against sealed criteria (Shadow Score Spec L2) |
