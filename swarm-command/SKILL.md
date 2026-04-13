@@ -572,8 +572,8 @@ Show shadow scoring results:
 Apply the 4-stage consensus algorithm:
 
 ### Stage 1 — Collect All Evidence
-- Commander bundles (5)
-- Reviewer score-cards (10)
+- Commander bundles (SS-50: 2-3, SS-100: 5, SS-250: 5)
+- Reviewer score-cards (SS-50: 3, SS-100: 8, SS-250: 10)
 - Shadow Score Gap Reports (per bundle)
 
 ### Stage 2 — Score Each Bundle
