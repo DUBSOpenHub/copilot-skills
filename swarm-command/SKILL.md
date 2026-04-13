@@ -66,7 +66,7 @@ If the user used a shortcut trigger (`swarm250`, `swarm100`, `swarm50`), pre-sel
 ask_user:
   question: "How large a swarm do you want to deploy?"
   choices:
-    - "⚡ SS-50  — ~52 agents · fast & focused"
+    - "⚡ SS-50  — ~36-52 agents · fast & focused"
     - "🎯 SS-100 — ~89 agents · balanced (recommended)"
     - "🐝 SS-250 — ~316 agents · full consensus swarm"
 ```
@@ -910,7 +910,7 @@ These rules are ABSOLUTE and may never be violated:
 - Shadow: disabled (score computed, no hardening)
 - Timeout: 60s
 - Cost cap: $5
-- Total: ~52 agents
+- Total: ~36-52 agents (depends on 2 or 3 commanders)
 
 ## SS-100 — Standard (default)
 - Commanders: 5 (selected domains)
