@@ -796,10 +796,10 @@ Example format for each disagreement:
 │ ⚔️ DISAGREEMENT #1: <topic>                            │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
-│ 🅰️ Side A (CMD-ARCH · opus-4.6, REV-05 · sonnet-4.6): │
+│ 🅰️ Side A (CMD-ARCH · claude-opus-4.6, REV-05 · claude-sonnet-4.6): │
 │    "<position with reasoning>"                          │
 │                                                         │
-│ 🅱️ Side B (CMD-IMPL · gpt-5.4, REV-07 · sonnet-4):    │
+│ 🅱️ Side B (CMD-IMPL · gpt-5.4, REV-07 · claude-sonnet-4):    │
 │    "<opposing position with reasoning>"                 │
 │                                                         │
 │ 📊 Review scores: A = 0.73 vs B = 0.68                 │
