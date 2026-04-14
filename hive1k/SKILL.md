@@ -400,6 +400,9 @@ DIV-DELTA (Cross-cutting + Special Missions): agent_type="general-purpose", mode
 
 ### Deployment Procedure
 
+**⚠️ STOP — READ BEFORE DEPLOYING:**
+You MUST use the **MANDATORY COMMANDER PROMPT TEMPLATE** below for every commander you launch. Do NOT write freeform prompts. Do NOT summarize the task and send it directly. Commanders that receive freeform prompts will do the work themselves instead of spawning — this defeats the entire purpose of the swarm hierarchy. The template includes the ORCHESTRATION-ONLY block, Squad Lead prompt, Worker DEPTH LOCK, and spawn count enforcement. Fill in the {{PLACEHOLDERS}} and launch.
+
 **H-250:** Launch Commanders in PARALLEL using the `task` tool (direct deployment, same as legacy SS-250).
 
 **H-500/H-1K:** Launch Division Commanders in PARALLEL using the `task` tool. Each Division Commander then deploys its own Commanders.
