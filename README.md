@@ -7,6 +7,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | Skill | Description |
 |-------|-------------|
 | [agent-company](agent-company/) | — |
+| [agent-pulse](agent-pulse/) | — |
 | [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
 | [copilot-cli-quickstart](copilot-cli-quickstart/) | Use this skill when someone wants to learn GitHub Copilot CLI from scratch. Offers interactive step-by-step tutorials... |
