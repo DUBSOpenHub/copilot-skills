@@ -2,7 +2,7 @@
 name: havoc-hackathon
 description: >
   🏟️ Havoc Hackathon — a multi-model orchestration skill that turns your terminal into a competitive arena.
-  Dispatches up to 14 AI models in tournament elimination heats, scores them with sealed judge panels
+  Dispatches up to 13 current full-size AI models in tournament elimination heats, scores them with sealed judge panels
   and Shadow Spec hidden quality gates, evolves the best ideas between rounds via Convergence Broadcasts,
   and synthesizes the final output from collective intelligence.
   Say "run hackathon" to start. Say "run kiloagent" for 1,000-agent deep mode.
@@ -139,7 +139,7 @@ Classify the task and pick the mode automatically — do NOT ask the user which 
 | **Epic** | Tournament (all models) | rewrite, redesign, full-stack feature, cross-repo change, framework evaluation |
 
 **Rules:** Default to Classic unless the task clearly matches Complex/Epic patterns. When in doubt, choose Classic — speed matters more than coverage for most tasks. The user can always override: "quick"/"fast" → Classic, "tournament"/"full"/"all models" → Tournament.
-  - N ≥ 12: 4 heats × 3 → 4 finalists
+  - N ≥ 12: 4 heats × 3-4 → 4 finalists
   - N = 9-11: 3 heats × 3 → 3 finalists
   - N = 7-8: 2 heats × 3-4 → 2 finalists
   - N = 5-6: 2 heats × 2-3 → 2 finalists
@@ -151,6 +151,7 @@ Classify the task and pick the mode automatically — do NOT ask the user which 
 | Models | Heats | Distribution | Finalists | Notes |
 |--------|-------|-------------|-----------|-------|
 | 14 | 4 | 4-4-3-3 | 4 | Extras to lowest-ELO heats |
+| 13 | 4 | 4-3-3-3 | 4 | Extra to lowest-ELO heat |
 | 12 | 4 | 3-3-3-3 | 4 | Even split |
 | 11 | 3 | 4-4-3 | 3 | Extra to lowest-ELO heat |
 | 10 | 3 | 4-3-3 | 3 | |
@@ -170,11 +171,11 @@ When distributing uneven models, assign extras to heats containing the lowest-EL
 > "⚡ Model tier? Standard models work great for most tasks. Premium brings the heavy hitters."
 > Choices: **Standard (Recommended)**, **Premium**
 
-- **Standard tier** (default): Contestants = all Standard tier models (10 models). Judges = Claude Sonnet 4.5, Codex GPT-5.2, GPT-5.1.
-- **Premium tier**: Contestants = all available models  -  Premium + Standard (14 models). Judges = Claude Opus 4.5, GPT-5.2, Codex Max (GPT-5.1).
-- **Classic Mode** overrides tier selection: Standard = Claude Sonnet 4.6, Codex Max GPT-5.1, GPT-5.2. Premium = Codex GPT-5.3, Claude Opus 4.6, Gemini 3 Pro.
+- **Standard tier** (default): Contestants = all Standard tier models (7 models). Judges = Claude Sonnet 4.5, Codex GPT-5.3, Codex GPT-5.2.
+- **Premium tier**: Contestants = all available full-size models  -  Premium + Standard (13 models). Judges = Claude Opus 4.5, GPT-5.4, Codex GPT-5.2.
+- **Classic Mode** overrides tier selection: Standard = Claude Sonnet 4.6, GPT-5.4, GPT-5.2. Premium = GPT-5.5, Claude Opus 4.7, Claude Opus 4.6.
 
-If the user names specific models (e.g., "use opus, gemini, and codex"), skip the tier prompt and use those models directly in Classic Mode. Show the selected tier badge (⚡ STANDARD or 👑 PREMIUM) in the opening ceremony next to each contestant.
+If the user names specific models (e.g., "use opus, gpt-5.5, and codex"), skip the tier prompt and use those models directly in Classic Mode. Show the selected tier badge (⚡ STANDARD or 👑 PREMIUM) in the opening ceremony next to each contestant.
 
 **Task Decomposition:** If large/multi-domain, propose sequential mini-hackathons (winner feeds next round).
 
@@ -743,36 +744,35 @@ CREATE TABLE IF NOT EXISTS hackathon_hot_signals (
 
 | Display Name | Model ID | Tier |
 |-------------|----------|------|
+| Claude Opus 4.7 | `claude-opus-4.7` | Premium |
+| Claude Opus 4.7 (1M) | `claude-opus-4.7-1m-internal` | Premium |
 | Claude Opus 4.6 | `claude-opus-4.6` | Premium |
-| Claude Opus 4.6 (Fast) | `claude-opus-4.6-fast` | Premium |
 | Claude Opus 4.6 (1M) | `claude-opus-4.6-1m` | Premium |
 | Claude Opus 4.5 | `claude-opus-4.5` | Premium |
-| Codex Max (GPT-5.1) | `gpt-5.1-codex-max` | Standard |
-| Gemini 3 Pro | `gemini-3-pro-preview` | Standard |
+| GPT-5.5 | `gpt-5.5` | Premium |
 | Claude Sonnet 4.6 | `claude-sonnet-4.6` | Standard |
 | Claude Sonnet 4.5 | `claude-sonnet-4.5` | Standard |
 | Claude Sonnet 4 | `claude-sonnet-4` | Standard |
+| GPT-5.4 | `gpt-5.4` | Standard |
 | Codex (GPT-5.3) | `gpt-5.3-codex` | Standard |
 | Codex (GPT-5.2) | `gpt-5.2-codex` | Standard |
-| Codex (GPT-5.1) | `gpt-5.1-codex` | Standard |
 | GPT-5.2 | `gpt-5.2` | Standard |
-| GPT-5.1 | `gpt-5.1` | Standard |
 | Claude Haiku 4.5 | `claude-haiku-4.5` | Fast/Cheap |
 | GPT-5.4 Mini | `gpt-5.4-mini` | Fast/Cheap |
 | GPT-5 Mini | `gpt-5-mini` | Fast/Cheap |
 | GPT-4.1 | `gpt-4.1` | Fast/Cheap |
 
 **Kiloagent Model Mapping:** In Kiloagent Mode, roles map to models as follows:
-- **Referees** → Opus (Premium tier: `claude-opus-4.6` or `claude-opus-4.6-1m`)
+- **Referees** → Opus (Premium tier: `claude-opus-4.7` or `claude-opus-4.7-1m-internal`)
 - **Pod Leads** → Sonnet (`claude-sonnet-4.6`)
 - **Specialists** → Sonnet (`claude-sonnet-4.5`)
 - **Scouts / Canaries / Shadow Probes** → Haiku (`claude-haiku-4.5`)
 - **Executors** → Fast models (`gpt-5.4-mini` or `gpt-5-mini`)
 
-**Default contestants (Standard):** Claude Sonnet 4.6, Codex Max (GPT-5.1), GPT-5.2 ← STANDARD ⚡
-**Default contestants (Premium):** Codex (GPT-5.3), Claude Opus 4.6, Gemini 3 Pro ← PREMIUM 👑
-**Default judges (Standard):** Claude Sonnet 4.5, Codex (GPT-5.2), GPT-5.1 ← STANDARD ⚡
-**Default judges (Premium):** Claude Opus 4.5, GPT-5.2, Codex Max (GPT-5.1) ← PREMIUM 👑
+**Default contestants (Standard):** Claude Sonnet 4.6, GPT-5.4, GPT-5.2 ← STANDARD ⚡
+**Default contestants (Premium):** GPT-5.5, Claude Opus 4.7, Claude Opus 4.6 ← PREMIUM 👑
+**Default judges (Standard):** Claude Sonnet 4.5, Codex (GPT-5.3), Codex (GPT-5.2) ← STANDARD ⚡
+**Default judges (Premium):** Claude Opus 4.5, GPT-5.4, Codex (GPT-5.2) ← PREMIUM 👑
 
 ---
 
@@ -826,7 +826,7 @@ After simulation passes, dispatch a trivial test prompt ("respond with OK") to e
   ✅ Phase 2 — Scoring Criteria (7/7)
       ✅ All 4 rubric types, adaptive rules present
   ✅ Phase 3 — Fleet Deployment (9/9)
-      ✅ 10 Standard + 4 Premium, no duplicates
+      ✅ 7 Standard + 6 Premium, no duplicates
   ✅ Phase 4 — Sealed Judging (12/12)
       ✅ Judge separation clean, anti-gaming concrete
   ✅ Phase 5 — Winner Declaration (7/7)
