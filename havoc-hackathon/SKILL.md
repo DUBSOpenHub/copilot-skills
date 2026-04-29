@@ -6,6 +6,7 @@ description: >
   and Shadow Spec hidden quality gates, evolves the best ideas between rounds via Convergence Broadcasts,
   and synthesizes the final output from collective intelligence.
   Say "run hackathon" to start. Say "run kiloagent" for 1,000-agent deep mode.
+  Say "run hackathon metaswarm" for commander contestants backed by full SS-250 swarms.
 license: MIT
 metadata:
   version: 3.0.0
@@ -119,12 +120,14 @@ Ask (or infer): 1) What's the task? 2) Where's the code? 3) Build or review mode
 - **Classic Mode** (auto for simple tasks, or user says "quick"/"fast"): 3 contestants, no heats  -  same as original behavior.
 - **Tournament Mode** (auto for complex tasks, or user says "tournament"/"full"/"all models"): All available models enter elimination heats. Elastic brackets auto-size based on model count (N):
 - **Kiloagent Mode** (user says "kiloagent"/"thousand agents"/"go deep"/"1000 agents"): 1,000-agent deep execution using Century Cell architecture. See **Kiloagent Mode** section below.
+- **Metaswarm Mode** (user says "metaswarm"/"swarm arena"/"swarm commanders"/"swarm250 hackathon"): Commander contestants compete; each commander runs a full Swarm Command SS-250 deployment through Terminal Stampede panes.
 
 **Explicit override priority (highest first):**
-1. If user says "tournament", "full", "all models", or "run all agents" → force Tournament (even for trivial prompts).
-2. If user says "quick", "fast", or "classic" → force Classic.
-3. If user says "kiloagent", "thousand agents", "go deep", "1000 agents", "kilo" → force Kiloagent Mode. Skip remaining Phase 1 logic and jump to the Kiloagent Mode section below.
-4. Otherwise apply smart auto-detection table below.
+1. If user says "metaswarm", "swarm arena", "swarm commanders", "swarm250 hackathon", or "full 250 per commander" → force Metaswarm Mode. Skip remaining Phase 1 logic and jump to the Metaswarm Mode section below.
+2. If user says "kiloagent", "thousand agents", "go deep", "1000 agents", "kilo" → force Kiloagent Mode. Skip remaining Phase 1 logic and jump to the Kiloagent Mode section below.
+3. If user says "tournament", "full", "all models", or "run all agents" → force Tournament (even for trivial prompts).
+4. If user says "quick", "fast", or "classic" → force Classic.
+5. Otherwise apply smart auto-detection table below.
 
 **Smart Mode Auto-Detection (apply BEFORE asking the user):**
 
@@ -788,7 +791,7 @@ Run these 6 checks first — fast, no model calls:
 2. **Bracket math:** Show the bracket distribution for the current model count (from the table above). Confirm heat sizes and finalist count.
 3. **ELO persistence:** Use `view` tool to check if `~/.copilot/hackathon-elo.json` exists. If yes, show current leaderboard. If no, report "Fresh start — no history."
 4. **Judge separation:** Verify that the selected judge models are NOT in the contestant list. Report any conflicts and show fallback plan.
-5. **Smart mode detection:** Show which mode would be selected for the user's task (Classic vs Tournament) and why.
+5. **Smart mode detection:** Show which mode would be selected for the user's task (Classic vs Tournament vs Kiloagent vs Metaswarm) and why.
 6. **Tool check:** Confirm `task`, `read_agent`, `list_agents`, `sql`, `ask_user`, and `bash` tools are available.
 
 ### Full Simulation (9-phase walkthrough)
@@ -800,7 +803,7 @@ After infrastructure checks pass, walk through each phase with mock data:
 | 0 — Meta-Learning | Create SQL tables, seed mock ELO, render leaderboard | Table schemas, serpentine draft ordering, leaderboard format |
 | 1 — Challenge | Classify 3 sample tasks (trivial/medium/complex), show bracket | Smart mode detection, bracket math, model count handling |
 | 2 — Scoring | Generate rubric for detected task type | Rubric categories, scoring range (1-10, /50), adaptive rules |
-| 3 — Deploy | Show dispatch plan: which models to which heats | Model roster completeness, parallel dispatch structure, Evolution Brief format |
+| 3 — Deploy | Show dispatch plan: which models to which heats, or commander manifests for Metaswarm | Model roster completeness, parallel dispatch structure, Evolution Brief format, Metaswarm launch contract |
 | 4 — Judge | Simulate 3-judge panel with mock scores | Judge-contestant separation, provider diversity, anti-gaming rules, median calculation, stddev flagging |
 | 5 — Winner | Rank mock scores, test rematch threshold | Score totals, ranking logic, margin ≤2 rematch trigger, Phase 6 mandate |
 | 6 — Merge | Vote on 3 mock decisions with 4 finalists | CONSENSUS (3+ agree) / MAJORITY (2 agree) / UNIQUE (all differ) classification |
@@ -849,6 +852,128 @@ After simulation passes, dispatch a trivial test prompt ("respond with OK") to e
 
 If DEGRADED: show what will work differently (e.g., "2 models unavailable — will run with {N} models, {H-1} heats").
 If NOT READY: explain what's broken and how to fix it.
+
+---
+
+## Metaswarm Mode
+
+**Trigger:** User says "metaswarm", "swarm arena", "swarm commanders", "swarm250 hackathon", "full 250 per commander", or "run hackathon metaswarm".
+
+Metaswarm Mode replaces single-answer contestants with **commander contestants**. Havoc still owns the arena, bracket, sealed judging, Convergence Broadcast, ELO, podium, and ensemble synthesis. Terminal Stampede owns visible terminal/tmux panes. Swarm Command owns the nested full SS-250 per commander.
+
+**Default scale:** full 250 workers per commander. Each commander uses Swarm Command metaswarm shape: 50 Squad Leads × 5 Workers. Do not silently downgrade. If circuit breakers or budget limits stop the full path, label that commander bundle `partial` and continue the tournament with visible provenance.
+
+### Architecture
+
+```
+Havoc Hackathon (arena / judging / synthesis)
+  └── Terminal Stampede --metaswarm (visible commander panes)
+      ├── commander-001 → Swarm Command metaswarm, ss-250, 250 workers
+      ├── commander-002 → Swarm Command metaswarm, ss-250, 250 workers
+      └── commander-003 → Swarm Command metaswarm, ss-250, 250 workers
+```
+
+### Metaswarm Launch Contract
+
+When Metaswarm Mode is selected:
+
+1. Build commander manifests instead of direct model prompts.
+2. Set `profile="metaswarm"`, `runtime="stampede"`, `swarm_scale="ss-250"`, and `per_commander_full_swarm=true`.
+3. Launch Terminal Stampede with `--metaswarm`.
+4. Each commander writes nested progress to `.stampede/{run_id}/commanders/{commander_id}/swarm-state.json`.
+5. Each commander appends child launch/update records to `.stampede/{run_id}/commanders/{commander_id}/child-agents.jsonl` so the monitor can track all sub-agents in real time.
+6. Each commander returns `.stampede/{run_id}/commanders/{commander_id}/bundle.json`.
+7. Havoc anonymizes those commander bundles before judging.
+8. Round 2 finalists receive the Convergence Broadcast and, when the user asked for max depth, run another full 250-worker commander pass.
+9. For code-changing runs, Stampede merger consumes the winning/consensus bundles and preserves commander ID, model, swarm scale, files changed, conflicts, and confidence in the merge report.
+
+Low-level launch shape:
+
+```bash
+stampede.sh \
+  --metaswarm \
+  --run-id run-YYYYMMDD-HHMMSS \
+  --count COMMANDER_COUNT \
+  --repo REPO_PATH \
+  --models MODEL_A,MODEL_B,MODEL_C
+```
+
+### Commander Manifest Shape
+
+```json
+{
+  "task_id": "commander-001",
+  "run_id": "run-YYYYMMDD-HHMMSS",
+  "kind": "commander",
+  "havoc_role": "contestant",
+  "contestant_label": "Contestant A",
+  "model": "claude-sonnet-4.6",
+  "objective": "User challenge",
+  "repo_path": "/abs/path",
+  "profile": "metaswarm",
+  "runtime": "stampede",
+  "swarm_scale": "ss-250",
+  "per_commander_full_swarm": true,
+  "constraints": {
+    "max_workers": 250,
+    "squad_leads_per_commander": 50,
+    "workers_per_squad_lead": 5,
+    "workers_per_commander": 250
+  },
+  "depth_budget": {
+    "squads_allocated": 50,
+    "squads_max": 50
+  },
+  "telemetry_contract": {
+    "state_file": ".stampede/{run_id}/commanders/{commander_id}/swarm-state.json",
+    "child_ledger": ".stampede/{run_id}/commanders/{commander_id}/child-agents.jsonl",
+    "launch_proof_required": true
+  }
+}
+```
+
+### Metaswarm Judging
+
+Judge commander bundles, not raw child-worker outputs. Required bundle fields:
+
+- `status`: `success`, `partial`, or `failed`
+- `summary`: commander-level result
+- `confidence`: 0.0-1.0
+- `swarm_scale`: `ss-250`
+- `per_commander_full_swarm`: `true`
+- `telemetry.workers_target`: `250`
+- `telemetry.squad_leads_launched`: `50` for `status=success`
+- `telemetry.workers_launched`: `250` for `status=success`
+- `files_changed`, `consensus`, `conflicts`, and evidence/provenance fields when code changed
+
+Commentary line: `"🐝 Commander {N} is unleashing a full SS-250 swarm. The arena just got louder."`
+
+### Context Capsule Mapping
+
+The commander manifest is the serialized handoff from Havoc to Stampede and then into Swarm Command. Keep this mapping stable:
+
+| Swarm Context Capsule Field | Havoc / Stampede Manifest Field |
+|---|---|
+| `capsule_id` | `task_id` or explicit `capsule_id` |
+| `task_brief` | `objective` |
+| `domain` | `domain` or `havoc_role` |
+| `constraints.profile` | `profile` = `metaswarm` |
+| `constraints.swarm_scale` | `swarm_scale` = `ss-250` |
+| `constraints.per_commander_full_swarm` | `per_commander_full_swarm` = `true` |
+| `constraints.max_workers` | `constraints.workers_per_commander` = `250` |
+| `constraints.squad_leads_per_commander` | `constraints.squad_leads_per_commander` = `50` |
+| `constraints.workers_per_squad_lead` | `constraints.workers_per_squad_lead` = `5` |
+| `depth_budget.squads_allocated` | `depth_budget.squads_allocated` = `50` |
+| `depth_config.current_depth` | `1` |
+| `depth_config.max_depth` | `3` |
+| `depth_config.can_launch` | `true` |
+
+Consensus tiers map directly into Phase 6 ensemble synthesis:
+
+- `CONSENSUS`: two or more commander swarms independently agree; auto-include.
+- `MAJORITY`: winner plus at least one judge/reviewer agrees; include with dissent notes.
+- `UNIQUE`: one commander finds a high-confidence novel point; preserve if evidence is strong.
+- `CONFLICT`: commanders disagree; escalate to Havoc final arbitration before merge.
 
 ---
 

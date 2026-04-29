@@ -31,11 +31,12 @@ filesystem IPC, monitor progress, recover dead agents, and synthesize results.
 | Pattern | Action |
 |---------|--------|
 | `stampede [N agents on] REPO [with model MODEL] [: task descriptions]` | Launch new run |
+| `stampede metaswarm [N commanders on] REPO [with model MODEL] [: mission]` | Launch visible commander panes; each commander runs a full SS-250 child swarm |
 | `stampede resume [RUN_ID]` | Resume interrupted run |
 | `stampede status [RUN_ID]` | Show run status |
 | `stampede teardown [RUN_ID]` | Tear down agents and clean up |
 
-**Defaults:** agents = 3 (max 8), model = `claude-sonnet-4.5`, repo = cwd
+**Defaults:** agents = 3 (max 8), commanders = 3 for `metaswarm`, model = `claude-sonnet-4.5`, repo = cwd
 
 If tasks are listed after `:` (semicolon-separated), create one task per description.
 If no tasks given, analyze the repo and auto-generate them.
@@ -105,6 +106,7 @@ Extract from the user's natural-language prompt:
 | `objective` | what the user wants done | *(required)* |
 | `repo_path` | repository path (resolve `~`) | cwd |
 | `worker_count` | "N agents" | 3 (max 8) |
+| `profile` | "metaswarm", "swarm commanders", "full 250 per commander" | normal stampede |
 | `model` | "with model X" | claude-sonnet-4.5 |
 
 If `stampede resume [RUN_ID]` → skip to STEP 9.
@@ -138,8 +140,10 @@ run_id = f"run-{datetime.datetime.now().strftime("%Y%m%d-%H%M%S")}"
 repo_path = "THE_REPO_PATH"
 base = os.path.join(repo_path, ".stampede", run_id)
 
-for d in ["queue", "claimed", "results", "logs", "pids"]:
+for d in ["queue", "claimed", "results", "logs", "pids", "scripts"]:
     os.makedirs(f"{base}/{d}", exist_ok=True)
+if PROFILE == "metaswarm":
+    os.makedirs(f"{base}/commanders", exist_ok=True)
 
 print(f"RUN_ID={run_id}")
 print(f"BASE={base}")
@@ -279,6 +283,9 @@ state = {
     "repo_path": "THE_REPO_PATH",
     "model": "THE_MODEL",
     "worker_count": WORKER_COUNT,
+    "profile": "PROFILE",
+    "swarm_scale": "ss-250" if PROFILE == "metaswarm" else None,
+    "per_commander_full_swarm": PROFILE == "metaswarm",
     "total_tasks": TOTAL_TASKS,
     "phase": "stampedeing",
     "tasks": {
@@ -310,6 +317,9 @@ with open(f"{base}/state.json", "w") as f:
   "phase": "stampedeing|running|synthesizing|completed",
   "tasks": { "queued": [], "claimed": [], "completed": [] },
   "workers": [{ "worker_id": "a1b2c3", "pid": 12345, "status": "alive" }],
+  "profile": "normal|metaswarm",
+  "swarm_scale": "ss-250",
+  "per_commander_full_swarm": true,
   "updated_at": "ISO-8601"
 }
 ```
@@ -389,6 +399,18 @@ chmod +x ~/bin/stampede.sh
 ~/bin/stampede.sh \
   --run-id THE_RUN_ID \
   --count WORKER_COUNT \
+  --repo THE_REPO_PATH \
+  --model THE_MODEL \
+  --no-attach
+```
+
+For metaswarm runs, add `--metaswarm`. This switches panes from leaf workers to `stampede-commander` agents. Each commander receives `per_commander_full_swarm=true`, `swarm_scale=ss-250`, `constraints.max_workers=250`, and `depth_budget.squads_allocated=50`. The child swarm is 50 Squad Leads × 5 Workers = 250 leaf workers per commander. Do not silently downgrade; if the full child swarm cannot launch, the commander bundle must be `partial` or `failed`. Each commander writes live proof under `BASE/commanders/{commander_id}/swarm-state.json` and `BASE/commanders/{commander_id}/child-agents.jsonl`:
+
+```bash
+~/bin/stampede.sh \
+  --metaswarm \
+  --run-id THE_RUN_ID \
+  --count COMMANDER_COUNT \
   --repo THE_REPO_PATH \
   --model THE_MODEL \
   --no-attach
