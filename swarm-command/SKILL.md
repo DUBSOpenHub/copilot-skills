@@ -324,6 +324,7 @@ Each Commander prompt MUST include:
    - "Limit each Squad Lead to 5 workers maximum."
    - "Namespace every child artifact under metaswarm/{run_id}/{commander_id}/."
    - "Maintain a live child-agent ledger with Squad Lead and Worker launch/update counts."
+   - "Use the Metaswarm premium model policy for Squad Leads and Workers. Do not use mini/Haiku/GPT-4.1 leaf models."
    - "Workers MUST use agent_type explore or task and MUST receive the Depth Lock block."
 
    **SS-50 / SS-100 (no Squad Leads — flat hierarchy):**
@@ -340,6 +341,7 @@ Each Commander prompt MUST include:
 6. **Circuit breaker**: "If more than 50% of squad leads fail (SS-250) or 50% of workers fail (SS-50/SS-100), STOP and report failure."
 7. **Metaswarm cap**: "If profile=metaswarm, launch the full 250-worker path for this commander unless the parent circuit breaker opens; do not silently downgrade to standard SS-250."
 8. **Launch proof**: "If profile=metaswarm, the Commander bundle must include telemetry proving `squad_leads_launched=50` and `workers_launched=250`; otherwise status must be `partial` or `failed`."
+9. **Premium model policy**: "If profile=metaswarm, every Squad Lead and Worker launch must set a premium model override from the Metaswarm premium pool. Banned for Metaswarm leaf work: `claude-haiku-4.5`, `gpt-5.4-mini`, `gpt-5-mini`, and `gpt-4.1`."
 
 ### Squad Lead Instructions (SS-250 only — embedded in Commander prompt)
 
@@ -1049,7 +1051,7 @@ Apply these 7 critical optimizations:
 2. **Canary pre-flight** — 1 canary worker per pod before full deployment
 3. **Parallel squad/worker launch** — All Squad Leads (SS-250) or Workers (SS-50/100) per Commander launch simultaneously
 4. **Micro-brief compression** — 128-token worker prompts for fast processing
-5. **Haiku/Mini for workers** — Cheapest/fastest models at leaf level
+5. **Haiku/Mini for standard workers only** — Cheapest/fastest models at leaf level for standard SS-50/100/250. Metaswarm uses premium workers by default.
 6. **Timeout cascade** — Nexus: 90s, Commander: 60s, Squad Lead: 40s (SS-250 only), Worker: 30s
 7. **Content-hash dedup** — Identical results merged automatically
 
@@ -1063,6 +1065,7 @@ Apply these 7 critical optimizations:
 | Commander (pool: 9) | `claude-opus-4.6`, `claude-opus-4.5`, `claude-opus-4.6-1m`, `claude-sonnet-4.6`, `claude-sonnet-4.5`, `claude-sonnet-4`, `gpt-5.4`, `gpt-5.2`, `gpt-5.1` | Draw in order; alternate Claude↔GPT for diversity |
 | Squad Lead (SS-250 only) | `claude-haiku-4.5`, `gpt-5.4-mini` | Alternate within commander for cross-family diversity |
 | Worker (pool: 6) | `claude-haiku-4.5`, `gpt-5.4-mini`, `gpt-5-mini`, `gpt-4.1`, `gpt-5.3-codex`, `gpt-5.2-codex` | Mix within pod; Codex variants for build/test tasks |
+| Metaswarm Worker (premium pool) | `claude-opus-4.7`, `gpt-5.5`, `claude-opus-4.6`, `gpt-5.4`, `claude-opus-4.5`, `gpt-5.2`, `claude-sonnet-4.6`, `gpt-5.3-codex`, `claude-sonnet-4.5`, `gpt-5.2-codex` | Required for `profile=metaswarm`; never use mini/Haiku/GPT-4.1 unless the user explicitly requests cheap mode |
 | Reviewer (7 pairs) | `claude-opus-4.6`↔`gpt-5.4`, `claude-opus-4.5`↔`gpt-5.2`, `claude-opus-4.6-1m`↔`gpt-5.1`, `claude-sonnet-4.6`↔`gpt-5.3-codex`, `claude-sonnet-4.5`↔`gpt-5.2-codex`, `claude-sonnet-4`↔`gpt-5.4-mini`, `claude-haiku-4.5`↔`gpt-5-mini` | Always cross-family pairs |
 | Shadow Scoring | Nexus-internal | Nexus validates against sealed criteria (Shadow Score Spec L2) |
 

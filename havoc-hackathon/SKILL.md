@@ -861,7 +861,7 @@ If NOT READY: explain what's broken and how to fix it.
 
 Metaswarm Mode replaces single-answer contestants with **commander contestants**. Havoc still owns the arena, bracket, sealed judging, Convergence Broadcast, ELO, podium, and ensemble synthesis. Terminal Stampede owns visible terminal/tmux panes. Swarm Command owns the nested full SS-250 per commander.
 
-**Default scale:** full 250 workers per commander. Each commander uses Swarm Command metaswarm shape: 50 Squad Leads × 5 Workers. Do not silently downgrade. If circuit breakers or budget limits stop the full path, label that commander bundle `partial` and continue the tournament with visible provenance.
+**Default scale:** full 250 workers per commander. Each commander uses Swarm Command metaswarm shape: 50 Squad Leads × 5 Workers with premium child-model overrides. Do not silently downgrade. If circuit breakers or budget limits stop the full path, label that commander bundle `partial` and continue the tournament with visible provenance.
 
 ### Architecture
 
@@ -914,6 +914,7 @@ stampede.sh \
   "runtime": "stampede",
   "swarm_scale": "ss-250",
   "per_commander_full_swarm": true,
+  "model_policy": "premium",
   "constraints": {
     "max_workers": 250,
     "squad_leads_per_commander": 50,
@@ -960,6 +961,7 @@ The commander manifest is the serialized handoff from Havoc to Stampede and then
 | `constraints.profile` | `profile` = `metaswarm` |
 | `constraints.swarm_scale` | `swarm_scale` = `ss-250` |
 | `constraints.per_commander_full_swarm` | `per_commander_full_swarm` = `true` |
+| `constraints.model_policy` | `model_policy` = `premium` |
 | `constraints.max_workers` | `constraints.workers_per_commander` = `250` |
 | `constraints.squad_leads_per_commander` | `constraints.squad_leads_per_commander` = `50` |
 | `constraints.workers_per_squad_lead` | `constraints.workers_per_squad_lead` = `5` |
