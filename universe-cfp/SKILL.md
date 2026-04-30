@@ -1,3 +1,4 @@
+---
 name: universe-cfp
 description: >
   Suggests GitHub Universe talk submissions based on your GitHub activity.
