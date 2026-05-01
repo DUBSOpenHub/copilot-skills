@@ -88,6 +88,25 @@ STAMPEDE_WORKERS_PER_SQUAD_LEAD
 STAMPEDE_WORKERS_PER_COMMANDER
 ```
 
+## Prerequisites and Preflight
+
+Before launch, verify the local runtime exists:
+
+```bash
+command -v copilot
+command -v tmux
+command -v python3
+command -v git
+test -x ~/bin/stampede.sh
+test -x ~/bin/stampede-monitor.sh
+```
+
+If `~/bin/stampede.sh` or `~/bin/stampede-monitor.sh` is missing, stop and
+tell the user to run the Agent Conductor quick installer or install Terminal
+Stampede first. Do not start an Agent Conductor run without the Stampede
+launcher and monitor because the dashboard and recovery contracts depend on
+their run files.
+
 ## Run Layout
 
 Agent Conductor reuses Stampede's repo-local runtime so Agent Pulse and tmux
@@ -101,6 +120,9 @@ REPO/.stampede/RUN_ID/
   claimed/
   results/
   commanders/commander-###/
+    manifest.json
+    context-capsule.json
+    assignments.json
     swarm-state.json
     child-agents.jsonl
     bundle.json
@@ -129,6 +151,42 @@ shape:
 cmd 3/5 active · sub-agents 112 running / 480 done / 620 seen · q 0 · claimed 3 · results 2/5
 collab p5 r18 i11 c8 b7
 commander-004 launching_workers · squads 32/50 · sub-agents 160/250 · run 42 done 118 fail 0
+```
+
+Structured schema:
+
+```json
+{
+  "ts": "ISO-8601",
+  "run_id": "run-...",
+  "profile": "metaswarm",
+  "queue": 0,
+  "claimed": 0,
+  "results": 5,
+  "total_tasks": 5,
+  "lines": [
+    "cmd 0/5 active · sub-agents 0 running / 1250 done / 1250 seen · q 0 · claimed 0 · results 5/5",
+    "collab p5 r18 i11 c8 b7"
+  ],
+  "agents": [
+    {
+      "id": "commander-001",
+      "status": "success",
+      "phase": "complete",
+      "active": false,
+      "model": "claude-opus-4.7",
+      "heartbeat_age_s": 4,
+      "squad_leads": 50,
+      "squad_target": 50,
+      "workers": 250,
+      "worker_target": 250,
+      "sub_agents_seen": 300,
+      "sub_agents_running": 0,
+      "sub_agents_done": 300,
+      "sub_agents_failed": 0
+    }
+  ]
+}
 ```
 
 ## Step 0 - SQL Tracking
@@ -197,6 +255,7 @@ Write `state.json` with Python. Include:
   "run_id": "run-YYYYMMDD-HHMMSS",
   "profile": "metaswarm",
   "product": "agent-conductor",
+  "runtime_profile": "metaswarm",
   "repo_path": "/abs/repo",
   "mission": "user mission",
   "model_tier": "premium | standard",
@@ -204,7 +263,8 @@ Write `state.json` with Python. Include:
   "commander_count": 5,
   "collab": {"path": "BASE/collab"},
   "shadow_score": {"sealed": true, "seal_hash": "sha256:..."},
-  "phase": "preparing"
+  "phase": "preparing",
+  "status": "running"
 }
 ```
 
@@ -262,6 +322,24 @@ Protocol sequence:
 propose -> peer_review -> improve -> consensus -> broadcast -> adopt
 ```
 
+Create `collab/protocol.json` with Python `json.dump` before commanders start:
+
+```json
+{
+  "version": 1,
+  "workflow": ["propose", "peer_review", "improve", "consensus", "broadcast", "adopt"],
+  "ledgers": {
+    "proposals": "proposals.jsonl",
+    "reviews": "reviews.jsonl",
+    "improvements": "improvements.jsonl",
+    "consensus": "consensus.jsonl",
+    "broadcasts": "broadcasts.jsonl"
+  },
+  "record_required_fields": ["ts", "run_id", "commander_id", "event", "item_id", "summary", "evidence", "confidence", "source_refs"],
+  "append_only": true
+}
+```
+
 Every record should include:
 
 ```json
@@ -277,6 +355,18 @@ Every record should include:
   "source_refs": []
 }
 ```
+
+`adopt` is not a separate ledger. It is represented by a commander writing an
+`improvement` or `consensus` record that cites the `broadcasts.jsonl` item it
+adopted in `source_refs`.
+
+## Depth Guard
+
+Every commander and worker prompt MUST carry `depth_config` with `can_launch`, `current_depth`, and `max_depth`.
+
+A commander MUST NOT spawn or launch sub-agents when `can_launch` is false or `current_depth >= max_depth`.
+
+Before spawning sub-agents, increment `current_depth` by 1 and set `can_launch` for the next depth from the same rule.
 
 ## Step 5 - Commander Manifests
 
@@ -294,15 +384,24 @@ Each manifest must include:
 ```json
 {
   "task_id": "commander-001",
+  "commander_id": "commander-001",
   "run_id": "run-...",
   "kind": "commander",
-  "profile": "agent-conductor",
+  "role": "commander",
+  "profile": "metaswarm",
+  "product": "agent-conductor",
   "runtime_profile": "metaswarm",
+  "swarm_scale": "ss-250",
+  "per_commander_full_swarm": true,
+  "objective": "original mission",
   "mission": "original mission",
   "domain": "architecture",
   "repo_path": "/abs/repo",
+  "branch": "havoc-swarm/run-.../commander-001",
   "model_tier": "premium",
   "model_policy": "premium",
+  "premium_model_pool": ["claude-opus-4.7", "gpt-5.5", "claude-opus-4.6", "gpt-5.4"],
+  "banned_child_models": ["claude-haiku-4.5", "gpt-5.4-mini", "gpt-5-mini", "gpt-4.1"],
   "shadow_score": {"sealed": true, "seal_hash": "sha256:..."},
   "collab": {"path": "BASE/collab", "protocol": "BASE/collab/protocol.json"},
   "constraints": {
@@ -312,9 +411,75 @@ Each manifest must include:
     "workers_per_commander": 250,
     "required_status_values": ["success", "partial", "failed"]
   },
-  "depth_budget": {"squads_allocated": 50, "squads_max": 50}
+  "depth_budget": {"squads_allocated": 50, "squads_max": 50},
+  "depth_config": {"can_launch": true, "current_depth": 0, "max_depth": 2},
+  "launch_proof": {
+    "required": true,
+    "state_file": "BASE/commanders/commander-001/swarm-state.json",
+    "child_ledger": "BASE/commanders/commander-001/child-agents.jsonl",
+    "sub_agent_ledger": "BASE/commanders/commander-001/child-agents.jsonl"
+  },
+  "telemetry_contract": {
+    "state_file": "BASE/commanders/commander-001/swarm-state.json",
+    "child_ledger": "BASE/commanders/commander-001/child-agents.jsonl",
+    "sub_agent_ledger": "BASE/commanders/commander-001/child-agents.jsonl",
+    "launch_proof_required": true
+  }
 }
 ```
+
+Runtime note: Stampede may use `profile: metaswarm` internally so existing
+monitor and Agent Pulse parsers work. `product: agent-conductor` preserves the
+user-facing product identity.
+
+### `swarm-state.json` schema
+
+Each commander must keep this state fresh with Python `json.dump`:
+
+```json
+{
+  "commander_id": "commander-001",
+  "run_id": "run-...",
+  "status": "running | success | partial | failed",
+  "phase": "launching_workers | collecting | complete",
+  "model_policy": "premium",
+  "squads_target": 50,
+  "workers_target": 250,
+  "squad_leads_launched": 50,
+  "squad_leads_running": 0,
+  "squad_leads_completed": 50,
+  "squad_leads_failed": 0,
+  "workers_launched": 250,
+  "workers_running": 0,
+  "workers_completed": 250,
+  "workers_failed": 0,
+  "launch_proof": {
+    "state_file": "BASE/commanders/commander-001/swarm-state.json",
+    "child_ledger": "BASE/commanders/commander-001/child-agents.jsonl",
+    "sub_agent_ledger": "BASE/commanders/commander-001/child-agents.jsonl"
+  },
+  "updated_at": "ISO-8601"
+}
+```
+
+Partial runs are explicitly labeled with launch counts. Never call a partial
+run a success.
+
+## Commander Prompt Template
+
+Commander prompts must tell the commander to read `manifest.json`, enforce
+`depth_config.can_launch`, launch only within `constraints.max_workers`, write
+launch proof to `swarm-state.json`, append compatibility telemetry to
+`child-agents.jsonl`, and write JSON only with Python `json.dump`. The commander
+must publish at least one collaboration record when it has useful evidence and
+must write `bundle.json` with status `success`, `partial`, or `failed`.
+
+## Worker Prompt Template
+
+Worker prompts must receive `context-capsule.json`, `assignments.json`, and
+`depth_config` with `can_launch` false unless a future explicit depth budget
+allows deeper work. Workers write atomic findings under `atoms/`, cite evidence,
+and use Python `json.dump` for every JSON file.
 
 ## Step 6 - Launch Terminal Stampede
 
@@ -324,6 +489,12 @@ own visible pane and nested sub-agent proof contract.
 ```bash
 STAMPEDE_OBJECTIVE="$MISSION" \
 STAMPEDE_METASWARM_NO_GATES=1 \
+STAMPEDE_MODEL_POLICY="$MODEL_TIER" \
+STAMPEDE_PREMIUM_MODEL_POOL="$PREMIUM_MODEL_POOL" \
+STAMPEDE_BANNED_CHILD_MODELS="claude-haiku-4.5,gpt-5.4-mini,gpt-5-mini,gpt-4.1" \
+STAMPEDE_SQUAD_LEADS_PER_COMMANDER=50 \
+STAMPEDE_WORKERS_PER_SQUAD_LEAD=5 \
+STAMPEDE_WORKERS_PER_COMMANDER=250 \
 ~/bin/stampede.sh \
   --metaswarm \
   --run-id "$RUN_ID" \
@@ -347,6 +518,7 @@ For status, read:
 - `orchestrator-commentary.json` for concise stats and insights.
 - `fleet.json` for commander models.
 - `commanders/*/swarm-state.json` for launch proof.
+- `commanders/*/child-agents.jsonl` for compatibility sub-agent telemetry.
 - `collab/*.jsonl` for collaboration counts.
 - `results/commander-*.json` for terminal bundles.
 
@@ -382,21 +554,47 @@ After `results/commander-*.json` count equals commander count:
 1. Load all commander bundles.
 2. Load `collab/proposals.jsonl`, `reviews.jsonl`, `improvements.jsonl`,
    `consensus.jsonl`, and `broadcasts.jsonl`.
-3. Open the sealed Shadow Score criteria only in the orchestrator context.
-4. Score each commander and the final synthesis on:
-   - requirement coverage
-   - collaboration quality
-   - evidence quality
-   - test/validation impact
-   - synthesis usefulness
-5. Write `shadow-score/scorecard.json`.
-6. Produce a final answer with:
-   - commander status table
-   - concise collaboration stats
-   - Shadow Score summary
+3. Recompute the hash for `shadow-score/sealed/criteria.json` and compare it to
+   `shadow-score/seal.sha256`. If it differs, stop and mark the scorecard as
+   failed due to seal mismatch.
+4. Open the sealed Shadow Score criteria only in the orchestrator context.
+5. Score each commander and the final synthesis on:
+    - requirement coverage
+    - collaboration quality
+    - evidence quality
+    - test/validation impact
+    - synthesis usefulness
+6. Write `shadow-score/scorecard.json`.
+7. Produce a final answer with:
+    - commander status table
+    - concise collaboration stats
+    - Shadow Score summary
    - best findings and consensus
-   - partial/failure caveats
-   - next action
+    - partial/failure caveats
+    - next action
+
+`scorecard.json` schema:
+
+```json
+{
+  "run_id": "run-...",
+  "seal_verified": true,
+  "criteria_hash": "sha256:...",
+  "overall_score": 0.0,
+  "status": "success | partial | failed",
+  "dimensions": {
+    "requirement_coverage": 0.0,
+    "collaboration_quality": 0.0,
+    "evidence_quality": 0.0,
+    "test_validation_impact": 0.0,
+    "synthesis_usefulness": 0.0
+  },
+  "commander_scores": [
+    {"commander_id": "commander-001", "status": "success", "score": 0.0, "evidence_refs": []}
+  ],
+  "partial_caveats": []
+}
+```
 
 ## Completion Criteria
 
