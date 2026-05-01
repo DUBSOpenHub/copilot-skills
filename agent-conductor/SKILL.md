@@ -49,9 +49,9 @@ If absent, ask exactly one question at a time.
    - `Premium` - frontier/premium models for commanders and sub-agents.
    - `Standard` - standard capable models; no mini/cheap silent downgrade.
 2. Scale:
-   - `Small` - 2 commander swarms.
-   - `Standard` - 3 commander swarms.
-   - `Max` - 5 commander swarms.
+   - `Small` - 2 commander groups.
+   - `Standard` - 3 commander groups.
+   - `Max` - 5 commander groups.
 3. Dashboard:
    - `Agent Pulse + Stampede monitor` recommended.
    - `Stampede monitor only`.
@@ -280,8 +280,8 @@ Every record should include:
 
 ## Step 5 - Commander Manifests
 
-Write one queue manifest per commander. Use different domains so swarms overlap
-enough to collaborate but still bring distinct views.
+Write one queue manifest per commander. Use different domains so commander
+groups overlap enough to collaborate but still bring distinct views.
 
 Recommended domain rotation:
 
