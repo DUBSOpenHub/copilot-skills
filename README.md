@@ -7,6 +7,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | Skill | Description |
 |-------|-------------|
 | [agent-company](agent-company/) | — |
+| [agent-conductor](agent-conductor/) | Multi-agent fleet conductor with real-time TUI observability. Launches multiple Terminal Stampede commander groups, k... |
 | [agent-pulse](agent-pulse/) | — |
 | [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
