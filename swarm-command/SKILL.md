@@ -4,7 +4,7 @@ description: >
   🐝 Swarm Command — multi-model consensus swarm orchestrator.
   Launches 50-250+ AI agents across 15 models with hierarchical fan-out,
   cross-family review, Shadow Score Spec L2 conformance, and quality-gated synthesis.
-  Say "swarm command", "swarmcommand", "swarm250", or "swarm command metaswarm" to start.
+  Say "swarm command", "swarmcommand", or "swarm250" to start.
 license: MIT
 metadata:
   version: 1.0.0
@@ -36,9 +36,6 @@ Forbidden output patterns:
 - "swarm250" (auto-selects SS-250)
 - "swarm100" (auto-selects SS-100)
 - "swarm50" (auto-selects SS-50)
-- "swarm command metaswarm" (auto-selects the metaswarm profile: full SS-250 per commander)
-- "swarm command per-commander-250"
-- "swarm250-per-commander"
 
 Optionally followed by a task description.
 
@@ -63,15 +60,14 @@ Immediately display this opening banner — this is the first thing the user see
 
 ALWAYS use `ask_user` to prompt for swarm size. This step is NEVER skipped, even if a scale keyword (`ss-50`, `ss-100`, `ss-250`) was embedded in the user's message. The ceremony of choosing your swarm size sets the tone for the entire deployment.
 
-If the user used a shortcut trigger (`swarm250`, `swarm100`, `swarm50`, `metaswarm`, `per-commander-250`), pre-select the matching size/profile as the first choice with "(your pick)" appended, but still show all options so the user confirms.
+If the user used a shortcut trigger (`swarm250`, `swarm100`, `swarm50`), pre-select the matching size as the first choice with "(your pick)" appended, but still show all options so the user confirms.
 
 ```
 ask_user:
   question: "How large a swarm do you want to deploy?"
   choices:
-    - "🐝 Metaswarm — 250 workers per commander · highest coverage"
-    - "⚡ SS-50  — ~36-52 agents · fast & focused"
     - "🎯 SS-100 — ~89 agents · balanced (recommended)"
+    - "⚡ SS-50  — ~36-52 agents · fast & focused"
     - "🐝 SS-250 — ~316 agents · full consensus swarm"
 ```
 
@@ -95,8 +91,7 @@ After the user confirms both scale and task, display the full mission briefing w
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
    📋 Mission:     <task summary>
-   ⚡ Scale:       <SS-50 | SS-100 | SS-250 | Metaswarm>
-   🧭 Profile:     <standard | metaswarm>
+   ⚡ Scale:       <SS-50 | SS-100 | SS-250>
    🤖 Agents:      <count> across 5 layers
    🧬 Models:      15 (Claude × GPT families)
    👻 Shadow:      <N> sealed criteria (L2)
@@ -222,13 +217,11 @@ For each domain, construct a Context Capsule (max 2048 tokens):
   "domain": "<architecture|implementation|testing|documentation|integration>",
   "constraints": {
     "timeout_s": "<SS-50: 60 | SS-100: 75 | SS-250: 90>",
-    "max_workers": "<standard SS-250 commander: 50 leaf workers | metaswarm commander: 250 leaf workers>",
+    "max_workers": "<SS-50/SS-100: 15 leaf workers | SS-250 commander: 50 leaf workers>",
     "swarm_scale": "<ss-50|ss-100|ss-250>",
-    "profile": "<standard|metaswarm>",
-    "per_commander_full_swarm": "<false normally | true when profile=metaswarm>",
-    "squad_leads_per_commander": "<standard SS-250: 10 | metaswarm: 50>",
+    "squad_leads_per_commander": "<SS-50/SS-100: 0 | SS-250: 10>",
     "workers_per_squad_lead": 5,
-    "workers_per_commander": "<standard SS-250: 50 | metaswarm: 250>",
+    "workers_per_commander": "<SS-50/SS-100: 15 | SS-250: 50>",
     "token_ceiling": 64000,
     "retry_budget": 1
   },
@@ -238,8 +231,8 @@ For each domain, construct a Context Capsule (max 2048 tokens):
     "can_launch": true
   },
   "depth_budget": {
-    "squads_allocated": "<standard SS-250: 10 | metaswarm: 50>",
-    "squads_max": "<standard SS-250: 10 | metaswarm: 50>",
+    "squads_allocated": "<SS-50/SS-100: 0 | SS-250: 10>",
+    "squads_max": "<SS-50/SS-100: 0 | SS-250: 10>",
     "complexity_tier": "high | medium | low",
     "rationale": "<why this commander received this squad budget>"
   },
@@ -251,8 +244,7 @@ For each domain, construct a Context Capsule (max 2048 tokens):
 - Strip rationale — Commanders don't need to know *why* you chose this decomposition
 - Narrow file scope — Each capsule focuses on domain-relevant files only
 - Tighten constraints — Based on scale (SS-50 gets tighter budgets)
-- Treat `constraints.max_workers` as a leaf-worker budget, not a squad-lead count. Standard SS-250 uses 50 workers per commander; Metaswarm uses 250 workers per commander.
-- In Metaswarm, omission of `depth_budget.squads_allocated=50` is a protocol error. Do not default to 10 squads when `profile=metaswarm`.
+- Treat `constraints.max_workers` as a leaf-worker budget, not a squad-lead count. SS-50 and SS-100 use 15 workers per commander; SS-250 uses 50 workers per commander.
 
 ---
 
@@ -314,19 +306,6 @@ Each Commander prompt MUST include:
    - "Squad Leads MUST use agent_type explore or task for workers."
    - "Include in every worker prompt: DO NOT use the task tool. You are a LEAF NODE."
 
-   **Metaswarm / per-commander-250 (opt-in full swarm per Commander):**
-   - "You are at depth 1. You MAY spawn Squad Leads."
-   - "Set profile=metaswarm, swarm_scale=ss-250, per_commander_full_swarm=true."
-   - "This profile gives EACH Commander a full 250-worker deployment: 50 Squad Leads × 5 Workers."
-   - "Set constraints.max_workers=250, depth_budget.squads_allocated=50, and depth_budget.squads_max=50."
-   - "Use agent_type: general-purpose for Squad Leads."
-   - "Set depth_config.current_depth = 2, max_depth = 3, can_launch = true for Squad Leads."
-   - "Limit each Squad Lead to 5 workers maximum."
-   - "Namespace every child artifact under metaswarm/{run_id}/{commander_id}/."
-   - "Maintain a live child-agent ledger with Squad Lead and Worker launch/update counts."
-   - "Use the Metaswarm premium model policy for Squad Leads and Workers. Do not use mini/Haiku/GPT-4.1 leaf models."
-   - "Workers MUST use agent_type explore or task and MUST receive the Depth Lock block."
-
    **SS-50 / SS-100 (no Squad Leads — flat hierarchy):**
    - "You are at depth 1. You spawn workers DIRECTLY (no Squad Leads)."
    - "Use agent_type: explore or task for ALL workers — NEVER general-purpose."
@@ -339,10 +318,6 @@ Each Commander prompt MUST include:
 5. **Output format**: Strict JSON Bundle schema with bundle_id, domain, status, summary, atoms_merged, conflicts, content, confidence, wall_clock_s.
 
 6. **Circuit breaker**: "If more than 50% of squad leads fail (SS-250) or 50% of workers fail (SS-50/SS-100), STOP and report failure."
-7. **Metaswarm cap**: "If profile=metaswarm, launch the full 250-worker path for this commander unless the parent circuit breaker opens; do not silently downgrade to standard SS-250."
-8. **Launch proof**: "If profile=metaswarm, the Commander bundle must include telemetry proving `squad_leads_launched=50` and `workers_launched=250`; otherwise status must be `partial` or `failed`."
-9. **Premium model policy**: "If profile=metaswarm, every Squad Lead and Worker launch must set a premium model override from the Metaswarm premium pool. Banned for Metaswarm leaf work: `claude-haiku-4.5`, `gpt-5.4-mini`, `gpt-5-mini`, and `gpt-4.1`."
-
 ### Squad Lead Instructions (SS-250 only — embedded in Commander prompt)
 
 > **Note:** Squad Leads are only used at SS-250 scale. At SS-50/SS-100, Commanders spawn workers directly — skip this section for those scales.
@@ -976,12 +951,12 @@ When circuit breaker trips, show:
 These rules are ABSOLUTE and may never be violated:
 
 1. **You (Nexus) are at depth 0.** You may spawn Commanders (depth 1) and Reviewers. You also generate sealed acceptance criteria (Phase 1.5) and validate them (Phase 6).
-2. **Commanders are at depth 1.** At SS-250 and Metaswarm, they spawn Squad Leads (depth 2). At SS-50/SS-100, they spawn Workers directly (depth 2 — leaf nodes).
-3. **Squad Leads are at depth 2 (SS-250 and Metaswarm only).** They spawn Workers (depth 3 — leaf nodes).
+2. **Commanders are at depth 1.** At SS-250, they spawn Squad Leads (depth 2). At SS-50/SS-100, they spawn Workers directly (depth 2 — leaf nodes).
+3. **Squad Leads are at depth 2 (SS-250 only).** They spawn Workers (depth 3 — leaf nodes).
 4. **Workers are ALWAYS agent_type `explore` or `task`.** NEVER `general-purpose`.
 5. **Workers MUST be told**: "DO NOT use the task tool. You are a leaf node."
 6. **No agent at depth 2+ may have `can_launch = true`** — except Squad Leads at SS-250 (who use it to spawn leaf workers).
-7. **Maximum children**: Commanders ≤ 10 Squad Leads (standard SS-250), ≤ 50 Squad Leads (Metaswarm only), or ≤ 15 Workers (SS-50/SS-100); Squad Leads ≤ 5 Workers.
+7. **Maximum children**: Commanders ≤ 10 Squad Leads (SS-250) or ≤ 15 Workers (SS-50/SS-100); Squad Leads ≤ 5 Workers.
 8. **Three-layer enforcement**: Prompt-level + Contract-level (agent type) + Config-level (can_launch flag).
 9. **Reviewers** are Nexus-direct agents outside the numbered depth hierarchy. They always have `can_launch = false`.
 
@@ -992,7 +967,6 @@ These rules are ABSOLUTE and may never be violated:
 | SS-50 | 2 | Nexus (0) → Commander (1) → Worker (2) |
 | SS-100 | 2 | Nexus (0) → Commander (1) → Worker (2) |
 | SS-250 | 3 | Nexus (0) → Commander (1) → Squad Lead (2) → Worker (3) |
-| Metaswarm | 3 | Nexus (0) → Commander (1) → full SS-250 child swarm: 50 Squad Leads (2) → 250 Workers (3) per Commander |
 
 ---
 
@@ -1026,19 +1000,6 @@ These rules are ABSOLUTE and may never be violated:
 - Cost cap: $20
 - Total: ~316 agents
 
-## Metaswarm — Full SS-250 per Commander
-- Commanders: 1-5 (all selected domains)
-- Squad Leads per Commander: 50
-- Workers per Squad Lead: 5
-- Workers per Commander: 250
-- Reviewers: 10
-- Shadow: 10 sealed criteria, hardening at > 15%
-- Timeout: 90s base cascade, with circuit breaker allowed to stop new child spawns
-- Cost cap: $100
-- Total at 5 commanders: ~1,516 agents (1 Nexus + 5 Commanders + 250 Squad Leads + 1,250 Workers + 10 Reviewers)
-- Trigger: `swarm command metaswarm` or `swarm command per-commander-250`
-- This is explicit opt-in and MUST NOT change standard SS-250 semantics.
-
 > Agent counts include ALL deployed agents across all layers (Nexus + Commanders + Squad Leads + Workers + Reviewers).
 
 ---
@@ -1051,7 +1012,7 @@ Apply these 7 critical optimizations:
 2. **Canary pre-flight** — 1 canary worker per pod before full deployment
 3. **Parallel squad/worker launch** — All Squad Leads (SS-250) or Workers (SS-50/100) per Commander launch simultaneously
 4. **Micro-brief compression** — 128-token worker prompts for fast processing
-5. **Haiku/Mini for standard workers only** — Cheapest/fastest models at leaf level for standard SS-50/100/250. Metaswarm uses premium workers by default.
+5. **Haiku/Mini for workers** — Cheapest/fastest models at leaf level for SS-50/100/250.
 6. **Timeout cascade** — Nexus: 90s, Commander: 60s, Squad Lead: 40s (SS-250 only), Worker: 30s
 7. **Content-hash dedup** — Identical results merged automatically
 
@@ -1065,7 +1026,6 @@ Apply these 7 critical optimizations:
 | Commander (pool: 9) | `claude-opus-4.6`, `claude-opus-4.5`, `claude-opus-4.6-1m`, `claude-sonnet-4.6`, `claude-sonnet-4.5`, `claude-sonnet-4`, `gpt-5.4`, `gpt-5.2`, `gpt-5.1` | Draw in order; alternate Claude↔GPT for diversity |
 | Squad Lead (SS-250 only) | `claude-haiku-4.5`, `gpt-5.4-mini` | Alternate within commander for cross-family diversity |
 | Worker (pool: 6) | `claude-haiku-4.5`, `gpt-5.4-mini`, `gpt-5-mini`, `gpt-4.1`, `gpt-5.3-codex`, `gpt-5.2-codex` | Mix within pod; Codex variants for build/test tasks |
-| Metaswarm Worker (premium pool) | `claude-opus-4.7`, `gpt-5.5`, `claude-opus-4.6`, `gpt-5.4`, `claude-opus-4.5`, `gpt-5.2`, `claude-sonnet-4.6`, `gpt-5.3-codex`, `claude-sonnet-4.5`, `gpt-5.2-codex` | Required for `profile=metaswarm`; never use mini/Haiku/GPT-4.1 unless the user explicitly requests cheap mode |
 | Reviewer (7 pairs) | `claude-opus-4.6`↔`gpt-5.4`, `claude-opus-4.5`↔`gpt-5.2`, `claude-opus-4.6-1m`↔`gpt-5.1`, `claude-sonnet-4.6`↔`gpt-5.3-codex`, `claude-sonnet-4.5`↔`gpt-5.2-codex`, `claude-sonnet-4`↔`gpt-5.4-mini`, `claude-haiku-4.5`↔`gpt-5-mini` | Always cross-family pairs |
 | Shadow Scoring | Nexus-internal | Nexus validates against sealed criteria (Shadow Score Spec L2) |
 
