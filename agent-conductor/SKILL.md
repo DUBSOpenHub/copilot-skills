@@ -3,7 +3,8 @@ name: agent-conductor
 description: >
   Multi-agent fleet conductor with real-time TUI observability. Launches
   multiple Terminal Stampede commander groups, keeps them coordinated through
-  live collaboration ledgers, and applies sealed Shadow Score evaluation.
+  live collaboration ledgers, and applies sealed Shadow Score evaluation. Say
+  "agent conductor" to start.
 tools:
   - bash
   - glob
@@ -21,7 +22,7 @@ Agent Conductor coordinates multiple commander-led agent groups so they can
 propose, review, improve, converge, and broadcast learnings while the run is
 active. It uses Terminal Stampede for visible tmux panes and process lifecycle,
 bounded sub-agent fan-out semantics, Agent Pulse or Stampede monitor for
-real-time observability, and Shadow Score for sealed post-run quality gates.
+real-time observability, and [Shadow Score](https://github.com/DUBSOpenHub/shadow-score-spec/blob/main/SPEC.md) for sealed post-run quality gates.
 
 Use user-facing terminology **sub-agents**. The compatibility ledger filename
 `child-agents.jsonl` may appear in paths, but responses should use
@@ -31,8 +32,8 @@ Use user-facing terminology **sub-agents**. The compatibility ledger filename
 
 | Pattern | Action |
 |---|---|
-| `agent conductor` | Ask for repo, mission, model tier, and scale |
-| `agent conductor on REPO : MISSION` | Launch with questions for missing tier/scale |
+| `agent conductor` | Ask only for missing mission/repo; default to Premium Max + Agent Pulse |
+| `agent conductor on REPO : MISSION` | Launch with Premium Max + Agent Pulse unless tier/scale are explicit |
 | `agent conductor premium max on REPO : MISSION` | Launch 5 premium commander groups |
 | `agent conductor standard small on REPO : MISSION` | Launch smaller standard-tier run |
 | `agent conductor status [RUN_ID]` | Show concise run stats and insights |
@@ -41,20 +42,23 @@ Use user-facing terminology **sub-agents**. The compatibility ledger filename
 Default repo is the current working directory. Mission text after `:` is
 required for a launch.
 
-## Launch Questions
+## Launch Defaults and Questions
 
-If absent, ask exactly one question at a time.
+Default launch settings:
 
-1. Model tier:
-   - `Premium` - frontier/premium models for commanders and sub-agents.
-   - `Standard` - standard capable models; no mini/cheap silent downgrade.
-2. Scale:
-   - `Small` - 2 commander groups.
-   - `Standard` - 3 commander groups.
-   - `Max` - 5 commander groups.
-3. Dashboard:
-   - `Agent Pulse + Stampede monitor` recommended.
-   - `Stampede monitor only`.
+- `model_tier`: `Premium` - frontier/premium models for commanders and sub-agents.
+- `scale`: `Max` - 5 commander groups.
+- `dashboard`: `Agent Pulse + Stampede monitor`.
+
+Do not ask tier, scale, or dashboard questions when those fields are absent.
+Only ask one question at a time for truly missing launch inputs:
+
+1. Ask for mission when no text after `:` was provided.
+2. Ask for repo only when no `on REPO` was provided and the current working
+   directory is not the intended target or is not a usable repository.
+
+Explicit user input still wins: `standard small` launches the smaller standard
+tier, and `premium max` launches the default max profile explicitly.
 
 ## Model Tiers
 
@@ -75,6 +79,10 @@ Never silently use these models for Agent Conductor sub-agents:
 ```text
 claude-haiku-4.5,gpt-5.4-mini,gpt-5-mini,gpt-4.1
 ```
+
+This is a no mini/cheap silent downgrade rule: partial capacity must stay
+partial rather than falling back to cheap or mini models without explicit user
+direction.
 
 Pass the chosen tier through the run state, commander manifests, and Stampede
 environment. Stampede exposes the active policy as:
@@ -222,8 +230,8 @@ Extract:
 |---|---|---|
 | `repo_path` | `on REPO` | current working directory |
 | `mission` | text after `:` | ask if missing |
-| `model_tier` | premium/standard | ask |
-| `scale` | small/standard/max | ask |
+| `model_tier` | premium/standard | premium |
+| `scale` | small/standard/max | max |
 | `dashboard` | requested dashboard | Agent Pulse + Stampede monitor |
 
 Map scale to commander count:
@@ -511,6 +519,11 @@ osascript -e 'tell application "Terminal" to do script "cd ~/copilot-cli-agent-p
   -e 'tell application "Terminal" to activate'
 ```
 
+Agent Pulse project link: `https://github.com/DUBSOpenHub/copilot-cli-agent-pulse`.
+Use it when the user wants real-time visibility across Copilot sessions,
+Terminal Stampede runs, commander status, sub-agent counts, and telemetry
+confidence.
+
 ## Step 7 - Status and Live Insights
 
 For status, read:
@@ -529,6 +542,40 @@ RUN run-... | cmd 3/5 active | sub-agents 112 running / 480 done / 620 seen | re
 collab p5 r18 i11 c8 b7
 active: commander-004 launching_workers, commander-005 collecting
 ```
+
+### Swarm-Style Chat Commentary
+
+In chat, use a visible swarm-style format: phase banner, progress table, clear
+status word, and no hidden process narration. Do not make the user infer health
+from dashboard numbers alone.
+
+Use this shape for launch/status/stop updates:
+
+```text
+🐝 AGENT CONDUCTOR — EXECUTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RUN run-...  STATUS running|partial|failed|stopped
+
+Commander       Model              Phase                Sub-agents        State
+commander-001   claude-opus-4.7    launching_workers    120/250          active
+commander-002   gpt-5.5            complete             250/250          success
+commander-003   claude-opus-4.6    failed_startup       0/250            failed
+
+Totals: cmd 2/5 active · sub-agents 42 running / 370 done / 620 seen · results 3/5
+Decision: wait | stop | synthesize partial | relaunch
+```
+
+Rules:
+
+- Lead with the health state, not implementation details.
+- Show every commander in a small table when the user is debugging a run.
+- Distinguish `requested`, `started/seen`, `running`, `done`, and `failed`.
+- If commanders fail at startup, say `failed_startup` and recommend stop/relaunch
+  rather than saying the run is simply "still running".
+- When stopping, report teardown outcome: processes, tmux session, queue/claims,
+  result bundle count, and final run state.
+- Keep the final synthesis separate from live commentary.
 
 ## Step 8 - Recovery
 
