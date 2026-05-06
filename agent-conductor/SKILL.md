@@ -18,7 +18,7 @@ tools:
 
 # Agent Conductor
 
-Agent Conductor coordinates multiple commander-led agent groups so they can
+Agent Conductor coordinates exactly five commander-led agent groups so they can
 propose, review, improve, converge, and broadcast learnings while the run is
 active. It uses Terminal Stampede for visible tmux panes and process lifecycle,
 bounded sub-agent fan-out semantics, Agent Pulse or Stampede monitor for
@@ -32,10 +32,10 @@ Use user-facing terminology **sub-agents**. The compatibility ledger filename
 
 | Pattern | Action |
 |---|---|
-| `agent conductor` | Ask only for missing mission/repo; default to Premium Max + Agent Pulse |
-| `agent conductor on REPO : MISSION` | Launch with Premium Max + Agent Pulse unless tier/scale are explicit |
-| `agent conductor premium max on REPO : MISSION` | Launch 5 premium commander groups |
-| `agent conductor standard small on REPO : MISSION` | Launch smaller standard-tier run |
+| `agent conductor` | Ask only for missing mission/repo; default to Premium Max + Agent Pulse + Stampede monitor |
+| `agent conductor on REPO : MISSION` | Launch with Premium Max + Agent Pulse + Stampede monitor unless tier/scale are explicit |
+| `agent conductor premium max on REPO : MISSION` | Launch 5 premium commander groups with Agent Pulse + Stampede monitor |
+| `agent conductor standard small on REPO : MISSION` | Launch 5 standard-tier commander groups with Agent Pulse + Stampede monitor |
 | `agent conductor status [RUN_ID]` | Show concise run stats and insights |
 | `agent conductor teardown RUN_ID` | Stop the underlying Stampede tmux session |
 
@@ -47,7 +47,7 @@ required for a launch.
 Default launch settings:
 
 - `model_tier`: `Premium` - frontier/premium models for commanders and sub-agents.
-- `scale`: `Max` - 5 commander groups.
+- `scale`: `Max` - exactly 5 commander groups.
 - `dashboard`: `Agent Pulse + Stampede monitor`.
 
 Do not ask tier, scale, or dashboard questions when those fields are absent.
@@ -58,7 +58,27 @@ Only ask one question at a time for truly missing launch inputs:
    directory is not the intended target or is not a usable repository.
 
 Explicit user input still wins: `standard small` launches the smaller standard
-tier, and `premium max` launches the default max profile explicitly.
+tier, and `premium max` launches the default max profile explicitly. Scale words
+do not reduce commander cardinality: every Agent Conductor metaswarm run launches
+exactly five commanders.
+
+## Commander Cardinality Contract
+
+Agent Conductor has one non-negotiable launch shape: exactly five commander
+groups, `commander-001` through `commander-005`.
+
+- Do not launch an Agent Conductor metaswarm with fewer or more than five
+  commanders.
+- Do not translate `small`, `standard`, local capacity, or transient model
+  errors into a lower commander count.
+- Each commander manifest must bind `task_id` and `commander_id` to the same
+  exact value, e.g. `commander-003`.
+- The installed Stampede launcher must be the hardened runtime that rejects
+  `--metaswarm --count` values other than `5`, pre-claims exact commander
+  manifests, and writes a terminal `bundle.json` plus
+  `results/commander-###.json` for every commander exit path.
+- If five commanders cannot be launched, mark the run `failed` or `partial` and
+  tell the user why. Never silently downscale.
 
 ## Model Tiers
 
@@ -107,6 +127,9 @@ command -v python3
 command -v git
 test -x ~/bin/stampede.sh
 test -x ~/bin/stampede-monitor.sh
+grep -q "stampede_synthesize_commander_bundle" ~/bin/stampede.sh
+grep -q "Your exact commander task is pre-claimed" ~/bin/stampede.sh
+grep -q "requires exactly 5 commanders" ~/bin/stampede.sh
 ```
 
 If `~/bin/stampede.sh` or `~/bin/stampede-monitor.sh` is missing, stop and
@@ -114,6 +137,11 @@ tell the user to run the Agent Conductor quick installer or install Terminal
 Stampede first. Do not start an Agent Conductor run without the Stampede
 launcher and monitor because the dashboard and recovery contracts depend on
 their run files.
+
+If any hardened-launcher marker check fails, stop before launch and reinstall
+the tested Terminal Stampede runtime. Do not run Agent Conductor against a stale
+launcher, because stale installed copies can start five panes while omitting
+deterministic pre-claim and terminal bundle synthesis.
 
 ## Run Layout
 
@@ -234,12 +262,13 @@ Extract:
 | `scale` | small/standard/max | max |
 | `dashboard` | requested dashboard | Agent Pulse + Stampede monitor |
 
-Map scale to commander count:
+Map scale to commander count. These labels are preserved for user intent and
+future policy, but they all keep the same five-commander metaswarm cardinality:
 
 | Scale | Commanders |
 |---|---:|
-| Small | 2 |
-| Standard | 3 |
+| Small | 5 |
+| Standard | 5 |
 | Max | 5 |
 
 ## Step 2 - Create Run Directory
@@ -378,7 +407,7 @@ Before spawning sub-agents, increment `current_depth` by 1 and set `can_launch` 
 
 ## Step 5 - Commander Manifests
 
-Write one queue manifest per commander. Use different domains so commander
+Write exactly five queue manifests, one per commander. Use different domains so commander
 groups overlap enough to collaborate but still bring distinct views.
 
 Recommended domain rotation:
@@ -435,6 +464,10 @@ Each manifest must include:
   }
 }
 ```
+
+The launcher and skill must treat `task_id != commander_id` as a hard binding
+failure. Do not let a commander claim another commander's manifest, and do not
+repair a bad claim by relabeling the commander after launch.
 
 Runtime note: Stampede may use `profile: metaswarm` internally so existing
 monitor and Agent Pulse parsers work. `product: agent-conductor` preserves the
@@ -495,6 +528,12 @@ Invoke the installed Stampede launcher. `--metaswarm` gives each commander its
 own visible pane and nested sub-agent proof contract.
 
 ```bash
+COMMANDER_COUNT=5
+if [[ "$COMMANDER_COUNT" -ne 5 ]]; then
+  echo "Agent Conductor metaswarm requires exactly 5 commanders" >&2
+  exit 1
+fi
+
 STAMPEDE_OBJECTIVE="$MISSION" \
 STAMPEDE_METASWARM_NO_GATES=1 \
 STAMPEDE_MODEL_POLICY="$MODEL_TIER" \
@@ -506,7 +545,7 @@ STAMPEDE_WORKERS_PER_COMMANDER=250 \
 ~/bin/stampede.sh \
   --metaswarm \
   --run-id "$RUN_ID" \
-  --count "$COMMANDER_COUNT" \
+  --count 5 \
   --repo "$REPO_PATH" \
   --models "$MODEL_POOL" \
   --no-attach
@@ -534,6 +573,10 @@ For status, read:
 - `commanders/*/child-agents.jsonl` for compatibility sub-agent telemetry.
 - `collab/*.jsonl` for collaboration counts.
 - `results/commander-*.json` for terminal bundles.
+
+For Agent Conductor, expected terminal bundle count is always exactly `5`.
+If fewer than five result bundles exist, report the run as `running`, `partial`,
+or `failed`; do not begin final synthesis.
 
 Do not provide heavy narration. Report compactly:
 
@@ -582,11 +625,14 @@ Rules:
 If a commander dies before a terminal bundle:
 
 1. Check Agent Pulse `commander_alerts` or PID/tmux state.
-2. If the commander heartbeat is stale and no tmux process exists, requeue the
-   claimed manifest unless generation is exhausted.
-3. Mark unrecoverable commanders `partial` or `failed`; never call a partial
+2. Expect hardened Stampede to synthesize that commander's failed or partial
+   `bundle.json` and `results/commander-###.json`.
+3. If no terminal result exists and the commander heartbeat is stale with no
+   tmux process, requeue the exact same commander manifest unless generation is
+   exhausted.
+4. Mark unrecoverable commanders `partial` or `failed`; never call a partial
    Agent Conductor run a full success.
-4. Keep existing collab ledgers and Shadow Score envelope immutable.
+5. Keep existing collab ledgers and Shadow Score envelope immutable.
 
 For teardown:
 
@@ -596,23 +642,28 @@ For teardown:
 
 ## Step 9 - Final Synthesis and Shadow Score
 
-After `results/commander-*.json` count equals commander count:
+After `results/commander-*.json` count equals exactly `5`:
 
 1. Load all commander bundles.
-2. Load `collab/proposals.jsonl`, `reviews.jsonl`, `improvements.jsonl`,
+2. Verify every result has `commander_id` and `task_id` matching its filename:
+   `commander-001` through `commander-005`.
+3. Verify each commander has launch proof in `swarm-state.json` and
+   `child-agents.jsonl`; if a commander has zero worker launch proof, keep that
+   commander `partial` or `failed` and carry the caveat into final synthesis.
+4. Load `collab/proposals.jsonl`, `reviews.jsonl`, `improvements.jsonl`,
    `consensus.jsonl`, and `broadcasts.jsonl`.
-3. Recompute the hash for `shadow-score/sealed/criteria.json` and compare it to
+5. Recompute the hash for `shadow-score/sealed/criteria.json` and compare it to
    `shadow-score/seal.sha256`. If it differs, stop and mark the scorecard as
    failed due to seal mismatch.
-4. Open the sealed Shadow Score criteria only in the orchestrator context.
-5. Score each commander and the final synthesis on:
-    - requirement coverage
-    - collaboration quality
-    - evidence quality
-    - test/validation impact
-    - synthesis usefulness
-6. Write `shadow-score/scorecard.json`.
-7. Produce a final answer with:
+6. Open the sealed Shadow Score criteria only in the orchestrator context.
+7. Score each commander and the final synthesis on:
+     - requirement coverage
+     - collaboration quality
+     - evidence quality
+     - test/validation impact
+     - synthesis usefulness
+8. Write `shadow-score/scorecard.json`.
+9. Produce a final answer with:
     - commander status table
     - concise collaboration stats
     - Shadow Score summary
@@ -647,7 +698,11 @@ After `results/commander-*.json` count equals commander count:
 
 - Run directory exists with state, collab bus, sealed Shadow Score hash, queue,
   commander telemetry, and concise stats feed.
-- Stampede launched with `--metaswarm`.
+- Stampede launched with `--metaswarm --count 5`.
 - Agent Pulse or Stampede monitor can show concise stats and insights.
-- Every commander has `success`, `partial`, or `failed`.
+- Exactly five commander manifests exist and each binds `task_id` to the same
+  `commander_id`.
+- Exactly five terminal result bundles exist under `results/commander-*.json`.
+- Every commander has `success`, `partial`, or `failed`; missing worker launch
+  proof prevents success.
 - Final synthesis includes Shadow Score results without exposing sealed criteria.

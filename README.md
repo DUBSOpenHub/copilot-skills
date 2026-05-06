@@ -18,6 +18,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [dispatch](dispatch/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
 | [evo-forge](evo-forge/) | 🧬 Evo Forge — breeds better agents through evolutionary selection. Mutates agent prompts, tournaments them, selects s... |
 | [first-agent](first-agent/) | 🎓 First Agent — live training skill that guides non-developers from zero to building their first AI agent in three se... |
+| [fleet-scorecard](fleet-scorecard/) | Fleet Scorecard — turns any multi-agent CLI run into a clear outcome decision. Scores what changed, what won, what fa... |
 | [gdoc-converter](gdoc-converter/) | Converts Google Docs, Slides, and Sheets to Microsoft Office formats (Word, PowerPoint, Excel). Paste a Google URL an... |
 | [havoc-hackathon](havoc-hackathon/) | 🏟️ Havoc Hackathon — a multi-model orchestration skill that turns your terminal into a competitive arena. Dispatches ... |
 | [headcount-zero](headcount-zero/) | — |
