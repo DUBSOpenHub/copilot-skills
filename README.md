@@ -12,6 +12,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [agent-pulse](agent-pulse/) | — |
 | [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
+| [context-compass](context-compass/) | Context Compass — your guide to bringing GitHub, Slack, and WorkIQ context into Copilot CLI. Runs beginner onboarding... |
 | [copilot-cli-quickstart](copilot-cli-quickstart/) | Use this skill when someone wants to learn GitHub Copilot CLI from scratch. Offers interactive step-by-step tutorials... |
 | [copilot-first-light](copilot-first-light/) | ✨ First Light — a warm, friendly guide that helps anyone build their first AI agent in about 10 minutes. No coding ex... |
 | [dark-factory](dark-factory/) | 🏭 Dark Factory — agentic build system with sealed-envelope testing. Orchestrates 6 specialist agents through a checkp... |

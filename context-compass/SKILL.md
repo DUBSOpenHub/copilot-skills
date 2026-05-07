@@ -1,0 +1,1 @@
+/Users/greggcochran/context-compass/SKILL.md
