@@ -8,6 +8,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 |-------|-------------|
 | [agent-company](agent-company/) | — |
 | [agent-conductor](agent-conductor/) | Multi-agent fleet conductor with real-time TUI observability. Launches multiple Terminal Stampede commander groups, k... |
+| [agent-orchestra](agent-orchestra/) | Multi-agent fleet conductor for the GitHub Copilot CLI. Launches exactly five visible Terminal Stampede commander gro... |
 | [agent-pulse](agent-pulse/) | — |
 | [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
@@ -30,7 +31,6 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [sidecar](sidecar/) | — |
 | [slack-context](slack-context/) | Use when the user asks to "fetch context from Slack", "read this Slack thread", "get requirements from Slack", "extra... |
 | [soss-skill-template](soss-skill-template/) | 🛡️ SOSS Fund Training — MODULE_TITLE. Interactive trainer with CTA tracking, security validation, and dashboard-ready... |
-| [stampede](stampede/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent CLI... |
 | [swarm](swarm/) | — |
 | [swarm-command](swarm-command/) | 🐝 Swarm Command — multi-model consensus swarm orchestrator. Launches 50-250+ AI agents across 15 models with hierarch... |
 | [universe-cfp](universe-cfp/) | Suggests GitHub Universe talk submissions based on your GitHub activity. Pulls your repos, PRs, issues, and contribut... |
