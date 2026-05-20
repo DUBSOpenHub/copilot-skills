@@ -1,0 +1,34 @@
+schema_version: "1"
+id: copilot-app-first-steps
+name: Copilot App First Steps
+description: >
+  Interactive tutor skill for non-technical first-time users of the GitHub
+  Copilot app. Starts with a one-click entry path, then guides learners through
+  install/opening, the app tour, first prompts, projects, sessions, approvals,
+  issues, pull requests, troubleshooting, and a first independent workflow.
+emoji: "🧭"
+codename: The Beginner App Tutor
+category: education
+version: "0.1.0"
+tags:
+  - learning
+  - tutorial
+  - beginner
+  - copilot-app
+  - non-technical
+  - onboarding
+platforms:
+  - github-copilot-app
+input_format: free-text
+links:
+  readme: README.md
+  landing_page: install.html
+  pages_entry: index.html
+  skill_file: skills/copilot-app-first-steps/SKILL.md
+  github_skill_file: .github/skills/copilot-app-first-steps/SKILL.md
+  agent_file: agents/copilot-app-first-steps.agent.md
+  product_notes: agents/copilot-app-first-steps.md
+  tests: TESTING.md
+  security: SECURITY.md
+license: MIT
+owner: DUBSOpenHub
