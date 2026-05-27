@@ -17,6 +17,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [copilot-cli-quickstart](copilot-cli-quickstart/) | Use this skill when someone wants to learn GitHub Copilot CLI from scratch. Offers interactive step-by-step tutorials... |
 | [copilot-first-light](copilot-first-light/) | ✨ First Light — a warm, friendly guide that helps anyone build their first AI agent in about 10 minutes. No coding ex... |
 | [dark-factory](dark-factory/) | 🏭 Dark Factory — agentic build system with sealed-envelope testing. Orchestrates 6 specialist agents through a checkp... |
+| [decompose](decompose/) | — |
 | [design-auditor](design-auditor/) | 🔍 Design Auditor — paste a URL, get 5 ranked fixes to improve conversions. Analyzes layout, performance, accessibilit... |
 | [dispatch](dispatch/) | Cross-terminal multi-agent orchestration. Splits complex tasks into parallel work units dispatched to independent Cop... |
 | [evo-forge](evo-forge/) | 🧬 Evo Forge — breeds better agents through evolutionary selection. Mutates agent prompts, tournaments them, selects s... |

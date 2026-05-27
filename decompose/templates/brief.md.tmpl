@@ -1,0 +1,85 @@
+# {{GOAL_ONE_SENTENCE}}
+
+**For:** {{ROLE}} · **Created:** {{CREATED_AT}} · **Session:** {{SESSION_ID}}
+
+---
+
+## Goal
+
+{{GOAL_PLAIN_LANGUAGE}}
+
+---
+
+## Why This Matters
+
+{{WHY_THIS_MATTERS_2_3_SENTENCES}}
+
+---
+
+## What We Know
+
+{{#each KNOWNS}}
+- {{this}}
+{{/each}}
+
+---
+
+## What We Don't Know Yet
+
+{{#if UNKNOWNS_EMPTY}}
+All key facts were confirmed during planning.
+{{else}}
+{{#each UNKNOWNS}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+---
+
+## The Plan
+
+{{#each PLAN_STEPS}}
+{{@index_plus_one}}. **{{this.title}}** — {{this.description}}
+{{/each}}
+
+---
+
+## Decisions You Need to Make
+
+{{#if NO_HUMAN_GATES}}
+No decisions are blocked — the plan can run as-is once you're ready.
+{{else}}
+{{#each HUMAN_GATES}}
+{{@index_plus_one}}. **{{this.title}}** — {{this.description}}
+{{/each}}
+{{/if}}
+
+---
+
+## Risks and Watch-Outs
+
+{{#each RISKS_AND_ASSUMPTIONS}}
+- {{this}}
+{{/each}}
+
+---
+
+## How to Know It Worked
+
+{{#each SUCCESS_INDICATORS}}
+- {{this}}
+{{/each}}
+
+---
+
+## Next Step
+
+To begin, {{NEXT_STEP_ACTION}}.
+
+---
+
+{{#if IS_TECHNICAL_ROLE}}
+*This brief was created by the `decompose` skill. For the agent-executable version of this plan, see `genome.json` and `AGENTS.md`.*
+{{else}}
+*This plan was created by the `decompose` skill.*
+{{/if}}

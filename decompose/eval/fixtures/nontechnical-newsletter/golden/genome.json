@@ -1,0 +1,178 @@
+{
+  "genome_id": "nontechnical-newsletter-golden",
+  "schema_version": "1.0",
+  "role": "creator",
+  "intent": "Launch a weekly email newsletter about sustainable living, growing to 100 subscribers over 3 months.",
+  "nodes": [
+    {
+      "id": "choose_platform",
+      "title": "Choose email newsletter platform",
+      "type": "unknown",
+      "description": "The user has not yet chosen an email platform. Platform choice affects all downstream steps: account setup, template design, subscriber import, and send configuration. Substack is the recommended starting point.",
+      "prompt_template": "unknown",
+      "inputs": [],
+      "outputs": ["Email platform confirmed"],
+      "acceptance_criteria": [],
+      "assumptions": [],
+      "unknowns": ["Email platform preference"],
+      "resolution_strategy": "ask_user",
+      "confidence": 0.2,
+      "risk": "high",
+      "owner_hint": "human",
+      "human_decision_gate": true
+    },
+    {
+      "id": "setup_newsletter_account",
+      "title": "Set up newsletter account and profile",
+      "type": "research",
+      "description": "Create account on chosen platform. Set newsletter name, description, and welcome email for new subscribers. Make sign-up page publicly accessible.",
+      "prompt_template": "research",
+      "inputs": ["Email platform confirmed"],
+      "outputs": ["Live newsletter sign-up page", "Welcome email configured"],
+      "acceptance_criteria": [
+        "Sign-up page is publicly accessible",
+        "Newsletter name and description are set",
+        "Welcome email is configured"
+      ],
+      "assumptions": ["Platform chosen is Substack or equivalent self-service tool"],
+      "unknowns": [],
+      "confidence": 0.9,
+      "risk": "low",
+      "owner_hint": "creator",
+      "human_decision_gate": false
+    },
+    {
+      "id": "build_initial_audience",
+      "title": "Invite first subscribers",
+      "type": "comms",
+      "description": "Reach out to personal contacts via text or email. Share sign-up link on Instagram. Target at least 30 subscribers before sending issue #1.",
+      "prompt_template": "comms",
+      "inputs": ["Live sign-up page URL"],
+      "outputs": ["Initial subscriber list (target: 30+ before issue #1)"],
+      "acceptance_criteria": [
+        "At least 20 people have subscribed",
+        "Sign-up link shared on at least one social channel"
+      ],
+      "assumptions": ["User has roughly 200 reachable contacts across personal network and Instagram"],
+      "unknowns": [],
+      "confidence": 0.75,
+      "risk": "medium",
+      "owner_hint": "creator",
+      "human_decision_gate": false
+    },
+    {
+      "id": "write_issue_one",
+      "title": "Write first newsletter issue",
+      "type": "comms",
+      "description": "Draft the first newsletter issue. Should be personal, explain why the newsletter exists, and introduce the sustainable living topic. Keep it under 500 words to start.",
+      "prompt_template": "comms",
+      "inputs": ["Newsletter account set up", "Topic confirmed: sustainable living"],
+      "outputs": ["Draft of issue #1 (ready for review)"],
+      "acceptance_criteria": [
+        "Issue introduces the newsletter's purpose",
+        "Sustainable living angle is clear",
+        "Draft is under 600 words",
+        "Subject line is written"
+      ],
+      "parallelizable_with": ["build_initial_audience"],
+      "assumptions": ["User will write the content themselves"],
+      "unknowns": [],
+      "confidence": 0.85,
+      "risk": "low",
+      "owner_hint": "creator",
+      "human_decision_gate": false
+    },
+    {
+      "id": "approve_first_send",
+      "title": "Review and approve first email send",
+      "type": "decision",
+      "description": "The user must personally review issue #1 and approve the send. Sending is public, irreversible, and reaches real subscribers. No agent or automated process may press send.",
+      "prompt_template": "decision",
+      "inputs": ["Issue #1 draft complete", "Subscriber list ready (20+ subscribers)"],
+      "outputs": ["Issue #1 sent to subscribers"],
+      "acceptance_criteria": [],
+      "assumptions": [],
+      "unknowns": [],
+      "confidence": 0.95,
+      "risk": "medium",
+      "owner_hint": "human",
+      "human_decision_gate": true
+    },
+    {
+      "id": "establish_weekly_rhythm",
+      "title": "Establish weekly sending schedule",
+      "type": "milestone",
+      "description": "Milestone: issue #1 sent, weekly cadence established. Track subscriber growth toward 100-subscriber goal over 3 months.",
+      "prompt_template": "",
+      "inputs": ["Issue #1 sent"],
+      "outputs": ["Weekly newsletter in progress", "Subscriber tracking active"],
+      "acceptance_criteria": [
+        "At least 3 consecutive weekly issues sent",
+        "Subscriber count tracked"
+      ],
+      "assumptions": [],
+      "unknowns": [],
+      "confidence": 0.8,
+      "risk": "low",
+      "owner_hint": "creator",
+      "human_decision_gate": false
+    }
+  ],
+  "edges": [
+    { "from": "choose_platform", "to": "setup_newsletter_account", "type": "blocks" },
+    { "from": "setup_newsletter_account", "to": "build_initial_audience", "type": "blocks" },
+    { "from": "setup_newsletter_account", "to": "write_issue_one", "type": "informs" },
+    { "from": "build_initial_audience", "to": "approve_first_send", "type": "informs" },
+    { "from": "write_issue_one", "to": "approve_first_send", "type": "blocks" },
+    { "from": "approve_first_send", "to": "establish_weekly_rhythm", "type": "blocks" }
+  ],
+  "assumptions": [
+    "User will write all newsletter content themselves",
+    "Roughly 200 personal contacts are reachable via text, email, or Instagram"
+  ],
+  "unknowns": [
+    "Which email platform to use",
+    "Exact subscriber count on day of first send"
+  ],
+  "blind_spots": [
+    {
+      "text": "No email platform chosen yet — all downstream steps depend on this decision",
+      "classification": "unknown",
+      "resolution_hint": "Pick a platform (Substack recommended) before anything else"
+    },
+    {
+      "text": "User is assumed to be writing solo",
+      "classification": "assumption",
+      "resolution_hint": "Confirm if collaborating with anyone"
+    },
+    {
+      "text": "No subscriber list exists yet — first send may reach very few people",
+      "classification": "risk",
+      "resolution_hint": "Build audience before scheduling issue #1 send"
+    },
+    {
+      "text": "Sending the first email to subscribers is a public, irreversible action",
+      "classification": "gate",
+      "resolution_hint": "User must personally review and approve before sending"
+    }
+  ],
+  "open_questions": [
+    "Which email platform will you use?",
+    "Do you have any collaborators or is this a solo project?"
+  ],
+  "meta": {
+    "created_at": "2024-01-15T10:00:00Z",
+    "skill_version": "1.0",
+    "session_id": "sess-nontechnical-newsletter-golden",
+    "questions_asked": 4,
+    "meter_pct_at_close": 72
+  },
+  "handoff": {
+    "start_node_id": "choose_platform",
+    "human_gates": ["choose_platform", "approve_first_send"],
+    "do_not_assume": [
+      "Which email platform to use",
+      "Whether the user has a subscriber list ready"
+    ]
+  }
+}

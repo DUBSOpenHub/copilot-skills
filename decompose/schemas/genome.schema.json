@@ -1,0 +1,251 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://copilot.github.com/skills/decompose/genome.schema.json",
+  "title": "Task Genome",
+  "description": "Agent-executable execution plan produced by the decompose skill.",
+  "type": "object",
+  "required": [
+    "genome_id",
+    "schema_version",
+    "role",
+    "intent",
+    "nodes",
+    "edges",
+    "assumptions",
+    "unknowns",
+    "blind_spots",
+    "open_questions",
+    "meta",
+    "handoff"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "genome_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for this genome (e.g., UUID or slug)."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Semantic version of the genome schema used."
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Role lens under which this genome was compiled."
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Confirmed intent in one plain-language sentence."
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/Node" },
+      "description": "Ordered list of work nodes forming the execution DAG."
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Edge" },
+      "description": "Directed edges defining dependencies between nodes."
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Beliefs treated as true that have not been verified."
+    },
+    "unknowns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Open questions with no current answer."
+    },
+    "blind_spots": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/BlindSpot" },
+      "description": "Concerns surfaced by the Blind Spot Engine."
+    },
+    "open_questions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Questions requiring human resolution before execution."
+    },
+    "meta": {
+      "type": "object",
+      "required": ["created_at", "skill_version", "session_id"],
+      "additionalProperties": true,
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "skill_version": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "questions_asked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "meter_pct_at_close": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "required": ["start_node_id", "human_gates", "do_not_assume"],
+      "additionalProperties": false,
+      "properties": {
+        "start_node_id": {
+          "type": "string",
+          "description": "ID of the first executable node."
+        },
+        "human_gates": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Node IDs that require human decision before successors proceed."
+        },
+        "do_not_assume": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Explicit list of unknowns agents must not silently resolve."
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Node": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "type",
+        "description",
+        "prompt_template",
+        "inputs",
+        "outputs",
+        "acceptance_criteria",
+        "confidence",
+        "risk",
+        "human_decision_gate"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": ["research", "decision", "code_change", "comms", "review", "risk", "unknown", "milestone"]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_template": {
+          "type": "string",
+          "description": "Name of the prompt template file (from prompt_library/) or inline prompt. Empty string only allowed for milestone nodes."
+        },
+        "inputs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "outputs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Verifiable conditions that mark this node done."
+        },
+        "assumptions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "unknowns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "parallelizable_with": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs of nodes that can run concurrently with this one."
+        },
+        "owner_hint": {
+          "type": "string",
+          "description": "Suggested human or agent role to own this node."
+        },
+        "human_decision_gate": {
+          "type": "boolean",
+          "description": "If true, a human must approve before successor agent nodes proceed."
+        },
+        "resolution_strategy": {
+          "type": "string",
+          "description": "Required for type=unknown: how this unknown will be resolved."
+        }
+      }
+    },
+    "Edge": {
+      "type": "object",
+      "required": ["from", "to", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": ["blocks", "informs", "optional"]
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "BlindSpot": {
+      "type": "object",
+      "required": ["text", "classification"],
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "classification": {
+          "type": "string",
+          "enum": ["assumption", "unknown", "risk", "gate"]
+        },
+        "resolution_hint": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

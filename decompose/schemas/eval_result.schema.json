@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://copilot.github.com/skills/decompose/eval_result.schema.json",
+  "title": "Eval Result",
+  "description": "One record per eval × fixture combination. Aggregated into eval_report.md.",
+  "type": "object",
+  "required": [
+    "eval_id",
+    "fixture_id",
+    "pass",
+    "score",
+    "threshold",
+    "diff",
+    "notes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "eval_id": {
+      "type": "string",
+      "enum": [
+        "role_first",
+        "task_second",
+        "question_budget",
+        "accessibility",
+        "brief_quality",
+        "agent_readiness",
+        "schema_validity",
+        "dag_validity",
+        "redaction",
+        "uncertainty_handling",
+        "human_gates",
+        "headless_mode",
+        "replay",
+        "golden_regression"
+      ]
+    },
+    "fixture_id": {
+      "type": "string",
+      "enum": [
+        "nontechnical-newsletter",
+        "nontechnical-app-idea",
+        "developer-oauth",
+        "developer-bugfix",
+        "pm-beta-launch",
+        "designer-onboarding-flow",
+        "ops-incident-runbook",
+        "researcher-market-map",
+        "ambiguous-low-context",
+        "headless-missing-role",
+        "headless-missing-task",
+        "headless-missing-both"
+      ]
+    },
+    "pass": {
+      "type": "boolean",
+      "description": "True if the eval passed its threshold for this fixture."
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Normalized score: 1.0 = perfect, 0.0 = complete failure."
+    },
+    "threshold": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Minimum score required to pass this eval."
+    },
+    "diff": {
+      "type": "string",
+      "description": "Human-readable diff or delta from golden/expected output. Empty string if no diff."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Evaluator notes: what passed, what failed, recommended fix."
+    },
+    "artifact_path": {
+      "type": "string",
+      "description": "Path to the artifact evaluated (relative to fixture output dir)."
+    },
+    "rubric_breakdown": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "description": "Per-criterion rubric scores."
+    },
+    "run_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

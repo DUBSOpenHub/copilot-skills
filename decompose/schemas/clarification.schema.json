@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://copilot.github.com/skills/decompose/clarification.schema.json",
+  "title": "Clarification State",
+  "description": "Mid-session state object carried in working memory and persisted to replay.jsonl.",
+  "type": "object",
+  "required": [
+    "role",
+    "raw_intent",
+    "sanitized_intent",
+    "questions_asked",
+    "knowns",
+    "unknowns",
+    "blind_spots",
+    "meter_pct",
+    "confirmed"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "role": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Role established in Step 1. Required after Role Lens completes."
+    },
+    "role_deferred": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if user explicitly deferred role selection."
+    },
+    "raw_intent": {
+      "type": "string",
+      "description": "Original unmodified user input (may contain sensitive data — store only in session memory, not in written artifacts)."
+    },
+    "sanitized_intent": {
+      "type": "string",
+      "description": "Intent after redaction pipeline has run."
+    },
+    "questions_asked": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 7,
+      "description": "Number of Socratic clarifying questions asked. Normal sessions: 3–7."
+    },
+    "questions_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["index", "question", "answer", "category"],
+        "properties": {
+          "index": { "type": "integer", "minimum": 1 },
+          "question": { "type": "string" },
+          "answer": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": [
+              "success_criteria",
+              "scope",
+              "constraints",
+              "stakeholders",
+              "dependencies",
+              "risks",
+              "assets",
+              "acceptance_criteria",
+              "approval_gates",
+              "output_format"
+            ]
+          }
+        }
+      }
+    },
+    "knowns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Facts established and confirmed by the user."
+    },
+    "unknowns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Open items without a current answer."
+    },
+    "blind_spots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["text", "classification"],
+        "additionalProperties": false,
+        "properties": {
+          "text": { "type": "string", "minLength": 1 },
+          "classification": {
+            "type": "string",
+            "enum": ["assumption", "unknown", "risk", "gate"]
+          },
+          "resolution_hint": { "type": "string" }
+        }
+      }
+    },
+    "meter_pct": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Understanding Meter percentage at last update."
+    },
+    "confirmed": {
+      "type": "boolean",
+      "description": "Set to true after Reflection Mirror receives user confirmation."
+    },
+    "redaction_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pattern_matched", "location", "action"],
+        "properties": {
+          "pattern_matched": { "type": "string" },
+          "location": { "type": "string" },
+          "action": {
+            "type": "string",
+            "enum": ["REDACTED", "REVIEW-REQUIRED"]
+          }
+        }
+      }
+    }
+  }
+}
