@@ -1,178 +1,285 @@
 {
   "genome_id": "nontechnical-newsletter-golden",
   "schema_version": "1.0",
-  "role": "creator",
-  "intent": "Launch a weekly email newsletter about sustainable living, growing to 100 subscribers over 3 months.",
+  "role": "I write a weekly newsletter about sustainable living",
+  "intent": "I want to grow my newsletter to 10,000 subscribers in 6 months",
   "nodes": [
     {
       "id": "choose_platform",
-      "title": "Choose email newsletter platform",
-      "type": "unknown",
-      "description": "The user has not yet chosen an email platform. Platform choice affects all downstream steps: account setup, template design, subscriber import, and send configuration. Substack is the recommended starting point.",
-      "prompt_template": "unknown",
-      "inputs": [],
-      "outputs": ["Email platform confirmed"],
-      "acceptance_criteria": [],
-      "assumptions": [],
-      "unknowns": ["Email platform preference"],
-      "resolution_strategy": "ask_user",
-      "confidence": 0.2,
-      "risk": "high",
+      "title": "Choose newsletter platform",
+      "type": "decision",
+      "description": "Select the email newsletter platform before setup work begins.",
+      "prompt_template": "Human approval gate: review the inputs, verify each acceptance criterion, and explicitly approve before successor nodes proceed.",
+      "inputs": [
+        "goal",
+        "platform options"
+      ],
+      "outputs": [
+        "selected platform"
+      ],
+      "acceptance_criteria": [
+        "User explicitly selects the newsletter platform to use."
+      ],
+      "assumptions": [
+        "Substack or Beehiiv can support the first six months."
+      ],
+      "unknowns": [
+        "Final platform choice is pending."
+      ],
+      "confidence": 0.78,
+      "risk": "low",
+      "parallelizable_with": [],
       "owner_hint": "human",
       "human_decision_gate": true
     },
     {
       "id": "setup_newsletter_account",
-      "title": "Set up newsletter account and profile",
+      "title": "Set up newsletter account",
       "type": "research",
-      "description": "Create account on chosen platform. Set newsletter name, description, and welcome email for new subscribers. Make sign-up page publicly accessible.",
-      "prompt_template": "research",
-      "inputs": ["Email platform confirmed"],
-      "outputs": ["Live newsletter sign-up page", "Welcome email configured"],
-      "acceptance_criteria": [
-        "Sign-up page is publicly accessible",
-        "Newsletter name and description are set",
-        "Welcome email is configured"
+      "description": "Configure the selected platform profile, signup page, welcome email, and basic analytics.",
+      "prompt_template": "For fixture nontechnical-newsletter, complete node `setup_newsletter_account`: Configure the selected platform profile, signup page, welcome email, and basic analytics. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "selected platform",
+        "newsletter positioning"
       ],
-      "assumptions": ["Platform chosen is Substack or equivalent self-service tool"],
-      "unknowns": [],
-      "confidence": 0.9,
+      "outputs": [
+        "configured newsletter workspace"
+      ],
+      "acceptance_criteria": [
+        "Signup page is public.",
+        "Newsletter name and description are set.",
+        "Welcome email is configured."
+      ],
+      "assumptions": [
+        "No paid engineering work is needed for initial setup."
+      ],
+      "unknowns": [
+        "Brand assets may still need to be gathered."
+      ],
+      "confidence": 0.74,
       "risk": "low",
-      "owner_hint": "creator",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     },
     {
-      "id": "build_initial_audience",
-      "title": "Invite first subscribers",
-      "type": "comms",
-      "description": "Reach out to personal contacts via text or email. Share sign-up link on Instagram. Target at least 30 subscribers before sending issue #1.",
-      "prompt_template": "comms",
-      "inputs": ["Live sign-up page URL"],
-      "outputs": ["Initial subscriber list (target: 30+ before issue #1)"],
-      "acceptance_criteria": [
-        "At least 20 people have subscribed",
-        "Sign-up link shared on at least one social channel"
+      "id": "define_audience_and_offer",
+      "title": "Define audience and subscription promise",
+      "type": "research",
+      "description": "Clarify the target reader, newsletter promise, content pillars, and reasons to subscribe.",
+      "prompt_template": "For fixture nontechnical-newsletter, complete node `define_audience_and_offer`: Clarify the target reader, newsletter promise, content pillars, and reasons to subscribe. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "role",
+        "goal",
+        "Q&A summary"
       ],
-      "assumptions": ["User has roughly 200 reachable contacts across personal network and Instagram"],
-      "unknowns": [],
-      "confidence": 0.75,
+      "outputs": [
+        "audience and offer brief"
+      ],
+      "acceptance_criteria": [
+        "Primary audience is named.",
+        "Subscription promise is one sentence.",
+        "Three content pillars are listed."
+      ],
+      "assumptions": [
+        "Sustainable living tips are the core differentiator."
+      ],
+      "unknowns": [
+        "Current audience size is unknown."
+      ],
+      "confidence": 0.8,
       "risk": "medium",
-      "owner_hint": "creator",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
+      "human_decision_gate": false
+    },
+    {
+      "id": "build_growth_channels",
+      "title": "Build promotion channels",
+      "type": "comms",
+      "description": "Create a six-month promotion plan across social, communities, referrals, and collaborations.",
+      "prompt_template": "For fixture nontechnical-newsletter, complete node `build_growth_channels`: Create a six-month promotion plan across social, communities, referrals, and collaborations. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "audience brief",
+        "growth goal"
+      ],
+      "outputs": [
+        "promotion calendar"
+      ],
+      "acceptance_criteria": [
+        "At least three promotion channels are selected.",
+        "Weekly promotion cadence is documented.",
+        "Referral or collaboration tactic is included."
+      ],
+      "assumptions": [
+        "The creator can post on LinkedIn and Instagram weekly."
+      ],
+      "unknowns": [
+        "Community rules for promotion may vary."
+      ],
+      "confidence": 0.72,
+      "risk": "medium",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     },
     {
       "id": "write_issue_one",
       "title": "Write first newsletter issue",
       "type": "comms",
-      "description": "Draft the first newsletter issue. Should be personal, explain why the newsletter exists, and introduce the sustainable living topic. Keep it under 500 words to start.",
-      "prompt_template": "comms",
-      "inputs": ["Newsletter account set up", "Topic confirmed: sustainable living"],
-      "outputs": ["Draft of issue #1 (ready for review)"],
-      "acceptance_criteria": [
-        "Issue introduces the newsletter's purpose",
-        "Sustainable living angle is clear",
-        "Draft is under 600 words",
-        "Subject line is written"
+      "description": "Draft the first issue and subject line to validate the positioning.",
+      "prompt_template": "For fixture nontechnical-newsletter, complete node `write_issue_one`: Draft the first issue and subject line to validate the positioning. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "audience brief",
+        "content pillars"
       ],
-      "parallelizable_with": ["build_initial_audience"],
-      "assumptions": ["User will write the content themselves"],
-      "unknowns": [],
-      "confidence": 0.85,
+      "outputs": [
+        "first issue draft"
+      ],
+      "acceptance_criteria": [
+        "Issue introduces the newsletter purpose.",
+        "Sustainable living angle is clear.",
+        "Draft is under 700 words.",
+        "Subject line is written."
+      ],
+      "assumptions": [
+        "The creator has at least one topic ready."
+      ],
+      "unknowns": [
+        "Final brand voice may need refinement."
+      ],
+      "confidence": 0.76,
       "risk": "low",
-      "owner_hint": "creator",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     },
     {
       "id": "approve_first_send",
-      "title": "Review and approve first email send",
+      "title": "Approve first email send",
       "type": "decision",
-      "description": "The user must personally review issue #1 and approve the send. Sending is public, irreversible, and reaches real subscribers. No agent or automated process may press send.",
-      "prompt_template": "decision",
-      "inputs": ["Issue #1 draft complete", "Subscriber list ready (20+ subscribers)"],
-      "outputs": ["Issue #1 sent to subscribers"],
-      "acceptance_criteria": [],
-      "assumptions": [],
-      "unknowns": [],
-      "confidence": 0.95,
-      "risk": "medium",
+      "description": "Human gate before sending the first issue to subscribers.",
+      "prompt_template": "Human approval gate: review the inputs, verify each acceptance criterion, and explicitly approve before successor nodes proceed.",
+      "inputs": [
+        "first issue draft",
+        "subscriber list",
+        "send settings"
+      ],
+      "outputs": [
+        "send approval"
+      ],
+      "acceptance_criteria": [
+        "Sender confirms list, subject, and content one final time before sending.",
+        "User explicitly confirms send timing."
+      ],
+      "assumptions": [
+        "The send cannot be silently delegated."
+      ],
+      "unknowns": [
+        "Final send time is not set."
+      ],
+      "confidence": 0.9,
+      "risk": "high",
+      "parallelizable_with": [],
       "owner_hint": "human",
       "human_decision_gate": true
     },
     {
       "id": "establish_weekly_rhythm",
-      "title": "Establish weekly sending schedule",
+      "title": "Establish weekly publishing rhythm",
       "type": "milestone",
-      "description": "Milestone: issue #1 sent, weekly cadence established. Track subscriber growth toward 100-subscriber goal over 3 months.",
-      "prompt_template": "",
-      "inputs": ["Issue #1 sent"],
-      "outputs": ["Weekly newsletter in progress", "Subscriber tracking active"],
-      "acceptance_criteria": [
-        "At least 3 consecutive weekly issues sent",
-        "Subscriber count tracked"
+      "description": "Track cadence, subscriber growth, and iteration after launch.",
+      "prompt_template": "For fixture nontechnical-newsletter, complete node `establish_weekly_rhythm`: Track cadence, subscriber growth, and iteration after launch. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "promotion calendar",
+        "analytics"
       ],
-      "assumptions": [],
-      "unknowns": [],
-      "confidence": 0.8,
-      "risk": "low",
-      "owner_hint": "creator",
+      "outputs": [
+        "weekly operating rhythm"
+      ],
+      "acceptance_criteria": [
+        "Three consecutive weekly issues are scheduled or sent.",
+        "Subscriber count and conversion rate are tracked weekly."
+      ],
+      "assumptions": [
+        "A weekly cadence is sustainable."
+      ],
+      "unknowns": [
+        "Long-term content capacity is unknown."
+      ],
+      "confidence": 0.7,
+      "risk": "medium",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     }
   ],
   "edges": [
-    { "from": "choose_platform", "to": "setup_newsletter_account", "type": "blocks" },
-    { "from": "setup_newsletter_account", "to": "build_initial_audience", "type": "blocks" },
-    { "from": "setup_newsletter_account", "to": "write_issue_one", "type": "informs" },
-    { "from": "build_initial_audience", "to": "approve_first_send", "type": "informs" },
-    { "from": "write_issue_one", "to": "approve_first_send", "type": "blocks" },
-    { "from": "approve_first_send", "to": "establish_weekly_rhythm", "type": "blocks" }
-  ],
-  "assumptions": [
-    "User will write all newsletter content themselves",
-    "Roughly 200 personal contacts are reachable via text, email, or Instagram"
-  ],
-  "unknowns": [
-    "Which email platform to use",
-    "Exact subscriber count on day of first send"
-  ],
-  "blind_spots": [
     {
-      "text": "No email platform chosen yet — all downstream steps depend on this decision",
-      "classification": "unknown",
-      "resolution_hint": "Pick a platform (Substack recommended) before anything else"
+      "from": "choose_platform",
+      "to": "setup_newsletter_account",
+      "type": "blocks"
     },
     {
-      "text": "User is assumed to be writing solo",
-      "classification": "assumption",
-      "resolution_hint": "Confirm if collaborating with anyone"
+      "from": "define_audience_and_offer",
+      "to": "build_growth_channels",
+      "type": "informs"
     },
     {
-      "text": "No subscriber list exists yet — first send may reach very few people",
-      "classification": "risk",
-      "resolution_hint": "Build audience before scheduling issue #1 send"
+      "from": "setup_newsletter_account",
+      "to": "write_issue_one",
+      "type": "blocks"
     },
     {
-      "text": "Sending the first email to subscribers is a public, irreversible action",
-      "classification": "gate",
-      "resolution_hint": "User must personally review and approve before sending"
+      "from": "define_audience_and_offer",
+      "to": "write_issue_one",
+      "type": "informs"
+    },
+    {
+      "from": "write_issue_one",
+      "to": "approve_first_send",
+      "type": "blocks"
+    },
+    {
+      "from": "approve_first_send",
+      "to": "establish_weekly_rhythm",
+      "type": "blocks"
+    },
+    {
+      "from": "build_growth_channels",
+      "to": "establish_weekly_rhythm",
+      "type": "informs"
+    },
+    {
+      "from": "choose_platform",
+      "to": "define_audience_and_offer",
+      "type": "informs"
     }
   ],
+  "assumptions": [
+    "The creator can publish weekly and promote through existing social channels."
+  ],
+  "unknowns": [
+    "Newsletter platform is not yet chosen.",
+    "Current subscriber baseline is not confirmed."
+  ],
+  "blind_spots": [
+    "unknown: newsletter platform is not yet selected",
+    "assumption: the creator is writing and promoting solo",
+    "risk: subscriber growth depends on consistent cross-promotion",
+    "gate: first public send requires explicit human approval"
+  ],
   "open_questions": [
-    "Which email platform will you use?",
-    "Do you have any collaborators or is this a solo project?"
+    "What is the current subscriber count?",
+    "Which platform will the creator choose?"
   ],
   "meta": {
     "created_at": "2024-01-15T10:00:00Z",
-    "skill_version": "1.0",
     "session_id": "sess-nontechnical-newsletter-golden",
-    "questions_asked": 4,
-    "meter_pct_at_close": 72
+    "question_count": 4
   },
   "handoff": {
-    "start_node_id": "choose_platform",
-    "human_gates": ["choose_platform", "approve_first_send"],
-    "do_not_assume": [
-      "Which email platform to use",
-      "Whether the user has a subscriber list ready"
-    ]
+    "instructions": "Start at `choose_platform` and follow edges in genome.json. Do not assume answers for listed unknowns; stop at human gates for approval.",
+    "start_node": "choose_platform"
   }
 }

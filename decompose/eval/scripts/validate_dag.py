@@ -70,21 +70,22 @@ def validate_dag(genome: dict) -> list:
         nid = node["id"]
         ntype = node.get("type", "")
 
-        # DAG-4: Prompt template required for non-milestone nodes
-        if ntype != "milestone" and not node.get("prompt_template", "").strip():
+        # DAG-4: Agent-owned executable nodes must provide a prompt template.
+        prompt_template = node.get("prompt_template")
+        needs_prompt = (
+            node.get("owner_hint") == "agent"
+            and ntype in {"research", "code_change", "comms", "review", "risk"}
+        )
+        if needs_prompt and not (isinstance(prompt_template, str) and prompt_template.strip()):
             errors.append(
-                f"DAG-4: Node '{nid}' (type={ntype}) has empty prompt_template"
+                f"DAG-4: Agent node '{nid}' (type={ntype}) has empty prompt_template"
             )
 
-        # DAG-5: Acceptance criteria required for non-gated executable nodes
-        if (
-            not node.get("human_decision_gate", False)
-            and ntype not in ("milestone", "unknown")
-            and not node.get("acceptance_criteria")
-        ):
+        # DAG-5: Acceptance criteria required for non-milestone executable nodes.
+        if ntype != "milestone" and not node.get("acceptance_criteria"):
             errors.append(f"DAG-5: Node '{nid}' missing acceptance_criteria")
 
-        # DAG-6: Gate node must have at least one outgoing 'blocks' edge
+        # DAG-6: Gate node must have at least one outgoing 'blocks' edge and human owner.
         if node.get("human_decision_gate", False) and len(nodes) > 1:
             has_blocks_out = any(
                 e.get("from") == nid and e.get("type") == "blocks"
@@ -92,22 +93,25 @@ def validate_dag(genome: dict) -> list:
             )
             if not has_blocks_out:
                 errors.append(f"DAG-6: Gate node '{nid}' has no outgoing 'blocks' edge")
+            if node.get("owner_hint") != "human":
+                errors.append(f"DAG-6: Gate node '{nid}' owner_hint must be 'human'")
 
-        # DAG-7: Unknown nodes must have a resolution_strategy
-        if ntype == "unknown" and not node.get("resolution_strategy", "").strip():
-            errors.append(f"DAG-7: Unknown node '{nid}' missing resolution_strategy")
+        # DAG-7: Unknown nodes must make uncertainty explicit in the node or genome.
+        if ntype == "unknown" and not node.get("unknowns"):
+            errors.append(f"DAG-7: Unknown node '{nid}' missing unknowns")
 
-        # DAG-8: Low-confidence nodes must be typed as unknown
+        # DAG-8: Low-confidence nodes must be typed as unknown.
         confidence = node.get("confidence", 1.0)
         if confidence < 0.4 and ntype != "unknown":
             errors.append(
                 f"DAG-8: Node '{nid}' confidence={confidence} < 0.4 but type='{ntype}' (must be 'unknown')"
             )
 
-    # DAG-9: start_node_id must be a valid node ID
-    start_node = genome.get("handoff", {}).get("start_node_id", "")
+    # DAG-9: handoff start node must be a valid node ID.
+    handoff = genome.get("handoff", {})
+    start_node = handoff.get("start_node") or handoff.get("start_node_id") or ""
     if start_node and start_node not in node_ids:
-        errors.append(f"DAG-9: handoff.start_node_id '{start_node}' not in node list")
+        errors.append(f"DAG-9: handoff start node '{start_node}' not in node list")
 
     return errors
 

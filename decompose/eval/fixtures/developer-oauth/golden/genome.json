@@ -1,136 +1,290 @@
 {
   "genome_id": "developer-oauth-golden",
   "schema_version": "1.0",
-  "role": "developer",
-  "intent": "Add GitHub OAuth login to a FastAPI Python API, replacing JWT auth, targeting staging deployment within two weeks.",
+  "role": "Senior backend engineer, Python/FastAPI",
+  "intent": "Add OAuth2 GitHub login to our existing FastAPI app",
   "nodes": [
     {
       "id": "research_oauth_library",
-      "title": "Research and select OAuth library",
+      "title": "Research FastAPI OAuth library",
       "type": "research",
-      "description": "Evaluate authlib, fastapi-users, and python-social-auth for GitHub OAuth2 support with FastAPI.",
-      "prompt_template": "research",
-      "inputs": ["FastAPI framework confirmed", "GitHub OAuth2 requirement"],
-      "outputs": ["Selected library with rationale", "Integration complexity estimate"],
-      "acceptance_criteria": ["At least 2 libraries evaluated", "GitHub OAuth2 compatibility confirmed for chosen library", "Integration complexity documented"],
-      "assumptions": ["FastAPI ASGI setup is standard"],
-      "unknowns": [],
-      "confidence": 0.9,
-      "risk": "low",
-      "parallelizable_with": ["assess_auth_coverage"],
-      "owner_hint": "developer",
+      "description": "Compare OAuth libraries and select an implementation approach for GitHub login.",
+      "prompt_template": "For fixture developer-oauth, complete node `research_oauth_library`: Compare OAuth libraries and select an implementation approach for GitHub login. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "FastAPI version",
+        "auth requirements"
+      ],
+      "outputs": [
+        "library recommendation"
+      ],
+      "acceptance_criteria": [
+        "At least two libraries are evaluated.",
+        "GitHub OAuth2 compatibility is confirmed.",
+        "Integration complexity is documented."
+      ],
+      "assumptions": [
+        "Maintained libraries are preferred over custom OAuth code."
+      ],
+      "unknowns": [
+        "Installed dependency constraints are unknown."
+      ],
+      "confidence": 0.82,
+      "risk": "medium",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     },
     {
-      "id": "assess_auth_coverage",
-      "title": "Assess auth module test coverage",
-      "type": "research",
-      "description": "Map current test coverage of the auth module. Identify gaps that could hide regressions during JWT to OAuth migration.",
-      "prompt_template": "research",
-      "inputs": ["Current codebase", "60% coverage estimate (self-reported)"],
-      "outputs": ["Coverage report", "List of untested auth code paths"],
-      "acceptance_criteria": ["Coverage report generated for auth module", "Untested paths listed", "Risk assessment of gaps documented"],
-      "parallelizable_with": ["research_oauth_library"],
-      "assumptions": [],
-      "unknowns": [],
-      "confidence": 0.85,
+      "id": "review_current_auth_flow",
+      "title": "Review current auth flow",
+      "type": "review",
+      "description": "Map existing login, JWT issuance, user linking, and protected route behavior.",
+      "prompt_template": "For fixture developer-oauth, complete node `review_current_auth_flow`: Map existing login, JWT issuance, user linking, and protected route behavior. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "auth module",
+        "route list",
+        "tests"
+      ],
+      "outputs": [
+        "auth flow map"
+      ],
+      "acceptance_criteria": [
+        "All session-mode call sites identified.",
+        "JWT issuance and validation paths are documented.",
+        "User linking assumptions are listed."
+      ],
+      "assumptions": [
+        "Existing tests cover the common login path."
+      ],
+      "unknowns": [
+        "Edge cases around linked GitHub accounts are unknown."
+      ],
+      "confidence": 0.78,
       "risk": "medium",
-      "owner_hint": "developer",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     },
     {
       "id": "implement_oauth_endpoints",
-      "title": "Implement GitHub OAuth login endpoints",
+      "title": "Implement GitHub OAuth endpoints",
       "type": "code_change",
-      "description": "Add /auth/github and /auth/github/callback endpoints. Update session management. Do not remove JWT in this step.",
-      "prompt_template": "code_change",
-      "inputs": ["Selected OAuth library", "Coverage gaps noted", "GitHub OAuth app credentials (runtime)"],
-      "outputs": ["/auth/github endpoint", "/auth/github/callback endpoint", "Updated session model", "Integration tests"],
-      "acceptance_criteria": ["User can initiate GitHub OAuth login", "Callback stores GitHub user ID in session", "Existing JWT endpoints not broken", "Integration tests pass"],
-      "assumptions": [],
-      "unknowns": ["Whether existing session model can be extended or must be replaced"],
-      "confidence": 0.85,
-      "risk": "medium",
-      "owner_hint": "developer",
+      "description": "Add login and callback endpoints, state validation, and account linking for GitHub OAuth.",
+      "prompt_template": "For fixture developer-oauth, complete node `implement_oauth_endpoints`: Add login and callback endpoints, state validation, and account linking for GitHub OAuth. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "library recommendation",
+        "auth flow map"
+      ],
+      "outputs": [
+        "OAuth login code"
+      ],
+      "acceptance_criteria": [
+        "User can initiate GitHub OAuth login.",
+        "Callback validates state and stores authenticated identity.",
+        "Existing JWT login still works.",
+        "Integration tests pass."
+      ],
+      "assumptions": [
+        "GitHub client values will be supplied through existing secret management."
+      ],
+      "unknowns": [
+        "Redirect URI per environment needs confirmation."
+      ],
+      "confidence": 0.76,
+      "risk": "high",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     },
     {
       "id": "risk_session_invalidation",
-      "title": "Risk: Active JWT sessions invalidated on cutover",
+      "title": "Assess session invalidation risk",
       "type": "risk",
-      "description": "When JWT auth is removed, active sessions are invalidated. Users will be logged out. Requires migration window and rollback plan.",
-      "prompt_template": "risk",
-      "inputs": ["Implementation complete on staging", "Estimated active session count"],
-      "outputs": ["Rollback runbook", "Migration window plan"],
-      "acceptance_criteria": ["Rollback procedure documented", "Migration window timing agreed"],
-      "assumptions": [],
-      "unknowns": ["Number of active sessions at planned cutover time"],
-      "confidence": 0.75,
+      "description": "Document migration, rollback, and user-impact risks before changing session behavior.",
+      "prompt_template": "For fixture developer-oauth, complete node `risk_session_invalidation`: Document migration, rollback, and user-impact risks before changing session behavior. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "auth flow map",
+        "rollout constraints"
+      ],
+      "outputs": [
+        "risk and rollback note"
+      ],
+      "acceptance_criteria": [
+        "Rollback path documented.",
+        "Staging verification steps defined.",
+        "User impact of session changes is described."
+      ],
+      "assumptions": [
+        "JWT removal is not required for initial OAuth launch."
+      ],
+      "unknowns": [
+        "Number of active JWT sessions is unknown."
+      ],
+      "confidence": 0.8,
       "risk": "high",
-      "owner_hint": "developer",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
+      "human_decision_gate": false
+    },
+    {
+      "id": "oauth_rollout_review",
+      "title": "Review OAuth rollout readiness",
+      "type": "review",
+      "description": "Review code, tests, configuration, and rollback notes before production rollout.",
+      "prompt_template": "For fixture developer-oauth, complete node `oauth_rollout_review`: Review code, tests, configuration, and rollback notes before production rollout. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "OAuth login code",
+        "risk note"
+      ],
+      "outputs": [
+        "readiness review"
+      ],
+      "acceptance_criteria": [
+        "Code review completed.",
+        "Configuration checklist completed.",
+        "Staging OAuth login verified."
+      ],
+      "assumptions": [
+        "A staging environment is available."
+      ],
+      "unknowns": [
+        "Production rollout window is not set."
+      ],
+      "confidence": 0.79,
+      "risk": "medium",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     },
     {
       "id": "approve_jwt_removal",
-      "title": "Tech lead approves JWT auth removal",
+      "title": "Approve JWT removal",
       "type": "decision",
-      "description": "Per company policy, tech lead must explicitly approve removal of JWT. Cannot be automated. OAuth must be verified on staging and rollback plan ready.",
-      "prompt_template": "decision",
-      "inputs": ["OAuth verified on staging", "Rollback runbook ready", "All tests passing"],
-      "outputs": ["Explicit tech lead approval"],
-      "acceptance_criteria": [],
-      "assumptions": [],
-      "unknowns": [],
-      "confidence": 0.95,
-      "risk": "high",
-      "owner_hint": "tech_lead",
+      "description": "Human technical gate before removing or disabling JWT authentication.",
+      "prompt_template": "Human approval gate: review the inputs, verify each acceptance criterion, and explicitly approve before successor nodes proceed.",
+      "inputs": [
+        "migration plan",
+        "risk note",
+        "test results"
+      ],
+      "outputs": [
+        "approval decision"
+      ],
+      "acceptance_criteria": [
+        "JWT-to-OAuth migration plan reviewed.",
+        "All session-mode call sites identified.",
+        "Rollback path documented.",
+        "Tech lead explicitly approves removal before code changes."
+      ],
+      "assumptions": [
+        "Approval may defer JWT removal."
+      ],
+      "unknowns": [
+        "Approval owner may be a tech lead or security reviewer."
+      ],
+      "confidence": 0.88,
+      "risk": "critical",
+      "parallelizable_with": [],
+      "owner_hint": "human",
       "human_decision_gate": true
     },
     {
       "id": "remove_jwt_auth",
-      "title": "Remove JWT authentication system",
+      "title": "Remove JWT auth after approval",
       "type": "code_change",
-      "description": "Remove JWT middleware, token issuance, and validation after tech lead approval. Update all tests. Redeploy to staging.",
-      "prompt_template": "code_change",
-      "inputs": ["Tech lead approval confirmed", "Rollback plan ready"],
-      "outputs": ["JWT code removed", "All tests updated", "Staging redeployed"],
-      "acceptance_criteria": ["JWT endpoint returns 404 or 401", "GitHub OAuth login still functional", "All tests pass", "Staging deploy successful"],
-      "assumptions": [],
-      "unknowns": [],
-      "confidence": 0.9,
+      "description": "Disable or remove JWT login only after the approval gate passes.",
+      "prompt_template": "For fixture developer-oauth, complete node `remove_jwt_auth`: Disable or remove JWT login only after the approval gate passes. Return the outputs and verify each acceptance criterion.",
+      "inputs": [
+        "approval decision",
+        "migration plan"
+      ],
+      "outputs": [
+        "JWT removal change set"
+      ],
+      "acceptance_criteria": [
+        "JWT endpoint behavior is intentionally removed or guarded.",
+        "GitHub OAuth login remains functional.",
+        "All auth tests pass.",
+        "Rollback path remains available."
+      ],
+      "assumptions": [
+        "Removal is a later phase, not part of initial OAuth enablement."
+      ],
+      "unknowns": [
+        "Cutover timing is unknown."
+      ],
+      "confidence": 0.66,
       "risk": "high",
-      "owner_hint": "developer",
+      "parallelizable_with": [],
+      "owner_hint": "agent",
       "human_decision_gate": false
     }
   ],
   "edges": [
-    { "from": "research_oauth_library", "to": "implement_oauth_endpoints", "type": "blocks" },
-    { "from": "assess_auth_coverage", "to": "implement_oauth_endpoints", "type": "informs" },
-    { "from": "implement_oauth_endpoints", "to": "risk_session_invalidation", "type": "informs" },
-    { "from": "implement_oauth_endpoints", "to": "approve_jwt_removal", "type": "blocks" },
-    { "from": "risk_session_invalidation", "to": "approve_jwt_removal", "type": "informs" },
-    { "from": "approve_jwt_removal", "to": "remove_jwt_auth", "type": "blocks" }
+    {
+      "from": "research_oauth_library",
+      "to": "implement_oauth_endpoints",
+      "type": "blocks"
+    },
+    {
+      "from": "review_current_auth_flow",
+      "to": "implement_oauth_endpoints",
+      "type": "blocks"
+    },
+    {
+      "from": "review_current_auth_flow",
+      "to": "risk_session_invalidation",
+      "type": "informs"
+    },
+    {
+      "from": "implement_oauth_endpoints",
+      "to": "oauth_rollout_review",
+      "type": "blocks"
+    },
+    {
+      "from": "risk_session_invalidation",
+      "to": "approve_jwt_removal",
+      "type": "blocks"
+    },
+    {
+      "from": "approve_jwt_removal",
+      "to": "remove_jwt_auth",
+      "type": "blocks"
+    },
+    {
+      "from": "oauth_rollout_review",
+      "to": "remove_jwt_auth",
+      "type": "informs"
+    },
+    {
+      "from": "research_oauth_library",
+      "to": "review_current_auth_flow",
+      "type": "informs"
+    }
   ],
-  "assumptions": ["FastAPI ASGI setup is standard", "GitHub OAuth app will be created before implementation"],
-  "unknowns": ["Whether existing session model can be extended or must be replaced", "Active session count at cutover time"],
+  "assumptions": [
+    "FastAPI routes can add GitHub OAuth without immediately removing existing JWT login."
+  ],
+  "unknowns": [
+    "Exact auth library choice and session storage changes need review."
+  ],
   "blind_spots": [
-    { "text": "Standard FastAPI/ASGI assumed", "classification": "assumption" },
-    { "text": "Auth module test coverage has ~40% gap", "classification": "unknown" },
-    { "text": "Active JWT sessions will be invalidated on cutover", "classification": "risk" },
-    { "text": "No rollback plan exists — must be created before gate", "classification": "risk" },
-    { "text": "Tech lead must explicitly approve JWT removal", "classification": "gate" }
+    "assumption: existing FastAPI app can support server-side OAuth sessions",
+    "unknown: active JWT session count is not known",
+    "risk: login changes can lock out existing users",
+    "gate: JWT removal requires explicit technical approval"
   ],
-  "open_questions": ["Can the existing session model be extended or must it be replaced?", "What is the planned maintenance window for JWT cutover?"],
+  "open_questions": [
+    "Which OAuth library should be selected?",
+    "What session migration strategy is safest?"
+  ],
   "meta": {
-    "created_at": "2024-01-15T11:00:00Z",
-    "skill_version": "1.0",
+    "created_at": "2024-01-15T10:00:00Z",
     "session_id": "sess-developer-oauth-golden",
-    "questions_asked": 5,
-    "meter_pct_at_close": 83
+    "question_count": 5
   },
   "handoff": {
-    "start_node_id": "research_oauth_library",
-    "human_gates": ["approve_jwt_removal"],
-    "do_not_assume": ["Tech lead approval for JWT removal", "Session model replacement vs extension", "Active session count at cutover"]
+    "instructions": "Start at `research_oauth_library` and follow edges in genome.json. Do not assume answers for listed unknowns; stop at human gates for approval.",
+    "start_node": "research_oauth_library"
   }
 }
