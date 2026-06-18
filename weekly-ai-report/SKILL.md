@@ -206,13 +206,16 @@ casual readers will skip past. Often the most valuable insight.}
 
 **🧪 Try it yourself:**
 
-**If you're a {RELEVANT_ROLE}:**
+**{PRODUCT}:**
 \```
-{prompt tailored to a non-dev role. Pick 2-3 most relevant roles per story from:
-Product/Program, Marketing/Events, Operations, DevRel/Community/Advocacy.
-Always specify which product to use: Copilot CLI, Copilot App, or M365 (Word, Excel,
-Teams, Outlook, etc.). Always include at least one M365-based prompt option.
-Prompts must be specific and practical.}
+{prompt tailored to that product surface}
+\```
+
+Products to choose from (pick 2-3 most relevant per story):
+- **Copilot CLI** — terminal-based, power-user workflows
+- **Copilot App** — Canvases, multi-session, agent orchestration
+- **M365 Copilot** — and when applicable, specify the app: Word, Excel, PowerPoint, Outlook, Teams
+Prompts must be specific, practical, and accessible to non-developers.}
 \```
 
 **Sources:** {linked sources} · Confidence: **{High/Medium}**
@@ -250,8 +253,10 @@ End with: "We'll track this prediction. If we're wrong, we'll say so."}
 - SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
 - Section order: What happened → Why it matters → 💡 The part you might miss → What this means
-- Every story gets role-specific "🧪 Try it yourself" prompts for NON-DEVELOPER roles only. Pick 2-3 from: Product/Program, Marketing/Events, Operations, DevRel/Community/Advocacy
-- Do NOT include developer/engineering prompts
+- Every story gets "🧪 Try it yourself" prompts organized by PRODUCT, not role. Pick 2-3 per story from: **Copilot CLI**, **Copilot App**, **M365 Copilot** (and specify the app when applicable: Word, Excel, PowerPoint, Outlook, Teams)
+- Do NOT organize prompts by job title or role
+- Do NOT include developer/engineering-specific prompts
+- Prompts should be accessible to non-developers
 - Always specify which product: **Copilot CLI**, **Copilot App**, or **M365** (Copilot in Word, Excel, Teams, Outlook, etc.)
 - Always include at least one **M365-based** prompt option per story
 - Non-dev prompts must be genuinely useful — not "ask about X" but specific enough to produce actionable output
