@@ -228,22 +228,22 @@ casual readers will skip past. Often the most valuable insight.}
 
 **🧪 Try it yourself:**
 
-**Copilot CLI:**
+**Copilot CLI:** `⚡ 30 sec`
 \```
 {prompt}
 \```
 
-**Copilot App:**
+**Copilot App:** `⚡ 1 min`
 \```
 {prompt}
 \```
 
-**M365 Copilot ({specific app}):**
+**M365 Copilot ({specific app}):** `⚡ 1 min`
 \```
 {prompt}
 \```
 
-**Bonus — M365 Copilot ({different app, your choice}):**
+**Bonus — M365 Copilot ({different app, your choice}):** `🔧 2 min`
 \```
 {prompt — pick the M365 app most relevant to this specific story}
 \```
