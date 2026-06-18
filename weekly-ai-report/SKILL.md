@@ -206,16 +206,24 @@ casual readers will skip past. Often the most valuable insight.}
 
 **🧪 Try it yourself:**
 
-**{PRODUCT}:**
+**Copilot CLI:**
 \```
-{prompt tailored to that product surface}
+{prompt}
 \```
 
-Products to choose from (pick 2-3 most relevant per story):
-- **Copilot CLI** — terminal-based, power-user workflows
-- **Copilot App** — Canvases, multi-session, agent orchestration
-- **M365 Copilot** — and when applicable, specify the app: Word, Excel, PowerPoint, Outlook, Teams
-Prompts must be specific, practical, and accessible to non-developers.}
+**Copilot App:**
+\```
+{prompt}
+\```
+
+**M365 Copilot ({specific app}):**
+\```
+{prompt}
+\```
+
+**Bonus — M365 Copilot ({different app, your choice}):**
+\```
+{prompt — pick the M365 app most relevant to this specific story}
 \```
 
 **Sources:** {linked sources} · Confidence: **{High/Medium}**
