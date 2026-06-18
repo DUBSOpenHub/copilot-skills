@@ -171,21 +171,24 @@ non-public details. When in doubt, leave it out.
 
 Generate FOUR outputs:
 
-**0. Banner Image** — Generate a branded header using the asset generator MCP:
-```
-asset-generator-create_email_banner:
-  eyebrow: "{DATE_RANGE}"
-  heading: "AI-First Drops"
-  description: "{Headline of the #1 story this week — makes each banner content-unique}"
-  pillar: "copilot"
-  theme: "{rotate weekly — cycle through available copilot email themes to keep each issue visually distinct}"
-```
-To ensure variety, also try different asset types week to week:
-- **Week A:** `create_email_banner` (copilot pillar)
-- **Week B:** `create_landscape` (copilot pillar, heading = #1 story)
-- **Week C:** `create_social_banner` (copilot pillar, eyebrow = date, heading = #1 story)
-- **Week D:** `create_blog_changelog_unfurl` (featureType = "new", heading = #1 story)
-Then repeat. This ensures no two consecutive issues look the same.
+**0. Banner Image** — EVERY drop MUST have a unique graphic. Generate it using the asset generator MCP tools.
+
+**Rules for uniqueness — each drop must look different:**
+1. Use a DIFFERENT asset generator tool each week (rotate through the list below)
+2. Always use the **#1 story headline** as the description/heading — this makes content unique
+3. Always include the **date range** in the eyebrow
+4. Always use the `copilot` pillar
+
+**Rotation schedule:**
+- **Week 1:** `asset-generator-create_email_banner` (eyebrow = date, heading = "AI-First Drops", description = #1 story headline, pillar = copilot)
+- **Week 2:** `asset-generator-create_landscape` (pillar = copilot, heading = #1 story headline, description = date range)
+- **Week 3:** `asset-generator-create_social_banner` (pillar = copilot, eyebrow = date, heading = #1 story headline)
+- **Week 4:** `asset-generator-create_blog_changelog_unfurl` (featureType = "new", heading = #1 story headline)
+- **Week 5+:** Repeat from Week 1
+
+To determine which week: count the number of existing issues in the `ai-first-drops` repo and use `(count % 4) + 1`.
+
+**Never reuse the exact same asset generator call as the previous issue.**
 
 Embed the resulting image URL at the top of the markdown report, right after the title.
 
