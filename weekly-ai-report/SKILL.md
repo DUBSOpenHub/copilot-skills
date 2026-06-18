@@ -245,10 +245,15 @@ End with: "We'll track this prediction. If we're wrong, we'll say so."}
 ```
 
 **IMPORTANT formatting rules:**
-- Section order is always: What happened → Why it matters → What this means
-- Prompts are labeled "🧪 Try it yourself" and framed as testing the specific frontier skill
+- Section order is always: What happened → Why it matters → What everyone's getting wrong → What this means
+- Every "Why it matters" must be OPINIONATED — take a position, don't just describe
+- Every "What everyone's getting wrong" must offer a contrarian or deeper take
+- Prompts must test the SPECIFIC new capability — not generic tasks any model could do
+- Prompts should explain WHY they are the right test for this particular breakthrough
 - No cost/pricing data anywhere in the report
 - "At a Glance" table uses: What Happened, Model, Why You Should Care (3 columns only)
+- Include a 🔮 Bold Prediction section with a specific, falsifiable, time-bound prediction
+- End with "We'll track this prediction. If we're wrong, we'll say so."
 
 ### CSV Structure
 
