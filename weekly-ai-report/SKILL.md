@@ -79,12 +79,16 @@ prompt from Phase 4 — the one that best tests a genuinely new frontier capabil
 Run that SAME prompt against 3-5 models using the `task` tool with different `model` overrides.
 Launch them **in parallel** using background mode for speed.
 
-**Models to include** (use whichever are available, aim for diversity across model families):
-- `claude-sonnet-4.6` or `claude-opus-4.6` (Anthropic)
-- `gpt-5.5` or `gpt-5.4` (OpenAI)
-- `gemini-3.1-pro-preview` (Google)
-- `claude-haiku-4.5` (smaller/faster tier for comparison)
-- Any other available model that's relevant to the week's story
+**Models to include** — ALWAYS check for the latest available models before running.
+Do NOT hardcode model names. Instead, pick 4-5 models at runtime aiming for:
+- At least one from each major family: Anthropic (Claude), OpenAI (GPT), Google (Gemini)
+- At least one smaller/faster tier for cost-quality comparison
+- At least one Microsoft MAI model if available
+- If a model was released THIS WEEK, include it — that's the most interesting comparison
+
+To discover current models, check the `model` parameter options on the `task` tool
+or run a quick search for the latest model IDs. Model names change frequently —
+never assume last week's model list is still current.
 
 For each model response, capture:
 1. The first ~300 words of the actual output (trim for readability)
