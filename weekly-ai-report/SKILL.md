@@ -209,7 +209,7 @@ casual readers will skip past. Often the most valuable insight.}
 **If you're a {RELEVANT_ROLE}:**
 \```
 {prompt tailored to a non-dev role. Pick 2-3 most relevant roles per story from:
-Product/Program Manager, Marketing/Events, Operations, DevRel/Community/Advocacy.
+Product/Program, Marketing/Events, Operations, DevRel/Community/Advocacy.
 Always specify which product to use: Copilot CLI, Copilot App, or M365 (Word, Excel,
 Teams, Outlook, etc.). Always include at least one M365-based prompt option.
 Prompts must be specific and practical.}
@@ -250,7 +250,7 @@ End with: "We'll track this prediction. If we're wrong, we'll say so."}
 - SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
 - Section order: What happened → Why it matters → 💡 The part you might miss → What this means
-- Every story gets role-specific "🧪 Try it yourself" prompts for NON-DEVELOPER roles only. Pick 2-3 from: Product/Program Manager, Marketing/Events, Operations, DevRel/Community/Advocacy
+- Every story gets role-specific "🧪 Try it yourself" prompts for NON-DEVELOPER roles only. Pick 2-3 from: Product/Program, Marketing/Events, Operations, DevRel/Community/Advocacy
 - Do NOT include developer/engineering prompts
 - Always specify which product: **Copilot CLI**, **Copilot App**, or **M365** (Copilot in Word, Excel, Teams, Outlook, etc.)
 - Always include at least one **M365-based** prompt option per story
