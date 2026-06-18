@@ -10,6 +10,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [agent-conductor](agent-conductor/) | Multi-agent fleet conductor with real-time TUI observability. Launches multiple Terminal Stampede commander groups, k... |
 | [agent-orchestra](agent-orchestra/) | Multi-agent fleet conductor for the GitHub Copilot CLI. Launches exactly five visible Terminal Stampede commander gro... |
 | [agent-pulse](agent-pulse/) | — |
+| [ai-first-drops](ai-first-drops/) | 📡 Weekly AI Report — researches frontier model releases from the past week, stack-ranks new capabilities by power/imp... |
 | [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
 | [context-compass](context-compass/) | Context Compass — your guide to bringing GitHub, Slack, and WorkIQ context into Copilot CLI. Runs beginner onboarding... |
@@ -43,7 +44,6 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [swarm-command](swarm-command/) | 🐝 Swarm Command — multi-model consensus swarm orchestrator. Launches 50-250+ AI agents across 15 models with hierarch... |
 | [universe-cfp](universe-cfp/) | Suggests GitHub Universe talk submissions based on your GitHub activity. Pulls your repos, PRs, issues, and contribut... |
 | [web-artifacts-builder](web-artifacts-builder/) | Create interactive HTML artifacts (dashboards, visualizations, org charts, network maps, trackers, comparisons) as se... |
-| [weekly-ai-report](weekly-ai-report/) | 📡 Weekly AI Report — researches frontier model releases from the past week, stack-ranks new capabilities by power/imp... |
 | [xlsx](xlsx/) | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants t... |
 
 ## Install
