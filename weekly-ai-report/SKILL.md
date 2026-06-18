@@ -131,7 +131,38 @@ Then write the **🏟️ Live Model Showdown** section for the report:
 - Note if any model refused, errored, or produced garbage
 - This section should feel like a live experiment, not a polished review
 
-#### Phase 6 — Output Generation
+#### Phase 6 — Internal Verification Scan
+
+Before generating outputs, run a verification pass against internal sources to make sure
+everything in the report is accurate and current. This is the fact-check gate.
+
+**Check these sources (use whichever are available):**
+
+1. **Work IQ** — query for any internal context on the features covered:
+   - "What's on my Work IQ about [feature name]?"
+   - Check if any covered features have internal launch dates, rollout status, or known issues
+     that differ from public sources
+
+2. **Slack** — if accessible, scan relevant internal channels for:
+   - Corrections or clarifications on any features covered in the report
+   - Internal announcements that add context not in public sources
+   - Any features that were pulled, delayed, or changed since the public announcement
+
+3. **GitHub Changelog** — verify each story against the official changelog:
+   - Confirm ship dates, availability (GA/preview/beta), and plan requirements
+   - Check for any updates or errata published after the initial announcement
+
+**What to do with findings:**
+- If internal sources confirm the public info → no change needed
+- If internal sources add useful context → update the "💡 Part you might miss" section
+- If internal sources contradict public info → correct the report and note the discrepancy
+- If a feature was pulled or delayed → remove it or flag it clearly
+
+**⚠️ Safety:** Do not include any confidential, unreleased, or internal-only information in
+the published report. Only use internal sources to *verify* public information, not to *add*
+non-public details. When in doubt, leave it out.
+
+#### Phase 7 — Output Generation
 
 Generate FOUR outputs:
 
