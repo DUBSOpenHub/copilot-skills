@@ -58,10 +58,12 @@ For each feature/update discovered in Phase 1, search for:
 #### Phase 3 — Stack Ranking
 
 Rank capabilities from most to least powerful using these criteria (weighted):
-1. **Threshold crossing** (40%) — Did it beat a human baseline? First of its kind?
-2. **Practical impact** (30%) — How many people/workflows does this change?
-3. **Accessibility** (20%) — Can anyone use it, or is it restricted?
-4. **Benchmark delta** (10%) — How much did it improve over the previous best?
+1. **Non-developer impact** (50%) — How useful is this to PMs, marketing, events, ops, DevRel, community?
+2. **Practical impact** (25%) — How many people/workflows does this change?
+3. **Accessibility** (15%) — Can anyone use it, or is it restricted?
+4. **Threshold crossing** (10%) — First of its kind? New capability that didn't exist before?
+
+**Stack rank order: most impactful for non-developers first, most developer-focused last.**
 
 #### Phase 4 — Prompt Generation
 
