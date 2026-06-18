@@ -167,6 +167,11 @@ everything in the report is accurate and current. This is the fact-check gate.
 the published report. Only use internal sources to *verify* public information, not to *add*
 non-public details. When in doubt, leave it out.
 
+**🚫 Hard rule:** NEVER publish a story that cannot be verified through internal sources
+(Work IQ, Slack, internal docs, or GitHub Changelog). If a story only has public/external
+sources and nothing shows up internally, drop it and replace it with a story that CAN be
+verified. Every story in every drop must have internal confirmation.
+
 #### Phase 7 — Output Generation
 
 Generate FOUR outputs:
