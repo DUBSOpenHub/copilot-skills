@@ -123,7 +123,7 @@ Tone: Clear, practical, no jargon. Frame each item as news a colleague would sha
 ## #1 {EMOJI} {Catchy Headline}
 **What happened:** {description of the release/event — facts first}
 **Why it matters:** {significance and implications}
-**What this means for us:**
+**What this means:**
 - {actionable takeaway 1}
 - {actionable takeaway 2}
 - {actionable takeaway 3}
@@ -154,7 +154,7 @@ Tone: Clear, practical, no jargon. Frame each item as news a colleague would sha
 ```
 
 **IMPORTANT formatting rules:**
-- Section order is always: What happened → Why it matters → What this means for us
+- Section order is always: What happened → Why it matters → What this means
 - Prompts are labeled "🧪 Try it yourself" and framed as testing the specific frontier skill
 - No cost/pricing data anywhere in the report
 - "At a Glance" table uses: What Happened, Model, Why You Should Care (3 columns only)
