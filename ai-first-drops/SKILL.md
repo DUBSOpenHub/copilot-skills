@@ -1,7 +1,7 @@
 ---
-name: weekly-ai-report
+name: ai-first-drops
 description: >
-  📡 Weekly AI Report — researches frontier model releases from the past week,
+  📡 AI-First Drops — researches frontier model releases from the past week,
   stack-ranks new capabilities by power/impact, and generates ready-to-use prompts
   for each. Outputs both a markdown report and a CSV on your Desktop.
   Say "weekly ai report" to start.
@@ -10,7 +10,7 @@ metadata:
 license: MIT
 ---
 
-# Weekly AI Report — Frontier Model Intelligence
+# AI-First Drops
 
 **UTILITY SKILL** — Weekly scanner for new AI model releases and frontier capabilities.
 INVOKES: `web_search`, `web_fetch`, `create`, `bash`, `sql`
@@ -35,7 +35,7 @@ Tone: Confident, concise, high-signal. Think senior analyst briefing the CTO.
 
 ## Behavior
 
-### On Trigger ("weekly ai report", "weeklyaireport", "ai report", "what models dropped this week")
+### On Trigger ("ai-first drops", "ai first drops", "aifirstdrops", "weekly ai report", "run the drop")
 
 Execute the following research pipeline autonomously — do NOT ask the user questions:
 
@@ -191,7 +191,7 @@ Embed the resulting image URL at the top of the markdown report, right after the
 
 **1. Markdown Report** — Save to the session research folder:
 ```
-~/.copilot/session-state/{SESSION_ID}/research/weekly-ai-report-{DATE}.md
+~/.copilot/session-state/{SESSION_ID}/research/ai-first-drops-{DATE}.md
 ```
 
 Include:
@@ -207,12 +207,12 @@ Include:
 
 **2. CSV on Desktop** — Save to:
 ```
-~/Desktop/weekly-ai-report-{DATE}.csv
+~/Desktop/ai-first-drops-{DATE}.csv
 ```
 
 Columns: Rank, Capability, Model, Developer, Key Breakthrough, Benchmark, Access, Prompt
 
-Then open the CSV with: `open ~/Desktop/weekly-ai-report-{DATE}.csv`
+Then open the CSV with: `open ~/Desktop/ai-first-drops-{DATE}.csv`
 
 **3. Auto-publish GitHub Issue** — Create the issue automatically:
 ```bash
@@ -345,7 +345,7 @@ Rank,Capability,Model,Developer,Key Breakthrough,Benchmark,Access,Prompt
 
 **Assistant:** *[Runs full research pipeline autonomously, ~60-90 seconds]*
 
-📡 **Weekly AI Report — April 7-10, 2026**
+📡 **AI-First Drops — April 7-10, 2026**
 
 Top 3 this week:
 1. **Claude Mythos** found thousands of zero-day vulns autonomously (restricted access)
@@ -354,5 +354,5 @@ Top 3 this week:
 
 🤯 Most surprising: An open-source model (GLM-5.1) now beats every proprietary model at real-world coding tasks.
 
-📄 Full report: `~/.copilot/session-state/.../research/weekly-ai-report-2026-04-10.md`
-📊 CSV opened on Desktop: `~/Desktop/weekly-ai-report-2026-04-10.csv`
+📄 Full report: `~/.copilot/session-state/.../research/ai-first-drops-2026-04-10.md`
+📊 CSV opened on Desktop: `~/Desktop/ai-first-drops-2026-04-10.csv`

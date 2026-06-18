@@ -10,7 +10,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [agent-conductor](agent-conductor/) | Multi-agent fleet conductor with real-time TUI observability. Launches multiple Terminal Stampede commander groups, k... |
 | [agent-orchestra](agent-orchestra/) | Multi-agent fleet conductor for the GitHub Copilot CLI. Launches exactly five visible Terminal Stampede commander gro... |
 | [agent-pulse](agent-pulse/) | — |
-| [ai-first-drops](ai-first-drops/) | 📡 Weekly AI Report — researches frontier model releases from the past week, stack-ranks new capabilities by power/imp... |
+| [ai-first-drops](ai-first-drops/) | 📡 AI-First Drops — researches frontier model releases from the past week, stack-ranks new capabilities by power/impac... |
 | [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
 | [context-compass](context-compass/) | Context Compass — your guide to bringing GitHub, Slack, and WorkIQ context into Copilot CLI. Runs beginner onboarding... |
