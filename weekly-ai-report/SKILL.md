@@ -214,8 +214,10 @@ casual readers will skip past. Often the most valuable insight.}
 **If you're a {RELEVANT_ROLE}:**
 \```
 {prompt tailored to a non-dev role. Pick 1-2 most relevant roles per story from:
-PM/program manager, marketing/comms/content, revenue/sales, partnerships/BizDev,
-events/DevRel, operations/finance/people. Prompts must be specific and practical.}
+Product/Program Manager, Marketing/Events, Operations, DevRel.
+Always specify which product to use: Copilot CLI, Copilot App, or M365 (Word, Excel,
+Teams, Outlook, etc.). Always include at least one M365-based prompt option.
+Prompts must be specific and practical.}
 \```
 
 **Sources:** {linked sources} · Confidence: **{High/Medium}**
@@ -253,7 +255,9 @@ End with: "We'll track this prediction. If we're wrong, we'll say so."}
 - SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
 - Section order: What happened → Why it matters → 💡 The part you might miss → What this means
-- Every story gets role-specific "🧪 Try it yourself" prompts — always include a developer prompt PLUS 1-2 non-dev roles (PM, marketing, revenue, partnerships, events/DevRel, operations)
+- Every story gets role-specific "🧪 Try it yourself" prompts — always include a developer prompt PLUS 1-2 non-dev roles from: Product/Program Manager, Marketing/Events, Operations, DevRel
+- Always specify which product: **Copilot CLI**, **Copilot App**, or **M365** (Copilot in Word, Excel, Teams, Outlook, etc.)
+- Always include at least one **M365-based** prompt option per story
 - Non-dev prompts must be genuinely useful — not "ask about X" but specific enough to produce actionable output
 - No cost/pricing data anywhere in the report
 - "At a Glance" table uses: What Shipped, Feature, How You Can Use It (3 columns)
