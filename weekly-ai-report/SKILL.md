@@ -187,41 +187,46 @@ colleague who has a *point of view*, not just information.
 
 ```markdown
 # 📡 Weekly AI Frontier Report — {DATE_RANGE}
-### This week's AI headlines and frontier breakthroughs — explained.
+### This week's GitHub & Microsoft AI updates — explained.
 
 ## TL;DR
 {3-5 punchy sentences. Don't just list what happened — connect the dots. What's the
 THEME of this week? End with a line that frames why this week matters as a whole.}
 
 ## #1 {EMOJI} {Catchy Headline}
-**What happened:** {description of the release/event — facts first, specific numbers}
-**Why it matters:** {significance — make this OPINIONATED, not just informational.
-Don't say "this is important." Say WHY it changes something specific.}
-**What everyone's getting wrong:** {the contrarian take. What is the obvious
-interpretation, and why is the deeper story different? This is the section that
-makes people share the report.}
+**What happened:** {description — facts first, specific details}
+**Why it matters:** {significance — INFORMATIVE, not celebratory. What does this
+enable? What changes? Be clear and practical, not hype.}
+**💡 The part you might miss:** {the non-obvious implication or use case that
+casual readers will skip past. Often the most valuable insight.}
 **What this means:**
-- {actionable takeaway 1 — be specific, not generic}
+- {actionable takeaway 1 — be specific}
 - {actionable takeaway 2}
 - {actionable takeaway 3}
 
-**🧪 Try it yourself — {description of what the prompt tests}:**
+**🧪 Try it yourself:**
+
+**If you're a developer:**
 \```
-{A prompt that tests the SPECIFIC new capability this story is about.
-NOT a generic coding/reasoning prompt. The prompt should be IMPOSSIBLE
-or significantly worse on last month's models. It should test the exact
-breakthrough being claimed. Explain WHY this prompt is the right test.}
+{prompt tailored to developers}
+\```
+
+**If you're a {RELEVANT_ROLE}:**
+\```
+{prompt tailored to a non-dev role. Pick 1-2 most relevant roles per story from:
+PM/program manager, marketing/comms/content, revenue/sales, partnerships/BizDev,
+events/DevRel, operations/finance/people. Prompts must be specific and practical.}
 \```
 
 **Sources:** {linked sources} · Confidence: **{High/Medium}**
 
-{...repeat for each capability...}
+{...repeat for each story...}
 
 ## 🏟️ Live Model Showdown
 {See Phase 5 for full structure — real prompt, real outputs, real winner}
 
 ## At a Glance
-| # | What Happened | Model | Why You Should Care |
+| # | What Shipped | Feature | How You Can Use It |
 |---|---|---|---|
 {summary row per capability — NO cost column. "Why You Should Care" should be
 sharp and opinionated, not generic.}
