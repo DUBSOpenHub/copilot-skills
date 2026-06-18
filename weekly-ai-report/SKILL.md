@@ -250,14 +250,14 @@ End with: "We'll track this prediction. If we're wrong, we'll say so."}
 ```
 
 **IMPORTANT formatting rules:**
-- Section order is always: What happened → Why it matters → What everyone's getting wrong → What this means
-- Every "Why it matters" must be OPINIONATED — take a position, don't just describe
-- Every "What everyone's getting wrong" must offer a contrarian or deeper take
-- Prompts must test the SPECIFIC new capability — not generic tasks any model could do
-- Prompts should explain WHY they are the right test for this particular breakthrough
+- SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
+- TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
+- Section order: What happened → Why it matters → 💡 The part you might miss → What this means
+- Every story gets role-specific "🧪 Try it yourself" prompts — always include a developer prompt PLUS 1-2 non-dev roles (PM, marketing, revenue, partnerships, events/DevRel, operations)
+- Non-dev prompts must be genuinely useful — not "ask about X" but specific enough to produce actionable output
 - No cost/pricing data anywhere in the report
-- "At a Glance" table uses: What Happened, Model, Why You Should Care (3 columns only)
-- Include a 🔮 Bold Prediction section with a specific, falsifiable, time-bound prediction
+- "At a Glance" table uses: What Shipped, Feature, How You Can Use It (3 columns)
+- Include a 🔮 Bold Prediction section — specific, falsifiable, time-bound
 - End with "We'll track this prediction. If we're wrong, we'll say so."
 
 ### CSV Structure
