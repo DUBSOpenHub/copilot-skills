@@ -115,7 +115,7 @@ Tone: Clear, practical, no jargon. Frame each item as news a colleague would sha
 
 ```markdown
 # 📡 Weekly AI Report — {DATE_RANGE}
-### What you need to know this week to stay ahead
+### This week's AI headlines and frontier breakthroughs — explained.
 
 ## TL;DR
 {3-5 punchy sentences summarizing the week}
