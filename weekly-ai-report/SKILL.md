@@ -133,7 +133,17 @@ Then write the **🏟️ Live Model Showdown** section for the report:
 
 #### Phase 6 — Output Generation
 
-Generate THREE outputs:
+Generate FOUR outputs:
+
+**0. Banner Image** — Generate a branded header using the asset generator MCP:
+```
+asset-generator-create_email_banner:
+  eyebrow: "{DATE_RANGE}"
+  heading: "AI-First Drops"
+  description: "This week's AI updates — explained, with prompts to try."
+  pillar: "copilot"
+```
+Embed the resulting image URL at the top of the markdown report, right after the title.
 
 **1. Markdown Report** — Save to the session research folder:
 ```
