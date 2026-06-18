@@ -163,8 +163,8 @@ Then open the CSV with: `open ~/Desktop/weekly-ai-report-{DATE}.csv`
 **3. Auto-publish GitHub Issue** — Create the issue automatically:
 ```bash
 gh issue create \
-  --repo DUBSOpenHub/weekly-ai-frontier-report \
-  --title "📡 Weekly AI Frontier Report — {DATE_RANGE}" \
+  --repo DUBSOpenHub/ai-first-drops \
+  --title "📡 AI-First Drops — {DATE_RANGE}" \
   --body-file {path to markdown report} \
   --label "weekly-report,frontier-models,published"
 ```
@@ -190,7 +190,7 @@ have at least one line worth screenshotting. Frame each item as news from a smar
 colleague who has a *point of view*, not just information.
 
 ```markdown
-# 📡 Weekly AI Frontier Report — {DATE_RANGE}
+# 📡 AI-First Drops — {DATE_RANGE}
 ### This week's GitHub & Microsoft AI updates — explained.
 
 ## TL;DR
