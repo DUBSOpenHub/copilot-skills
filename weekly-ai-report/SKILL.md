@@ -140,9 +140,17 @@ Generate FOUR outputs:
 asset-generator-create_email_banner:
   eyebrow: "{DATE_RANGE}"
   heading: "AI-First Drops"
-  description: "This week's AI updates — explained, with prompts to try."
+  description: "{Headline of the #1 story this week — makes each banner content-unique}"
   pillar: "copilot"
+  theme: "{rotate weekly — cycle through available copilot email themes to keep each issue visually distinct}"
 ```
+To ensure variety, also try different asset types week to week:
+- **Week A:** `create_email_banner` (copilot pillar)
+- **Week B:** `create_landscape` (copilot pillar, heading = #1 story)
+- **Week C:** `create_social_banner` (copilot pillar, eyebrow = date, heading = #1 story)
+- **Week D:** `create_blog_changelog_unfurl` (featureType = "new", heading = #1 story)
+Then repeat. This ensures no two consecutive issues look the same.
+
 Embed the resulting image URL at the top of the markdown report, right after the title.
 
 **1. Markdown Report** — Save to the session research folder:
