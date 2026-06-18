@@ -71,7 +71,63 @@ For each ranked capability, write a **ready-to-use prompt** that:
 - Includes context and instructions so it works standalone
 - Pushes the model to its limits on that specific capability
 
-#### Phase 5 — Output Generation
+#### Phase 5 — Live Model Showdown 🏟️
+
+This is the section that makes this report unique. Pick the single most interesting
+prompt from Phase 4 — the one that best tests a genuinely new frontier capability.
+
+Run that SAME prompt against 3-5 models using the `task` tool with different `model` overrides.
+Launch them **in parallel** using background mode for speed.
+
+**Models to include** (use whichever are available, aim for diversity across model families):
+- `claude-sonnet-4.6` or `claude-opus-4.6` (Anthropic)
+- `gpt-5.5` or `gpt-5.4` (OpenAI)
+- `gemini-3.1-pro-preview` (Google)
+- `claude-haiku-4.5` (smaller/faster tier for comparison)
+- Any other available model that's relevant to the week's story
+
+For each model response, capture:
+1. The first ~300 words of the actual output (trim for readability)
+2. How long it took (note if fast/slow)
+3. A 1-sentence quality verdict
+
+Then write the **🏟️ Live Model Showdown** section for the report:
+
+```markdown
+## 🏟️ Live Model Showdown
+
+**This week's test:** {describe what the prompt tests and why it was chosen}
+
+**The prompt:**
+\```
+{the exact prompt sent to all models}
+\```
+
+### Results
+
+#### {Model 1 Name}
+{trimmed actual output}
+**Verdict:** {1-sentence assessment}
+
+#### {Model 2 Name}
+{trimmed actual output}
+**Verdict:** {1-sentence assessment}
+
+{...repeat for each model...}
+
+### 🏆 Winner: {Model Name}
+**Why:** {2-3 sentences on what separated the winner — be specific and opinionated}
+**Surprise:** {anything unexpected in the results}
+```
+
+**Rules for the showdown:**
+- Use the EXACT same prompt for every model — no tweaking
+- Show REAL output, not summaries of output — readers should see actual model responses
+- Be honest and opinionated about the winner — don't hedge
+- Note if any model refused, errored, or produced garbage
+- This section should feel like a live experiment, not a polished review
+
+#### Phase 6 — Output Generation
 
 Generate TWO outputs:
 
