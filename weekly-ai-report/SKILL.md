@@ -81,18 +81,21 @@ Generate TWO outputs:
 ```
 
 Include:
-- Executive summary (5 sentences max)
-- Stack-ranked table (Rank, Capability, Model, Breakthrough, Access, Cost)
-- Detailed section per capability with prompt
+- TL;DR (3-5 sentences, punchy summary for busy readers)
+- Detailed section per capability (see structure below)
+- "At a Glance" summary table (NO cost/pricing column)
+- "This Week's Biggest Takeaway" closing section
 - Confidence assessment
 - Footnotes with source URLs
+
+**Do NOT include cost-per-token or pricing data anywhere in the report.**
 
 **2. CSV on Desktop** — Save to:
 ```
 ~/Desktop/weekly-ai-report-{DATE}.csv
 ```
 
-Columns: Rank, Capability, Model, Developer, Key Breakthrough, Benchmark, Access, Cost, Prompt
+Columns: Rank, Capability, Model, Developer, Key Breakthrough, Benchmark, Access, Prompt
 
 Then open the CSV with: `open ~/Desktop/weekly-ai-report-{DATE}.csv`
 
@@ -107,27 +110,41 @@ Print a concise summary to the terminal:
 
 ### Markdown Report Structure
 
+The report is written for an internal team member who wants to stay current on AI.
+Tone: Clear, practical, no jargon. Frame each item as news a colleague would share.
+
 ```markdown
-# Frontier AI Skills Report — Week of {DATE_RANGE}
+# 📡 Weekly AI Report — {DATE_RANGE}
+### What you need to know this week to stay ahead
 
-## Executive Summary
-{3-5 sentences}
+## TL;DR
+{3-5 punchy sentences summarizing the week}
 
-## Stack-Ranked Frontier Skills
+## #1 {EMOJI} {Catchy Headline}
+**What happened:** {description of the release/event — facts first}
+**Why it matters:** {significance and implications}
+**What this means for us:**
+- {actionable takeaway 1}
+- {actionable takeaway 2}
+- {actionable takeaway 3}
 
-### #1 {EMOJI} {Capability Name}
-**Model:** {name} ({developer}) — *{access}*
-**What's new:** {description}
-**Why it's #{n}:** {justification}
-**Prompt:**
+**🧪 Try it yourself — {description of what the prompt tests}:**
 \```
-{ready-to-use prompt}
+{ready-to-use prompt that demonstrates this specific capability}
 \```
+
+**Sources:** {linked sources} · Confidence: **{High/Medium}**
 
 {...repeat for each capability...}
 
-## Master Comparison Table
-{table}
+## At a Glance
+| # | What Happened | Model | Why You Should Care |
+|---|---|---|---|
+{summary row per capability — NO cost column}
+
+## This Week's Biggest Takeaway
+{2-3 sentence synthesis of the week's theme}
+**One thing to try this week:** {single low-friction action}
 
 ## Confidence Assessment
 {what's certain vs inferred}
@@ -136,10 +153,16 @@ Print a concise summary to the terminal:
 {citations}
 ```
 
+**IMPORTANT formatting rules:**
+- Section order is always: What happened → Why it matters → What this means for us
+- Prompts are labeled "🧪 Try it yourself" and framed as testing the specific frontier skill
+- No cost/pricing data anywhere in the report
+- "At a Glance" table uses: What Happened, Model, Why You Should Care (3 columns only)
+
 ### CSV Structure
 
 ```
-Rank,Capability,Model,Developer,Key Breakthrough,Benchmark,Access,Cost,Prompt
+Rank,Capability,Model,Developer,Key Breakthrough,Benchmark,Access,Prompt
 ```
 
 ## Error Handling
