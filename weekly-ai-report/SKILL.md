@@ -248,12 +248,6 @@ sharp and opinionated, not generic.}
 all 7 stories? End with something memorable.}
 **One thing to try this week:** {single low-friction action anyone can do}
 
-## 🔮 Bold Prediction
-{One specific, falsifiable prediction based on this week's developments.
-Include a timeframe (e.g., "within 90 days"). Be bold but reasoned.
-End with: "We'll track this prediction. If we're wrong, we'll say so."}
-```
-
 ## Confidence Assessment
 {what's certain vs inferred}
 
@@ -277,8 +271,6 @@ End with: "We'll track this prediction. If we're wrong, we'll say so."}
 - Non-dev prompts must be genuinely useful — not "ask about X" but specific enough to produce actionable output
 - No cost/pricing data anywhere in the report
 - "At a Glance" table uses: What Shipped, Feature, How You Can Use It (3 columns)
-- Include a 🔮 Bold Prediction section — specific, falsifiable, time-bound
-- End with "We'll track this prediction. If we're wrong, we'll say so."
 
 ### CSV Structure
 
