@@ -129,9 +129,9 @@ Then write the **🏟️ Live Model Showdown** section for the report:
 
 #### Phase 6 — Output Generation
 
-Generate TWO outputs:
+Generate THREE outputs:
 
-**1. Markdown Report** — Save to the session research folder via `/research`:
+**1. Markdown Report** — Save to the session research folder:
 ```
 ~/.copilot/session-state/{SESSION_ID}/research/weekly-ai-report-{DATE}.md
 ```
@@ -156,7 +156,20 @@ Columns: Rank, Capability, Model, Developer, Key Breakthrough, Benchmark, Access
 
 Then open the CSV with: `open ~/Desktop/weekly-ai-report-{DATE}.csv`
 
-#### Phase 6 — Summary
+**3. Auto-publish GitHub Issue** — Create the issue automatically:
+```bash
+gh issue create \
+  --repo DUBSOpenHub/weekly-ai-frontier-report \
+  --title "📡 Weekly AI Frontier Report — {DATE_RANGE}" \
+  --body-file {path to markdown report} \
+  --label "weekly-report,frontier-models,published"
+```
+
+Add the `open-source` label if any story covers open-weight models.
+Add the `policy` label if any story covers regulation or governance.
+Do NOT add `needs-review` — the report auto-publishes.
+
+#### Phase 7 — Summary
 
 Print a concise summary to the terminal:
 - The top 3 most important things from this week
