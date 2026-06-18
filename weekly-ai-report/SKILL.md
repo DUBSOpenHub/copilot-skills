@@ -181,43 +181,61 @@ Print a concise summary to the terminal:
 ### Markdown Report Structure
 
 The report is written for an internal team member who wants to stay current on AI.
-Tone: Clear, practical, no jargon. Frame each item as news a colleague would share.
+Tone: Opinionated, practical, memorable. Not a summary — a take. Every section should
+have at least one line worth screenshotting. Frame each item as news from a smart
+colleague who has a *point of view*, not just information.
 
 ```markdown
-# 📡 Weekly AI Report — {DATE_RANGE}
+# 📡 Weekly AI Frontier Report — {DATE_RANGE}
 ### This week's AI headlines and frontier breakthroughs — explained.
 
 ## TL;DR
-{3-5 punchy sentences summarizing the week}
+{3-5 punchy sentences. Don't just list what happened — connect the dots. What's the
+THEME of this week? End with a line that frames why this week matters as a whole.}
 
 ## #1 {EMOJI} {Catchy Headline}
-**What happened:** {description of the release/event — facts first}
-**Why it matters:** {significance and implications}
+**What happened:** {description of the release/event — facts first, specific numbers}
+**Why it matters:** {significance — make this OPINIONATED, not just informational.
+Don't say "this is important." Say WHY it changes something specific.}
+**What everyone's getting wrong:** {the contrarian take. What is the obvious
+interpretation, and why is the deeper story different? This is the section that
+makes people share the report.}
 **What this means:**
-- {actionable takeaway 1}
+- {actionable takeaway 1 — be specific, not generic}
 - {actionable takeaway 2}
 - {actionable takeaway 3}
 
 **🧪 Try it yourself — {description of what the prompt tests}:**
 \```
-{ready-to-use prompt that demonstrates this specific capability}
+{A prompt that tests the SPECIFIC new capability this story is about.
+NOT a generic coding/reasoning prompt. The prompt should be IMPOSSIBLE
+or significantly worse on last month's models. It should test the exact
+breakthrough being claimed. Explain WHY this prompt is the right test.}
 \```
 
 **Sources:** {linked sources} · Confidence: **{High/Medium}**
 
 {...repeat for each capability...}
 
-## At a Glance
-| # | What Happened | Model | Why You Should Care |
-|---|---|---|---|
-{summary row per capability — NO cost column}
-
 ## 🏟️ Live Model Showdown
 {See Phase 5 for full structure — real prompt, real outputs, real winner}
 
+## At a Glance
+| # | What Happened | Model | Why You Should Care |
+|---|---|---|---|
+{summary row per capability — NO cost column. "Why You Should Care" should be
+sharp and opinionated, not generic.}
+
 ## This Week's Biggest Takeaway
-{2-3 sentence synthesis of the week's theme}
-**One thing to try this week:** {single low-friction action}
+{2-3 sentence synthesis — not a recap, a THESIS. What's the one idea that connects
+all 7 stories? End with something memorable.}
+**One thing to try this week:** {single low-friction action anyone can do}
+
+## 🔮 Bold Prediction
+{One specific, falsifiable prediction based on this week's developments.
+Include a timeframe (e.g., "within 90 days"). Be bold but reasoned.
+End with: "We'll track this prediction. If we're wrong, we'll say so."}
+```
 
 ## Confidence Assessment
 {what's certain vs inferred}
