@@ -41,19 +41,19 @@ Execute the following research pipeline autonomously — do NOT ask the user que
 
 #### Phase 1 — Discovery (parallel web searches)
 
-Run these searches in parallel:
-1. `"AI models released this week [CURRENT_MONTH] [CURRENT_YEAR] new capabilities frontier"`
-2. `"[CURRENT_MONTH] [CURRENT_YEAR] latest LLM announcements model releases"`
-3. `"GPT Claude Gemini Grok new model release [CURRENT_MONTH] [CURRENT_YEAR]"`
-4. `"open source AI model release [CURRENT_MONTH] [CURRENT_YEAR] benchmark"`
+Run these searches in parallel — focus on GitHub and Microsoft AI only:
+1. `"GitHub Copilot new features releases [CURRENT_MONTH] [CURRENT_YEAR]"`
+2. `"Microsoft AI announcements Azure MAI models [CURRENT_MONTH] [CURRENT_YEAR]"`
+3. `"GitHub changelog [CURRENT_MONTH] [CURRENT_YEAR] new features"`
+4. `"Microsoft Build Azure AI updates [CURRENT_MONTH] [CURRENT_YEAR]"`
 
-#### Phase 2 — Deep Dive (parallel per model)
+#### Phase 2 — Deep Dive (parallel per feature)
 
-For each model discovered in Phase 1, search for:
-- Specific benchmark numbers (SWE-Bench, OSWorld, AIME, GPQA, Arena ranking)
-- New capabilities that cross a threshold (first to beat humans, first open-source to lead, etc.)
-- Access method and pricing
-- What's *newly possible* that wasn't before this release
+For each feature/update discovered in Phase 1, search for:
+- What specifically shipped and when
+- How it works and who it's available to
+- What it enables that wasn't possible before
+- How non-developer roles (PM, marketing, revenue, partnerships, events/DevRel, operations) can use it
 
 #### Phase 3 — Stack Ranking
 
