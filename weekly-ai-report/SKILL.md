@@ -148,7 +148,12 @@ everything in the report is accurate and current. This is the fact-check gate.
    - Internal announcements that add context not in public sources
    - Any features that were pulled, delayed, or changed since the public announcement
 
-3. **GitHub Changelog** — verify each story against the official changelog:
+3. **GitHub Internal Docs** — search internal documentation sources:
+   - Check internal Hubber docs, ship posts, and internal repos for feature details
+   - Verify rollout percentages, feature flags, and plan-tier availability
+   - Look for internal FAQs, known limitations, or workarounds not in public docs
+
+4. **GitHub Changelog** — verify each story against the official changelog:
    - Confirm ship dates, availability (GA/preview/beta), and plan requirements
    - Check for any updates or errata published after the initial announcement
 
