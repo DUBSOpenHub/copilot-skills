@@ -178,12 +178,13 @@ Generate FOUR outputs:
 2. Always use the **#1 story headline** as the description/heading — this makes content unique
 3. Always include the **date range** in the eyebrow
 4. Always use the `copilot` pillar
+5. **ALWAYS include the tagline: "This week's AI updates — explained, with prompts to try."** in the description field (or as a secondary line if the tool supports it)
 
 **Rotation schedule:**
-- **Week 1:** `asset-generator-create_email_banner` (eyebrow = date, heading = "AI-First Drops", description = #1 story headline, pillar = copilot)
-- **Week 2:** `asset-generator-create_landscape` (pillar = copilot, heading = #1 story headline, description = date range)
-- **Week 3:** `asset-generator-create_social_banner` (pillar = copilot, eyebrow = date, heading = #1 story headline)
-- **Week 4:** `asset-generator-create_blog_changelog_unfurl` (featureType = "new", heading = #1 story headline)
+- **Week 1:** `asset-generator-create_email_banner` (eyebrow = date, heading = "AI-First Drops", description = "This week's AI updates — explained, with prompts to try.", pillar = copilot)
+- **Week 2:** `asset-generator-create_social_banner` (pillar = copilot, eyebrow = date, heading = "AI-First Drops", description = "This week's AI updates — explained, with prompts to try.")
+- **Week 3:** `asset-generator-create_email_banner` (eyebrow = date, heading = #1 story headline, description = "This week's AI updates — explained, with prompts to try.", pillar = copilot)
+- **Week 4:** `asset-generator-create_social_banner` (pillar = copilot, eyebrow = date, heading = #1 story headline, description = "This week's AI updates — explained, with prompts to try.")
 - **Week 5+:** Repeat from Week 1
 
 To determine which week: count the number of existing issues in the `ai-first-drops` repo and use `(count % 4) + 1`.
