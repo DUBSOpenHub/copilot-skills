@@ -199,6 +199,9 @@ Tone: Clear, practical, no jargon. Frame each item as news a colleague would sha
 |---|---|---|---|
 {summary row per capability — NO cost column}
 
+## 🏟️ Live Model Showdown
+{See Phase 5 for full structure — real prompt, real outputs, real winner}
+
 ## This Week's Biggest Takeaway
 {2-3 sentence synthesis of the week's theme}
 **One thing to try this week:** {single low-friction action}
