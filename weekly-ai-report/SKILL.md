@@ -139,6 +139,7 @@ Generate TWO outputs:
 Include:
 - TL;DR (3-5 sentences, punchy summary for busy readers)
 - Detailed section per capability (see structure below)
+- 🏟️ Live Model Showdown section (from Phase 5)
 - "At a Glance" summary table (NO cost/pricing column)
 - "This Week's Biggest Takeaway" closing section
 - Confidence assessment
