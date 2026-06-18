@@ -253,11 +253,14 @@ End with: "We'll track this prediction. If we're wrong, we'll say so."}
 - SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
 - Section order: What happened → Why it matters → 💡 The part you might miss → What this means
-- Every story gets "🧪 Try it yourself" prompts organized by PRODUCT, not role. Pick 2-3 per story from: **Copilot CLI**, **Copilot App**, **M365 Copilot** (and specify the app when applicable: Word, Excel, PowerPoint, Outlook, Teams)
+- Every story gets "🧪 Try it yourself" with ALL FOUR prompts:
+  1. **Copilot CLI** — always
+  2. **Copilot App** — always
+  3. **M365 Copilot** — always (specify: Word, Excel, PowerPoint, Outlook, or Teams)
+  4. **Bonus** — one additional M365 app or surface that's especially relevant (your choice)
 - Do NOT organize prompts by job title or role
 - Do NOT include developer/engineering-specific prompts
 - Prompts should be accessible to non-developers
-- Always specify which product: **Copilot CLI**, **Copilot App**, or **M365** (Copilot in Word, Excel, Teams, Outlook, etc.)
 - Always include at least one **M365-based** prompt option per story
 - Non-dev prompts must be genuinely useful — not "ask about X" but specific enough to produce actionable output
 - No cost/pricing data anywhere in the report
