@@ -187,12 +187,13 @@ Generate FOUR outputs:
 4. `eyebrow` = the **date range** (e.g. "June 16–23, 2026")
 5. `description` = "This week's AI updates — explained, with prompts to try."
 
-**Weekly variety comes from the `theme` only — rotate through these 8 light + grey themes (skip dark):**
+**Weekly variety comes from the `theme` only — rotate through all 12 themes (light → grey → dark), then repeat:**
 ```
 copilot-email-light-1, copilot-email-light-2, copilot-email-light-3, copilot-email-light-4,
-copilot-email-grey-1,  copilot-email-grey-2,  copilot-email-grey-3,  copilot-email-grey-4
+copilot-email-grey-1,  copilot-email-grey-2,  copilot-email-grey-3,  copilot-email-grey-4,
+copilot-email-dark-1,  copilot-email-dark-2,  copilot-email-dark-3,  copilot-email-dark-4
 ```
-Pick by edition number N (the drop you're publishing is the Nth): `theme = themes[(N - 1) % 8]`.
+Pick by edition number N (the drop you're publishing is the Nth): `theme = themes[(N - 1) % 12]`.
 To get N, count existing AI-First Drops edition issues and add 1. **Never reuse the previous edition's theme.**
 
 Embed the resulting image URL at the top of the markdown report, right after the title.
