@@ -178,25 +178,22 @@ verified. Every story in every drop must have internal confirmation.
 
 Generate FOUR outputs:
 
-**0. Banner Image** — EVERY drop MUST have a unique graphic. Generate it using the asset generator MCP tools.
+**0. Banner Image** — EVERY drop MUST have a horizontal banner. Generate it with `asset-generator-create_email_banner` (1320×568).
 
-**Rules for uniqueness — each drop must look different:**
-1. Use a DIFFERENT asset generator tool each week (rotate through the list below)
-2. Always use the **#1 story headline** as the description/heading — this makes content unique
-3. Always include the **date range** in the eyebrow
-4. Always use the `copilot` pillar
-5. **ALWAYS include the tagline: "This week's AI updates — explained, with prompts to try."** in the description field (or as a secondary line if the tool supports it)
+**Fixed for every drop (do NOT change these):**
+1. Tool: `asset-generator-create_email_banner` ONLY. **Never** use the tall/social formats (`create_social_banner`, `create_social_portrait`, `create_social_square`) — they crop awkwardly and stamp a "Copilot" wordmark across the top.
+2. `pillar` = `copilot`
+3. `heading` = "AI-First Drops"
+4. `eyebrow` = the **date range** (e.g. "June 16–23, 2026")
+5. `description` = "This week's AI updates — explained, with prompts to try."
 
-**Rotation schedule:**
-- **Week 1:** `asset-generator-create_email_banner` (eyebrow = date, heading = "AI-First Drops", description = "This week's AI updates — explained, with prompts to try.", pillar = copilot)
-- **Week 2:** `asset-generator-create_social_banner` (pillar = copilot, eyebrow = date, heading = "AI-First Drops", description = "This week's AI updates — explained, with prompts to try.")
-- **Week 3:** `asset-generator-create_email_banner` (eyebrow = date, heading = #1 story headline, description = "This week's AI updates — explained, with prompts to try.", pillar = copilot)
-- **Week 4:** `asset-generator-create_social_banner` (pillar = copilot, eyebrow = date, heading = #1 story headline, description = "This week's AI updates — explained, with prompts to try.")
-- **Week 5+:** Repeat from Week 1
-
-To determine which week: count the number of existing issues in the `ai-first-drops` repo and use `(count % 4) + 1`.
-
-**Never reuse the exact same asset generator call as the previous issue.**
+**Weekly variety comes from the `theme` only — rotate through these 8 light + grey themes (skip dark):**
+```
+copilot-email-light-1, copilot-email-light-2, copilot-email-light-3, copilot-email-light-4,
+copilot-email-grey-1,  copilot-email-grey-2,  copilot-email-grey-3,  copilot-email-grey-4
+```
+Pick by edition number N (the drop you're publishing is the Nth): `theme = themes[(N - 1) % 8]`.
+To get N, count existing AI-First Drops edition issues and add 1. **Never reuse the previous edition's theme.**
 
 Embed the resulting image URL at the top of the markdown report, right after the title.
 
