@@ -238,6 +238,19 @@ Add the `open-source` label if any story covers open-weight models.
 Add the `policy` label if any story covers regulation or governance.
 Do NOT add `needs-review` — the report auto-publishes.
 
+**4. Auto-tag a GitHub Release** — After the issue is published, cut a matching release:
+```bash
+# Edition N = total count of published AI-First Drops edition issues (this one is the Nth).
+# Versioning: Edition N -> tag vN.0.0 (Edition 1 = v1.0.0, Edition 2 = v2.0.0, ...).
+gh release create v{N}.0.0 \
+  --repo DUBSOpenHub/ai-first-drops \
+  --title "🚀 AI-First Drops v{N}.0.0 — Edition {N}" \
+  --target main \
+  --latest \
+  --notes "<short summary + a link to the edition issue — do NOT paste the full report>"
+```
+If that exact tag already exists, skip creating it.
+
 #### Phase 7 — Summary
 
 Print a concise summary to the terminal:
