@@ -73,7 +73,67 @@ For each ranked capability, write a **ready-to-use prompt** that:
 - Includes context and instructions so it works standalone
 - Pushes the model to its limits on that specific capability
 
-#### Phase 5 — Internal Verification Scan
+#### Phase 5 — Live Model Showdown 🏟️
+
+This is the section that makes this report unique. Pick the single most interesting
+prompt from Phase 4 — the one that best tests a genuinely new frontier capability.
+
+Run that SAME prompt against 3-5 models using the `task` tool with different `model` overrides.
+Launch them **in parallel** using background mode for speed.
+
+**Models to include** — ALWAYS check for the latest available models before running.
+Do NOT hardcode model names. Instead, pick 4-5 models at runtime aiming for:
+- At least one from each major family: Anthropic (Claude), OpenAI (GPT), Google (Gemini)
+- At least one smaller/faster tier for cost-quality comparison
+- At least one Microsoft MAI model if available
+- If a model was released THIS WEEK, include it — that's the most interesting comparison
+
+To discover current models, check the `model` parameter options on the `task` tool
+or run a quick search for the latest model IDs. Model names change frequently —
+never assume last week's model list is still current.
+
+For each model response, capture:
+1. The first ~300 words of the actual output (trim for readability)
+2. How long it took (note if fast/slow)
+3. A 1-sentence quality verdict
+
+Then write the **🏟️ Live Model Showdown** section for the report:
+
+```markdown
+## 🏟️ Live Model Showdown
+
+**This week's test:** {describe what the prompt tests and why it was chosen}
+
+**The prompt:**
+\```
+{the exact prompt sent to all models}
+\```
+
+### Results
+
+#### {Model 1 Name}
+{trimmed actual output}
+**Verdict:** {1-sentence assessment}
+
+#### {Model 2 Name}
+{trimmed actual output}
+**Verdict:** {1-sentence assessment}
+
+{...repeat for each model...}
+
+### 🏆 Winner: {Model Name}
+**Why:** {2-3 sentences on what separated the winner — be specific and opinionated}
+**Surprise:** {anything unexpected in the results}
+```
+
+**Rules for the showdown:**
+- Use the EXACT same prompt for every model — no tweaking
+- Show REAL output, not summaries of output — readers should see actual model responses
+- Be honest and opinionated about the winner — don't hedge
+- Note if any model refused, errored, or produced garbage
+- This section should feel like a live experiment, not a polished review
+
+#### Phase 6 — Internal Verification Scan
 
 Before generating outputs, run a verification pass against internal sources to make sure
 everything in the report is accurate and current. This is the fact-check gate.
@@ -114,7 +174,7 @@ non-public details. When in doubt, leave it out.
 sources and nothing shows up internally, drop it and replace it with a story that CAN be
 verified. Every story in every drop must have internal confirmation.
 
-#### Phase 6 — Output Generation
+#### Phase 7 — Output Generation
 
 Generate FOUR outputs:
 
@@ -146,6 +206,7 @@ Embed the resulting image URL at the top of the markdown report, right after the
 Include:
 - TL;DR (3-5 sentences, punchy summary for busy readers)
 - Detailed section per capability (see structure below)
+- 🏟️ Live Model Showdown section (from Phase 5)
 - "At a Glance" summary table (NO cost/pricing column)
 - "This Week's Biggest Takeaway" closing section
 - Confidence assessment
@@ -248,6 +309,9 @@ casual readers will skip past. Often the most valuable insight.}
 **Sources:** {linked sources} · Confidence: **{High/Medium}**
 
 {...repeat for each story...}
+
+## 🏟️ Live Model Showdown
+{See Phase 5 for full structure — real prompt, real outputs, real winner}
 
 ## At a Glance
 | # | What Shipped | Feature | How You Can Use It |
