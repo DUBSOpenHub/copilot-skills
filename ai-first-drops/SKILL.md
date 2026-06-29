@@ -13,7 +13,7 @@ license: MIT
 # AI-First Drops
 
 **UTILITY SKILL** — Weekly scanner for new AI model releases and frontier capabilities.
-INVOKES: `web_search`, `web_fetch`, `create`, `bash`, `sql`
+INVOKES: `web_search`, `web_fetch`, `workiq` (Work IQ), `slack`, `create`, `bash`, `sql`
 USE FOR: generating a stack-ranked report of new AI capabilities released in the past week
 DO NOT USE FOR: general AI questions, model comparison without a "this week" focus, tutorials
 
@@ -39,13 +39,28 @@ Tone: Confident, concise, high-signal. Think senior analyst briefing the CTO.
 
 Execute the following research pipeline autonomously — do NOT ask the user questions:
 
-#### Phase 1 — Discovery (parallel web searches)
+#### Phase 1 — Discovery (parallel — public + internal)
 
-Run these searches in parallel — focus on GitHub and Microsoft AI only:
+Pull from BOTH public and internal sources. This is an internal report, so internal signal
+matters as much as public announcements — do NOT rely on the GitHub Changelog alone.
+
+**Public web searches (run in parallel) — focus on GitHub and Microsoft AI only:**
 1. `"GitHub Copilot new features releases [CURRENT_MONTH] [CURRENT_YEAR]"`
 2. `"Microsoft AI announcements Azure MAI models [CURRENT_MONTH] [CURRENT_YEAR]"`
 3. `"GitHub changelog [CURRENT_MONTH] [CURRENT_YEAR] new features"`
 4. `"Microsoft Build Azure AI updates [CURRENT_MONTH] [CURRENT_YEAR]"`
+
+**Internal sources (review on EVERY run — first-class, not just fact-check helpers):**
+5. **Work IQ** — query for this week's internal updates, ship posts, rollouts, and DRIs related
+   to Copilot / GitHub / Microsoft AI (e.g. "What shipped or changed in Copilot this week?",
+   "Any AI launches or rollout changes this week?"). Use it to surface stories the public
+   changelog hasn't captured yet and to add internal context.
+6. **Slack** — search relevant internal channels for ship announcements, feature discussions,
+   rollout notes, and corrections from the past week. Capture anything that adds context or
+   surfaces a story that isn't yet (or only) in the public changelog.
+
+Treat Work IQ and Slack as primary discovery inputs alongside the web searches. The GitHub
+Changelog is one input among several — a drop should not be a changelog digest.
 
 #### Phase 2 — Deep Dive (parallel per feature)
 
