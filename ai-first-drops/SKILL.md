@@ -90,17 +90,18 @@ For each ranked capability, write a **ready-to-use prompt** that:
 
 #### Phase 5 — Internal Verification Scan
 
-Before generating outputs, run a verification pass against internal sources to make sure
-everything in the report is accurate and current. This is the fact-check gate.
+Before generating outputs, run a verification + enrichment pass. Work IQ and Slack are required
+every run — use them both to confirm accuracy AND to pull in internal context. This is the
+fact-check gate; it must not reduce to checking the changelog.
 
-**Check these sources (use whichever are available):**
+**Review ALL of these every run — Work IQ and Slack are required (don't lean on the changelog alone):**
 
 1. **Work IQ** — query for any internal context on the features covered:
    - "What's on my Work IQ about [feature name]?"
    - Check if any covered features have internal launch dates, rollout status, or known issues
      that differ from public sources
 
-2. **Slack** — if accessible, scan relevant internal channels for:
+2. **Slack** — scan relevant internal channels for:
    - Corrections or clarifications on any features covered in the report
    - Internal announcements that add context not in public sources
    - Any features that were pulled, delayed, or changed since the public announcement
@@ -120,14 +121,18 @@ everything in the report is accurate and current. This is the fact-check gate.
 - If internal sources contradict public info → correct the report and note the discrepancy
 - If a feature was pulled or delayed → remove it or flag it clearly
 
-**⚠️ Safety:** Do not include any confidential, unreleased, or internal-only information in
-the published report. Only use internal sources to *verify* public information, not to *add*
-non-public details. When in doubt, leave it out.
+**⚠️ Safety — publishing rule (keep this):** Do NOT publish a story if it is confidential,
+embargoed, security-sensitive, or otherwise not established internal knowledge. Internal context
+that is non-confidential and safe to share internally MAY be included (this is an internal
+report). When in doubt — especially on unreleased/embargoed items, security details,
+customer/revenue data, or PII — leave it out or keep it high-level. Reminder: an unlisted gist
+is NOT access-controlled, so treat the report as shareable.
 
-**🚫 Hard rule:** NEVER publish a story that cannot be verified through internal sources
-(Work IQ, Slack, internal docs, or GitHub Changelog). If a story only has public/external
-sources and nothing shows up internally, drop it and replace it with a story that CAN be
-verified. Every story in every drop must have internal confirmation.
+**🚫 Hard rule:** Internal sources come first. Actively mine Work IQ and Slack for stories and
+context on every run — the GitHub Changelog is a cross-check, NOT the primary source, and a drop
+must never collapse into a changelog digest. Every published story must be backed by internal
+knowledge (confirmed via Work IQ, Slack, or internal docs). If a story is not internal knowledge,
+or it is confidential, do NOT publish it.
 
 #### Phase 6 — Output Generation
 
