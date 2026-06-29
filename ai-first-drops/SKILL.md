@@ -44,11 +44,14 @@ Execute the following research pipeline autonomously — do NOT ask the user que
 Pull from BOTH public and internal sources. This is an internal report, so internal signal
 matters as much as public announcements — do NOT rely on the GitHub Changelog alone.
 
-**Public web searches (run in parallel) — focus on GitHub and Microsoft AI only:**
-1. `"GitHub Copilot new features releases [CURRENT_MONTH] [CURRENT_YEAR]"`
-2. `"Microsoft AI announcements Azure MAI models [CURRENT_MONTH] [CURRENT_YEAR]"`
-3. `"GitHub changelog [CURRENT_MONTH] [CURRENT_YEAR] new features"`
-4. `"Microsoft Build Azure AI updates [CURRENT_MONTH] [CURRENT_YEAR]"`
+**Public web searches (run in parallel) — GitHub *and* Microsoft AI. Because non-developer impact is weighted 50% in ranking (Phase 3), deliberately cover the surfaces non-developers actually use, not just GitHub developer tooling:**
+1. `"Microsoft 365 Copilot new features Word Excel PowerPoint Outlook Teams [CURRENT_MONTH] [CURRENT_YEAR]"`
+2. `"Microsoft Copilot Studio agents business users no-code [CURRENT_MONTH] [CURRENT_YEAR]"`
+3. `"GitHub Copilot new features releases [CURRENT_MONTH] [CURRENT_YEAR]"`
+4. `"Microsoft AI MAI models image voice creative Copilot [CURRENT_MONTH] [CURRENT_YEAR]"`
+5. `"GitHub changelog [CURRENT_MONTH] [CURRENT_YEAR] new features"`
+
+⚖️ **Non-dev-first rule:** A drop that *leads* with coding models, IDE/CLI tooling, or admin/governance metrics has mis-ranked. Lead with what helps PMs, marketing, revenue, partnerships, events/DevRel, ops, and community — typically **M365 Copilot (Word/Excel/PowerPoint/Outlook/Teams), Copilot Studio, Copilot Chat, and MAI creative models (image/voice/transcription)**. Developer/admin items belong in the *tail* of the ranking, not the head.
 
 **Internal sources (review on EVERY run — first-class, not just fact-check helpers):**
 5. **Work IQ** — query for this week's internal updates, ship posts, rollouts, and DRIs related
