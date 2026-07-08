@@ -66,13 +66,13 @@ commanders cannot launch, mark the run `partial` or `failed` and explain why.
 Premium rotation:
 
 ```text
-claude-opus-4.7,gpt-5.5,claude-opus-4.6,gpt-5.4,claude-opus-4.5,gpt-5.2,claude-sonnet-4.6,gpt-5.3-codex,claude-sonnet-4.5,gpt-5.2-codex
+claude-opus-4.7,gpt-5.5,claude-opus-4.6,gpt-5.4,claude-opus-4.5,claude-sonnet-4.6,gpt-5.3-codex,claude-sonnet-4.5
 ```
 
 Standard rotation:
 
 ```text
-claude-sonnet-4.6,gpt-5.4,claude-sonnet-4.5,gpt-5.3-codex,gpt-5.2-codex,gpt-5.2
+claude-sonnet-4.6,gpt-5.4,claude-sonnet-4.5,gpt-5.3-codex
 ```
 
 Never silently use cheap or mini models for Agent Orchestra sub-agents:
