@@ -169,16 +169,18 @@ When distributing uneven models, assign extras to heats containing the lowest-EL
 
 **Internal Orchestration Note:** Tournament mode is internal orchestration only. The user sees the same ceremony, prompts, and flow  -  just better results from broader model diversity.
 
+**Maximum Capability Policy:** Every `task` call for a contestant, judge, shadow evaluator, referee, pod lead, scout, canary, executor, or preflight probe MUST use `reasoning_effort: "max"` and `context_tier: "long_context"`. Select only from the current roster below. If a model is unavailable, replace it with another roster model at the same settings; never silently downgrade capability.
+
 **Model Tier Selection:** Unless the user explicitly requests premium models (e.g., "run hackathon with premium models", "use premium", "use opus"), ask which tier to use via `ask_user`:
 
 > "⚡ Model tier? Standard models work great for most tasks. Premium brings the heavy hitters."
 > Choices: **Standard (Recommended)**, **Premium**
 
-- **Standard tier** (default): Contestants = all Standard tier models (7 models). Judges = Claude Sonnet 4.5, Codex GPT-5.3, Codex GPT-5.2.
-- **Premium tier**: Contestants = all available full-size models  -  Premium + Standard (13 models). Judges = Claude Opus 4.5, GPT-5.4, Codex GPT-5.2.
-- **Classic Mode** overrides tier selection: Standard = Claude Sonnet 4.6, GPT-5.4, GPT-5.2. Premium = GPT-5.5, Claude Opus 4.7, Claude Opus 4.6.
+- **Standard tier** (default): Contestants = all Standard tier models (3 models). Judges = Claude Opus 4.8, GPT-5.6 Terra, Claude Opus 4.8 (Fast).
+- **Premium tier**: Contestants = all available current full-capability models  -  Premium + Standard (6 models). Judges = Claude Sonnet 5, GPT-5.6 Luna, Claude Opus 4.8 (Fast).
+- **Classic Mode** overrides tier selection: Standard = Claude Sonnet 5, GPT-5.6 Sol, GPT-5.6 Luna. Premium = Claude Opus 4.8, GPT-5.6 Terra, GPT-5.6 Sol.
 
-If the user names specific models (e.g., "use opus, gpt-5.5, and codex"), skip the tier prompt and use those models directly in Classic Mode. Show the selected tier badge (⚡ STANDARD or 👑 PREMIUM) in the opening ceremony next to each contestant.
+If the user names specific models (e.g., "use Opus 4.8, GPT-5.6 Terra, and Sonnet 5"), skip the tier prompt and use those models directly in Classic Mode. Show the selected tier badge (⚡ STANDARD or 👑 PREMIUM) in the opening ceremony next to each contestant.
 
 **Task Decomposition:** If large/multi-domain, propose sequential mini-hackathons (winner feeds next round).
 
@@ -201,7 +203,7 @@ Auto-detect keywords (security, performance, accessibility) for bonus criteria. 
 
 **Tournament Mode (when auto-detected or requested):**
 
-**Round 1  -  Heats:** Dispatch all models in parallel via `task` tool with `mode: "background"`. Each heat runs simultaneously. Identical prompts within each heat, same context, same rubric. Judge each heat. Top scorer per heat advances to Round 2.
+**Round 1  -  Heats:** Dispatch all models in parallel via `task` with `mode: "background"`, `reasoning_effort: "max"`, and `context_tier: "long_context"`. Each heat runs simultaneously. Identical prompts within each heat, same context, same rubric. Judge each heat. Top scorer per heat advances to Round 2.
 
 **Evolution Brief (between rounds):** After Round 1 judging, the orchestrator (not an LLM) generates a structured brief from judge scores:
 - What strategies won each heat (from judge justifications)
@@ -246,9 +248,9 @@ Parse judge justifications from `hackathon_judge_scores` WHERE `round=1`. For ea
 
 The CB replaces the Evolution Brief as a richer, more structured knowledge bridge between rounds. The orchestrator builds the CB itself (no separate agent needed).
 
-**Round 2  -  Finals:** Dispatch all finalists in parallel with the Convergence Broadcast (`mustKnow` + `fullBriefing`) prepended to their prompt. Same rubric, same context + CB.
+**Round 2  -  Finals:** Dispatch all finalists in parallel with the Convergence Broadcast (`mustKnow` + `fullBriefing`) prepended to their prompt and the Maximum Capability Policy applied. Same rubric, same context + CB.
 
-**Classic Mode ("quick"/"fast"):** Dispatch 3 models in parallel, single round, no heats. Same as original behavior.
+**Classic Mode ("quick"/"fast"):** Dispatch 3 models in parallel, single round, no heats, with the Maximum Capability Policy applied.
 
 **Build mode:** Each model commits to `hackathon/{model-name}`. Independent work. Scope boundaries.
 
@@ -277,10 +279,10 @@ The CB replaces the Evolution Brief as a richer, more structured knowledge bridg
 7. **🔒 Shadow Spec (hidden quality mesh):**
    - Shadow evaluation is a sealed 3-layer quality system. Contestants only see the 5 public rubric categories. They NEVER see shadow criteria names, counts, weights, prompts, decoys, or thresholds before the podium reveal.
    - **Multi-Layer Shadow Architecture:**
-     - **L1 — Pod Shadow Judges (90 total, Haiku, 1 per pod):** fast hidden-quality probes embedded at pod level. Each L1 judge scores pod submissions against the generated shadow criteria, measures local divergence, compares pod-mates for suspicious uniformity, and emits a lightweight risk packet for the cell.
-     - **L2 — Cell Shadow Referees (10 resident Sonnet referees, 1 per cell):** each cell has a resident shadow owner that reviews all 9 pod packets, checks cross-pod consistency, audits the worst divergences, and decides whether the cell is stable, degraded, or compromised.
-     - **L2 Consensus Overlay — 2 rotating Sonnet peer judges per cell (20 additional passes, 30 total L2 shadow opinions):** every cell is re-scored by 2 peer-cell Sonnet judges. Final cell-level shadow verdict = median of the 3 Sonnet scores (resident referee + 2 peers). This prevents a single biased shadow judge from poisoning the quality read.
-     - **L3 — Grand Shadow Arbiter (1 total, Opus):** system-wide hidden-quality auditor. Reviews the cell medians, cross-validation failures, leakage alerts, and the global heat map. Produces the final shadow verdict and remediation priorities for the 1,000-agent run.
+     - **L1 — Pod Shadow Judges (90 total, GPT-5.6 Luna, 1 per pod):** hidden-quality probes embedded at pod level. Each L1 judge scores pod submissions against the generated shadow criteria, measures local divergence, compares pod-mates for suspicious uniformity, and emits a lightweight risk packet for the cell.
+     - **L2 — Cell Shadow Referees (10 resident Claude Sonnet 5 referees, 1 per cell):** each cell has a resident shadow owner that reviews all 9 pod packets, checks cross-pod consistency, audits the worst divergences, and decides whether the cell is stable, degraded, or compromised.
+     - **L2 Consensus Overlay — 2 rotating Claude Sonnet 5 peer judges per cell (20 additional passes, 30 total L2 shadow opinions):** every cell is re-scored by 2 peer-cell Sonnet 5 judges. Final cell-level shadow verdict = median of the 3 Sonnet 5 scores (resident referee + 2 peers). This prevents a single biased shadow judge from poisoning the quality read.
+     - **L3 — Grand Shadow Arbiter (1 total, Claude Opus 4.8):** system-wide hidden-quality auditor. Reviews the cell medians, cross-validation failures, leakage alerts, and the global heat map. Produces the final shadow verdict and remediation priorities for the 1,000-agent run.
    - **Dynamic Shadow Criteria Generation:** instead of static prewritten criteria, generate 6-9 task-specific shadow criteria directly from the challenge description before any contestants launch.
      - Minimum composition: 1 instruction-adherence criterion, 1 evidence/calibration criterion, 1 anti-hallucination criterion, 1 scope-discipline criterion, 1 task-specific edge-case criterion, and 1-2 decoy criteria used only for leakage detection.
      - Criteria must reward substance, uncertainty calibration, and mission accuracy — not surface style mimicry.
@@ -323,7 +325,7 @@ The CB replaces the Evolution Brief as a richer, more structured knowledge bridg
      - Store generated criteria in `hackathon_shadow_criteria`; store judge assignments in `hackathon_shadow_assignments`.
    - **Shadow Consensus Scoring:**
      - L1 pod judges produce fast per-pod shadow scores and risk notes.
-     - L2 runs 3 Sonnet judgments per cell (1 resident + 2 peers). Final cell-level shadow score for each criterion = median. If the 3-way spread exceeds 0.18 on a 0-1 scale, escalate that cell to L3 for manual arbitration.
+     - L2 runs 3 Claude Sonnet 5 judgments per cell (1 resident + 2 peers). Final cell-level shadow score for each criterion = median. If the 3-way spread exceeds 0.18 on a 0-1 scale, escalate that cell to L3 for manual arbitration.
      - L3 never rescored everything blindly; it inspects only the highest-risk cells/pods and system-level anomalies so the shadow mesh scales to 1,000 agents without exploding cost.
    - **Shadow Divergence Heat Map:** render divergence at 3 granularities — by cell, by pod, and by agent type — so quality failures become spatially visible instead of hiding inside one aggregate score.
      - **ASCII format:**
@@ -370,7 +372,7 @@ The CB replaces the Evolution Brief as a richer, more structured knowledge bridg
 1. **Prefer non-competing models**  -  if any models are not entered as contestants, use them as judges first.
 2. **Use eliminated models**  -  In Round 2, models eliminated in Round 1 are ideal judges (they know the task but aren't competing).
 3. **Cross-heat judging**  -  In Round 1, a model from Heat 1 can judge Heat 3 (they haven't seen that heat's prompt responses). Rotate assignments so no model judges its own heat.
-4. **Different model variants**  -  Claude Sonnet 4.5 can judge Claude Sonnet 4.6's work (different model, same provider is acceptable).
+4. **Different model variants**  -  Claude Opus 4.8 (Fast) can judge Claude Opus 4.8's work (different model variant, same provider is acceptable).
 In Classic Mode, the default judge lists already avoid overlap with default contestants.
 
 ### Phase 5  -  Declare Winner
@@ -395,7 +397,7 @@ L1 Pod Alerts:
   {pod_id}: risk {score} | divergence {pct} | note: {summary}
   ...
 
-L2 Cell Consensus (median of 3 Sonnet judges):
+L2 Cell Consensus (median of 3 Claude Sonnet 5 judges):
   {cell_id}: shadow total {score} | status {stable/degraded/compromised}
   ...
 
@@ -747,35 +749,24 @@ CREATE TABLE IF NOT EXISTS hackathon_hot_signals (
 
 | Display Name | Model ID | Tier |
 |-------------|----------|------|
-| Claude Opus 4.7 | `claude-opus-4.7` | Premium |
-| Claude Opus 4.7 (1M) | `claude-opus-4.7-1m-internal` | Premium |
-| Claude Opus 4.6 | `claude-opus-4.6` | Premium |
-| Claude Opus 4.6 (1M) | `claude-opus-4.6-1m` | Premium |
-| Claude Opus 4.5 | `claude-opus-4.5` | Premium |
-| GPT-5.5 | `gpt-5.5` | Premium |
-| Claude Sonnet 4.6 | `claude-sonnet-4.6` | Standard |
-| Claude Sonnet 4.5 | `claude-sonnet-4.5` | Standard |
-| Claude Sonnet 4 | `claude-sonnet-4` | Standard |
-| GPT-5.4 | `gpt-5.4` | Standard |
-| Codex (GPT-5.3) | `gpt-5.3-codex` | Standard |
-| Codex (GPT-5.2) | `gpt-5.2-codex` | Standard |
-| GPT-5.2 | `gpt-5.2` | Standard |
-| Claude Haiku 4.5 | `claude-haiku-4.5` | Fast/Cheap |
-| GPT-5.4 Mini | `gpt-5.4-mini` | Fast/Cheap |
-| GPT-5 Mini | `gpt-5-mini` | Fast/Cheap |
-| GPT-4.1 | `gpt-4.1` | Fast/Cheap |
+| Claude Opus 4.8 | `claude-opus-4.8` | Premium |
+| Claude Opus 4.8 (Fast) | `claude-opus-4.8-fast` | Premium |
+| GPT-5.6 Terra | `gpt-5.6-terra` | Premium |
+| Claude Sonnet 5 | `claude-sonnet-5` | Standard |
+| GPT-5.6 Sol | `gpt-5.6-sol` | Standard |
+| GPT-5.6 Luna | `gpt-5.6-luna` | Standard |
 
 **Kiloagent Model Mapping:** In Kiloagent Mode, roles map to models as follows:
-- **Referees** → Opus (Premium tier: `claude-opus-4.7` or `claude-opus-4.7-1m-internal`)
-- **Pod Leads** → Sonnet (`claude-sonnet-4.6`)
-- **Specialists** → Sonnet (`claude-sonnet-4.5`)
-- **Scouts / Canaries / Shadow Probes** → Haiku (`claude-haiku-4.5`)
-- **Executors** → Fast models (`gpt-5.4-mini` or `gpt-5-mini`)
+- **Referees** → Claude Opus 4.8 (`claude-opus-4.8`)
+- **Pod Leads** → Claude Sonnet 5 (`claude-sonnet-5`)
+- **Specialists** → GPT-5.6 Terra (`gpt-5.6-terra`)
+- **Scouts / Canaries / Shadow Probes** → GPT-5.6 Luna (`gpt-5.6-luna`)
+- **Executors** → GPT-5.6 Sol (`gpt-5.6-sol`)
 
-**Default contestants (Standard):** Claude Sonnet 4.6, GPT-5.4, GPT-5.2 ← STANDARD ⚡
-**Default contestants (Premium):** GPT-5.5, Claude Opus 4.7, Claude Opus 4.6 ← PREMIUM 👑
-**Default judges (Standard):** Claude Sonnet 4.5, Codex (GPT-5.3), Codex (GPT-5.2) ← STANDARD ⚡
-**Default judges (Premium):** Claude Opus 4.5, GPT-5.4, Codex (GPT-5.2) ← PREMIUM 👑
+**Default contestants (Standard):** Claude Sonnet 5, GPT-5.6 Sol, GPT-5.6 Luna ← STANDARD ⚡
+**Default contestants (Premium):** Claude Opus 4.8, GPT-5.6 Terra, GPT-5.6 Sol ← PREMIUM 👑
+**Default judges (Standard):** Claude Opus 4.8, GPT-5.6 Terra, Claude Opus 4.8 (Fast) ← STANDARD ⚡
+**Default judges (Premium):** Claude Sonnet 5, GPT-5.6 Luna, Claude Opus 4.8 (Fast) ← PREMIUM 👑
 
 ---
 
@@ -812,7 +803,7 @@ After infrastructure checks pass, walk through each phase with mock data:
 
 ### Model Availability (live check)
 
-After simulation passes, dispatch a trivial test prompt ("respond with OK") to each model in the selected tier via `task` with `mode: "background"`. Report which models respond and which timeout/fail.
+After simulation passes, dispatch a trivial test prompt ("respond with OK") to each model in the selected tier via `task` with `mode: "background"`, `reasoning_effort: "max"`, and `context_tier: "long_context"`. Report which models respond and which timeout/fail.
 
 ### Output Format
 
@@ -829,7 +820,7 @@ After simulation passes, dispatch a trivial test prompt ("respond with OK") to e
   ✅ Phase 2 — Scoring Criteria (7/7)
       ✅ All 4 rubric types, adaptive rules present
   ✅ Phase 3 — Fleet Deployment (9/9)
-      ✅ 7 Standard + 6 Premium, no duplicates
+      ✅ 3 Standard + 3 Premium, no duplicates
   ✅ Phase 4 — Sealed Judging (12/12)
       ✅ Judge separation clean, anti-gaming concrete
   ✅ Phase 5 — Winner Declaration (7/7)
@@ -907,7 +898,7 @@ stampede.sh \
   "kind": "commander",
   "havoc_role": "contestant",
   "contestant_label": "Contestant A",
-  "model": "claude-sonnet-4.6",
+  "model": "claude-opus-4.8",
   "objective": "User challenge",
   "repo_path": "/abs/path",
   "profile": "metaswarm",
@@ -915,6 +906,8 @@ stampede.sh \
   "swarm_scale": "ss-250",
   "per_commander_full_swarm": true,
   "model_policy": "premium",
+  "reasoning_effort": "max",
+  "context_tier": "long_context",
   "constraints": {
     "max_workers": 250,
     "squad_leads_per_commander": 50,
@@ -991,20 +984,20 @@ Kiloagent Mode replaces the standard tournament with a **1,000-agent deep execut
 
 ```
 Century Cell (100 execution agents):
-├── 1 Referee        (general-purpose, Opus)     — synthesis + failure absorption
-├── 9 Pod Leads      (general-purpose, Sonnet)   — decompose + orchestrate
+├── 1 Referee        (general-purpose, Claude Opus 4.8)     — synthesis + failure absorption
+├── 9 Pod Leads      (general-purpose, Claude Sonnet 5)     — decompose + orchestrate
 └── 90 Leaf Workers  (mixed types)               — atomic execution
     └── Per Pod (10 leaves):
-        ├── 5 Scouts       (explore, Haiku)      — research, extract
-        ├── 2 Executors    (task, gpt-5.4-mini)    — run commands, validate
-        ├── 1 Specialist   (general-purpose, Sonnet) — solve hard sub-problems
-        ├── 1 Canary       (explore, Haiku)       — known-answer quality probe
-        └── 1 Shadow Probe (explore, Haiku)       — L1 hidden quality judge
+        ├── 5 Scouts       (explore, GPT-5.6 Luna) — research, extract
+        ├── 2 Executors    (task, GPT-5.6 Sol)     — run commands, validate
+        ├── 1 Specialist   (general-purpose, GPT-5.6 Terra) — solve hard sub-problems
+        ├── 1 Canary       (explore, GPT-5.6 Luna) — known-answer quality probe
+        └── 1 Shadow Probe (explore, GPT-5.6 Luna) — L1 hidden quality judge
 
 Shadow sidecars (not counted toward the 1,000 execution agents):
-├── 1 Cell Shadow Referee        (general-purpose, Sonnet) — L2 resident quality owner
-├── 2 Rotating Shadow Peers      (general-purpose, Sonnet) — L2 consensus overlay
-└── 1 Grand Shadow Arbiter total (general-purpose, Opus)   — L3 system-wide auditor
+├── 1 Cell Shadow Referee        (general-purpose, Claude Sonnet 5) — L2 resident quality owner
+├── 2 Rotating Shadow Peers      (general-purpose, Claude Sonnet 5) — L2 consensus overlay
+└── 1 Grand Shadow Arbiter total (general-purpose, Claude Opus 4.8) — L3 system-wide auditor
 ```
 
 ### Execution Flow
@@ -1012,15 +1005,15 @@ Shadow sidecars (not counted toward the 1,000 execution agents):
 1. **CB-0 (Initial Broadcast):** Orchestrator decomposes the problem into 10 cell missions + global rubric + sealed shadow generator prompt.
 2. **Shadow Generation Pass:** Before any work launches, generate 6-9 task-specific shadow criteria + 1-2 decoy traps. Store them in `hackathon_shadow_criteria`.
 3. **Wave 1 (Cells 1-5, 500 agents):** Launch 5 cells in parallel. Each cell runs: Pod Leads → Workers (with canaries + L1 shadow probes) → Referee synthesis.
-4. **CB-1 (Mid-Point Convergence):** Cell-5 Referee (Opus 1M) reads ALL Wave 1 outputs. Produces tiered context packets:
+4. **CB-1 (Mid-Point Convergence):** Cell-5 Referee (Claude Opus 4.8) reads ALL Wave 1 outputs. Produces tiered context packets:
    - `mustKnow` ≤2K tokens → injected into all Wave 2 workers
    - `analystBrief` ≤8K → Pod Leads
    - `refereeBrief` ≤16K → Referees
    - `shadowBrief` ≤4K (sealed) → Shadow Referees only (generated criteria, canary accuracy, divergence deltas, leakage alerts)
 5. **Wave 2 (Cells 6-10, 500 agents):** Same structure, but every agent receives CB-1. Wave 2 stands on Wave 1's shoulders.
-6. **L2 Consensus Pass:** Each cell's resident shadow referee plus 2 rotating Sonnet peers rescore the cell packet. Final cell-level shadow verdict = median of the 3 L2 scores.
-7. **CB-FINAL (Grand Synthesis):** Cell-10 Referee (Opus 1M) reads all 10 cell synthesis outputs. Produces the final merged deliverable containing: executive summary, all consensus findings with confidence levels, resolved contradictions with rationale, unresolved items flagged for user decision, and provenance table mapping each finding to its source cells.
-8. **L3 Grand Shadow Arbitration:** Opus reviews the full heat map, worst cells, low-correlation pods, and leakage alerts. Produces system-wide quality verdict.
+6. **L2 Consensus Pass:** Each cell's resident shadow referee plus 2 rotating Claude Sonnet 5 peers rescore the cell packet. Final cell-level shadow verdict = median of the 3 L2 scores.
+7. **CB-FINAL (Grand Synthesis):** Cell-10 Referee (Claude Opus 4.8) reads all 10 cell synthesis outputs. Produces the final merged deliverable containing: executive summary, all consensus findings with confidence levels, resolved contradictions with rationale, unresolved items flagged for user decision, and provenance table mapping each finding to its source cells.
+8. **L3 Grand Shadow Arbitration:** Claude Opus 4.8 reviews the full heat map, worst cells, low-correlation pods, and leakage alerts. Produces system-wide quality verdict.
 9. **Shadow Quality Report:** Aggregate canary accuracy, L1/L2/L3 divergence, leakage alerts, and the heat map across all 1,000 agents.
 
 ### Key Mechanisms
@@ -1029,9 +1022,9 @@ Shadow sidecars (not counted toward the 1,000 execution agents):
 - **Referee Takeover:** When a leaf fails, the cell Referee absorbs its work. Zero extra agents.
 - **Compression Ladder:** Raw → Facts → Capsules → Canon → CB. Each stage denser.
 - **Canary Probes:** 1 per pod (90 total) — known-answer tasks measuring quality at depth.
-- **L1 Shadow Probes:** 1 per pod (90 total, Haiku) — fast hidden-quality judges.
-- **L2 Shadow Referees:** 1 resident Sonnet referee per cell + 2 rotating Sonnet peers per cell (30 L2 shadow opinions total) — median consensus scoring.
-- **L3 Grand Shadow Arbiter:** 1 Opus — system-wide quality assessor and tie-breaker for disputed shadow readings.
+- **L1 Shadow Probes:** 1 per pod (90 total, GPT-5.6 Luna) — hidden-quality judges.
+- **L2 Shadow Referees:** 1 resident Claude Sonnet 5 referee per cell + 2 rotating Claude Sonnet 5 peers per cell (30 L2 shadow opinions total) — median consensus scoring.
+- **L3 Grand Shadow Arbiter:** 1 Claude Opus 4.8 — system-wide quality assessor and tie-breaker for disputed shadow readings.
 - **Shadow Divergence Heat Map:** pod/cell/agent-type visualization showing where hidden quality degrades.
 - **Canary-Shadow Cross-Validation:** correlate pod canary accuracy with shadow risk to distinguish real failures from judge drift.
 - **Anti-Shadow-Gaming:** decoy criteria, leakage detection, and re-scoring when hidden-layer compromise is suspected.
