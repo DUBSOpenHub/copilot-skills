@@ -125,7 +125,7 @@ fact-check gate; it must not reduce to checking the changelog.
 
 **What to do with findings:**
 - If internal sources confirm the public info → no change needed
-- If internal sources add useful context → update the "💡 Part you might miss" section
+- If internal sources add useful context → update the "What changed" or "Why it matters" line
 - If internal sources contradict public info → correct the report and note the discrepancy
 - If a feature was pulled or delayed → remove it or flag it clearly
 
@@ -261,7 +261,7 @@ colleague who has a *point of view*, not just information.
 - SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
 - Publish at most three capability sections. Each must stay under 180 words excluding its prompt.
-- Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or any item after #3.
+- Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or a capability item after #3.
 - Each story has one product-specific prompt. Name the product explicitly, distinguish Copilot CLI from Copilot App when either is used, and ensure every edition includes at least one M365 Copilot prompt.
 - Prompts must be accessible to non-developers and specific enough to produce an actionable result.
 - No cost/pricing data anywhere in the report
@@ -289,11 +289,9 @@ Rank,Capability,Model,Developer,Key Breakthrough,Benchmark,Access,Prompt
 📡 **AI-First Drops — April 7-10, 2026**
 
 Top 3 this week:
-1. **Claude Mythos** found thousands of zero-day vulns autonomously (restricted access)
-2. **GPT-5.4** beat humans at desktop computer use (75% vs 72.4% human baseline)
-3. **GLM-5.1** became first open-source model to top SWE-Bench Pro
-
-🤯 Most surprising: An open-source model (GLM-5.1) now beats every proprietary model at real-world coding tasks.
+1. **Repository overview** makes unfamiliar projects easier to assess before a deeper review.
+2. **Copilot app availability** makes an agent-workspace pilot accessible to more people.
+3. **Model routing** turns the choice between depth and speed into a repeatable team practice.
 
 📄 Full report: `~/.copilot/session-state/.../research/ai-first-drops-2026-04-10.md`
 📊 CSV opened on Desktop: `~/Desktop/ai-first-drops-2026-04-10.csv`
