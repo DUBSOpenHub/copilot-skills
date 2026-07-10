@@ -232,7 +232,7 @@ colleague who has a *point of view*, not just information.
 
 ```markdown
 # 📡 AI-First Drops — {DATE_RANGE}
-### Three GitHub & Microsoft AI updates worth your attention.
+### Three AI moves that could change how your team works this week.
 
 ## #1 {EMOJI} {Catchy Headline}
 **What changed:** {facts first; no more than two sentences}
