@@ -188,7 +188,11 @@ Columns: Rank, Capability, Model, Developer, Key Breakthrough, Benchmark, Access
 
 Then open the CSV with: `open ~/Desktop/ai-first-drops-{DATE}.csv`
 
-**3. Auto-publish GitHub Issue** — Create the issue automatically:
+**3. Auto-publish GitHub Issues** — Publish the identical report to both repositories. Before
+creating either issue, search that repository for the exact edition title. If it already exists,
+do not create a duplicate; create only the missing copy.
+
+**Internal distribution:**
 ```bash
 gh issue create \
   --repo github/dmo-ai \
@@ -196,14 +200,24 @@ gh issue create \
   --body-file {path to markdown report}
 ```
 
-Publish only to `github/dmo-ai`; do not create a duplicate report issue in
-`DUBSOpenHub/ai-first-drops`. The destination does not use the source repository's
-`weekly-report`, `frontier-models`, or `published` labels, so do not add or assume labels.
+**Canonical project archive:**
+```bash
+gh issue create \
+  --repo DUBSOpenHub/ai-first-drops \
+  --title "📡 AI-First Drops — {DATE_RANGE}" \
+  --body-file {path to markdown report} \
+  --label "weekly-report,frontier-models,published"
+```
+
+The `github/dmo-ai` destination does not use the source repository's `weekly-report`,
+`frontier-models`, or `published` labels, so do not add or assume labels there. Add
+`open-source` or `policy` labels to the canonical project issue when relevant. The original
+project repository is canonical for edition numbering, banner-theme rotation, and releases.
 
 **4. Auto-tag a GitHub Release** — After the issue is published, cut a matching release:
 ```bash
-# Edition N = total count of published AI-First Drops edition issues in github/dmo-ai
-# (this one is the Nth).
+# Edition N = total count of published AI-First Drops edition issues in
+# DUBSOpenHub/ai-first-drops (this one is the Nth).
 # Versioning: Edition N -> tag vN.0.0 (Edition 1 = v1.0.0, Edition 2 = v2.0.0, ...).
 gh release create v{N}.0.0 \
   --repo DUBSOpenHub/ai-first-drops \
@@ -220,6 +234,7 @@ Print a concise summary to the terminal:
 - The top 3 most important things from this week
 - The single most surprising finding
 - Where both files were saved
+- URLs for both published issues and the matching release
 
 ## Output Format
 
