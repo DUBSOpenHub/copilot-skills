@@ -192,6 +192,10 @@ Then open the CSV with: `open ~/Desktop/ai-first-drops-{DATE}.csv`
 creating either issue, search that repository for the exact edition title. If it already exists,
 do not create a duplicate; create only the missing copy.
 
+**New edition policy:** Create a new issue in each repository every Friday; never append a new
+week's report to an older issue. The exact-title lookup exists only to make retry attempts
+idempotent.
+
 **Internal distribution:**
 ```bash
 gh issue create \
