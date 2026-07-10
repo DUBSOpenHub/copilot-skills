@@ -6,7 +6,7 @@ description: >
   for each. Outputs both a markdown report and a CSV on your Desktop.
   Say "weekly ai report" to start.
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 license: MIT
 ---
 
@@ -21,7 +21,8 @@ DO NOT USE FOR: general AI questions, model comparison without a "this week" foc
 
 The user says "weekly ai report" (or a variation). The skill researches all major AI model
 releases from the past 7 days, identifies the frontier capabilities that are newly possible,
-stack-ranks them from most to least powerful, and generates a prompt to try each one.
+stack-ranks them from most to least powerful, and publishes only the three worth a busy
+reader's attention.
 
 Single trigger. Autonomous research. Two outputs (markdown + CSV). Every time.
 
@@ -83,9 +84,13 @@ Rank capabilities from most to least powerful using these criteria (weighted):
 
 **Stack rank order: most impactful for non-developers first, most developer-focused last.**
 
+**Publication limit:** Select and publish exactly the top three verified capabilities. If fewer
+than three qualify, publish fewer rather than padding the edition. Do not include honorable
+mentions, a long tail, or a separate roundup.
+
 #### Phase 4 — Prompt Generation
 
-For each ranked capability, write a **ready-to-use prompt** that:
+For each selected capability, write one concise, **ready-to-use prompt** that:
 - Demonstrates the specific frontier skill (not generic)
 - Can be copy-pasted into the model's interface or API
 - Includes context and instructions so it works standalone
@@ -167,12 +172,10 @@ Embed the resulting image URL at the top of the markdown report, right after the
 ```
 
 Include:
-- TL;DR (3-5 sentences, punchy summary for busy readers)
-- Detailed section per capability (see structure below)
-- "At a Glance" summary table (NO cost/pricing column)
-- "This Week's Biggest Takeaway" closing section
-- Confidence assessment
-- Footnotes with source URLs
+- Exactly three concise capability sections (or fewer when fewer than three are verified)
+- A final "Quick Summary" grid with one row per selected capability
+- One bottom-line sentence beneath the grid
+- Inline source URLs and confidence for each capability
 
 **Do NOT include cost-per-token or pricing data anywhere in the report.**
 
@@ -188,19 +191,19 @@ Then open the CSV with: `open ~/Desktop/ai-first-drops-{DATE}.csv`
 **3. Auto-publish GitHub Issue** — Create the issue automatically:
 ```bash
 gh issue create \
-  --repo DUBSOpenHub/ai-first-drops \
+  --repo github/dmo-ai \
   --title "📡 AI-First Drops — {DATE_RANGE}" \
-  --body-file {path to markdown report} \
-  --label "weekly-report,frontier-models,published"
+  --body-file {path to markdown report}
 ```
 
-Add the `open-source` label if any story covers open-weight models.
-Add the `policy` label if any story covers regulation or governance.
-Do NOT add `needs-review` — the report auto-publishes.
+Publish only to `github/dmo-ai`; do not create a duplicate report issue in
+`DUBSOpenHub/ai-first-drops`. The destination does not use the source repository's
+`weekly-report`, `frontier-models`, or `published` labels, so do not add or assume labels.
 
 **4. Auto-tag a GitHub Release** — After the issue is published, cut a matching release:
 ```bash
-# Edition N = total count of published AI-First Drops edition issues (this one is the Nth).
+# Edition N = total count of published AI-First Drops edition issues in github/dmo-ai
+# (this one is the Nth).
 # Versioning: Edition N -> tag vN.0.0 (Edition 1 = v1.0.0, Edition 2 = v2.0.0, ...).
 gh release create v{N}.0.0 \
   --repo DUBSOpenHub/ai-first-drops \
@@ -229,83 +232,40 @@ colleague who has a *point of view*, not just information.
 
 ```markdown
 # 📡 AI-First Drops — {DATE_RANGE}
-### This week's GitHub & Microsoft AI updates — explained.
-
-## TL;DR
-{3-5 punchy sentences. Don't just list what happened — connect the dots. What's the
-THEME of this week? End with a line that frames why this week matters as a whole.}
+### Three GitHub & Microsoft AI updates worth your attention.
 
 ## #1 {EMOJI} {Catchy Headline}
-**What happened:** {description — facts first, specific details}
-**Why it matters:** {significance — INFORMATIVE, not celebratory. What does this
-enable? What changes? Be clear and practical, not hype.}
-**💡 The part you might miss:** {the non-obvious implication or use case that
-casual readers will skip past. Often the most valuable insight.}
-**What this means:**
-- {actionable takeaway 1 — be specific}
-- {actionable takeaway 2}
-- {actionable takeaway 3}
+**What changed:** {facts first; no more than two sentences}
+**Why it matters:** {practical, non-hyped implication; no more than two sentences}
 
-**🧪 Try it yourself:**
-
-**Copilot CLI:** `⚡ 30 sec`
+**🧪 Try it in {specific product}:** `⚡ 1 min`
 \```
-{prompt}
+{one task-specific, copy-pasteable prompt}
 \```
 
-**Copilot App:** `⚡ 1 min`
-\```
-{prompt}
-\```
-
-**M365 Copilot ({specific app}):** `⚡ 1 min`
-\```
-{prompt}
-\```
-
-**Bonus — M365 Copilot ({different app, your choice}):** `🔧 2 min`
-\```
-{prompt — pick the M365 app most relevant to this specific story}
-\```
-
-**Sources:** {linked sources} · Confidence: **{High/Medium}**
+**Source:** {linked source} · Confidence: **{High/Medium}**
 
 {...repeat for each story...}
 
-## At a Glance
-| # | What Shipped | Feature | How You Can Use It |
+## Quick Summary
+| # | What Shipped | Why It Matters | Try It In |
 |---|---|---|---|
-{summary row per capability — NO cost column. "Why You Should Care" should be
-sharp and opinionated, not generic.}
+| 1 | {capability} | {sharp, practical takeaway} | {specific product} |
+| 2 | {capability} | {sharp, practical takeaway} | {specific product} |
+| 3 | {capability} | {sharp, practical takeaway} | {specific product} |
 
-## This Week's Biggest Takeaway
-{2-3 sentence synthesis — not a recap, a THESIS. What's the one idea that connects
-all 7 stories? End with something memorable.}
-**One thing to try this week:** {single low-friction action anyone can do}
-
-## Confidence Assessment
-{what's certain vs inferred}
-
-## Footnotes
-{citations}
+**Bottom line:** {one memorable sentence connecting the three updates.}
 ```
 
 **IMPORTANT formatting rules:**
 - SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
-- Section order: What happened → Why it matters → 💡 The part you might miss → What this means
-- Every story gets "🧪 Try it yourself" with ALL FOUR prompts:
-  1. **Copilot CLI** — always
-  2. **Copilot App** — always
-  3. **M365 Copilot** — always (specify: Word, Excel, PowerPoint, Outlook, or Teams)
-  4. **Bonus** — one additional M365 app or surface that's especially relevant (your choice)
-- Do NOT organize prompts by job title or role
-- Do NOT include developer/engineering-specific prompts
-- Prompts should be accessible to non-developers
-- Always include at least one **M365-based** prompt option per story
-- Non-dev prompts must be genuinely useful — not "ask about X" but specific enough to produce actionable output
+- Publish at most three capability sections. Each must stay under 180 words excluding its prompt.
+- Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or any item after #3.
+- Each story has one product-specific prompt. Name the product explicitly, distinguish Copilot CLI from Copilot App when either is used, and ensure every edition includes at least one M365 Copilot prompt.
+- Prompts must be accessible to non-developers and specific enough to produce an actionable result.
 - No cost/pricing data anywhere in the report
-- "At a Glance" table uses: What Shipped, Feature, How You Can Use It (3 columns)
+- "Quick Summary" is the final section. Its grid uses: What Shipped, Why It Matters, Try It In (3 columns).
 
 ### CSV Structure
 
@@ -316,7 +276,7 @@ Rank,Capability,Model,Developer,Key Breakthrough,Benchmark,Access,Prompt
 ## Error Handling
 
 - If web search returns no results for a model, note it as "unverified" and move on
-- If fewer than 5 capabilities found, still rank and report what exists
+- If fewer than 3 verified capabilities are found, report only the verified capabilities; never pad the edition
 - If a benchmark number appears in only one source, flag confidence as "single-source"
 - Always generate both outputs even if research is incomplete
 
