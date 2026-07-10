@@ -96,6 +96,10 @@ For each selected capability, write one concise, **ready-to-use prompt** that:
 - Includes context and instructions so it works standalone
 - Pushes the model to its limits on that specific capability
 
+When an edition has three items, use each approved product surface exactly once:
+**Copilot CLI**, **Copilot App**, and **M365 Copilot**. Do not add multiple prompt variants to
+one item. If fewer than three items qualify, use one approved surface per item.
+
 #### Phase 5 — Internal Verification Scan
 
 Before generating outputs, run a verification + enrichment pass. Work IQ and Slack are required
@@ -262,7 +266,7 @@ colleague who has a *point of view*, not just information.
 **What changed:** {facts first; no more than two sentences}
 **Why it matters:** {practical, non-hyped implication; no more than two sentences}
 
-**🧪 Try it in {specific product}:** `⚡ 1 min`
+**🧪 Try it in {Copilot CLI | Copilot App | M365 Copilot (specific app)}:** `⚡ 1 min`
 \```
 {one task-specific, copy-pasteable prompt}
 \```
@@ -286,7 +290,8 @@ colleague who has a *point of view*, not just information.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
 - Publish at most three capability sections. Each must stay under 180 words excluding its prompt.
 - Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or a capability item after #3.
-- Each story has one product-specific prompt. Name the product explicitly, distinguish Copilot CLI from Copilot App when either is used, and ensure every edition includes at least one M365 Copilot prompt.
+- Each story has one product-specific prompt. The only allowed surfaces are Copilot CLI, Copilot App, and M365 Copilot (name the specific M365 app).
+- When three items are published, use Copilot CLI, Copilot App, and M365 Copilot exactly once each. Never use GitHub Copilot Chat as a "Try it" surface.
 - Prompts must be accessible to non-developers and specific enough to produce an actionable result.
 - No cost/pricing data anywhere in the report
 - "Quick Summary" is the final section. Its grid uses: What Shipped, Why It Matters, Try It In (3 columns).
