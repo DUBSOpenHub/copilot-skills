@@ -196,6 +196,11 @@ do not create a duplicate; create only the missing copy.
 week's report to an older issue. The exact-title lookup exists only to make retry attempts
 idempotent.
 
+**Retry parity:** If the exact edition exists in one repository but is missing from the other,
+fetch the existing issue body and use it unchanged for the missing copy. Do not regenerate,
+append to, or edit the existing issue during a retry; both repositories must receive the same
+report body.
+
 **Internal distribution:**
 ```bash
 gh issue create \
