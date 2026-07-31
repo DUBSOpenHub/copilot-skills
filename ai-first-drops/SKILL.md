@@ -291,6 +291,7 @@ colleague who has a *point of view*, not just information.
 - Publish at most three capability sections. Each must stay under 180 words excluding its prompt.
 - Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or a capability item after #3.
 - Each story has one product-specific prompt. The only allowed surfaces are Copilot CLI, Copilot App, and M365 Copilot (name the specific M365 app).
+- Always identify Microsoft 365 features as **M365 Copilot** in headlines and body text; never shorten them to generic "Copilot."
 - When three items are published, use Copilot CLI, Copilot App, and M365 Copilot exactly once each. Never use GitHub Copilot Chat as a "Try it" surface.
 - Prompts must be accessible to non-developers and specific enough to produce an actionable result.
 - No cost/pricing data anywhere in the report
