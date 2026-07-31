@@ -264,6 +264,7 @@ colleague who has a *point of view*, not just information.
 
 ## #1 {EMOJI} {Catchy Headline}
 **🆕 What changed:** {facts first; no more than two sentences}
+
 **🎯 Why it matters:** {practical, non-hyped implication; no more than two sentences}
 
 **🧪 Try it in {Copilot CLI | Copilot App | M365 Copilot (specific app)}:** `⚡ 1 min`
@@ -290,6 +291,7 @@ colleague who has a *point of view*, not just information.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
 - Use neutral, factual headlines. Avoid loaded terms such as "finally" that imply a feature was overdue; prefer "now," "can now," or a direct description of the new capability.
 - Use the same four visual labels for every capability: **🆕 What changed**, **🎯 Why it matters**, **🧪 Try it in**, and **🔗 Source**.
+- Put a blank line between each labeled block; do not combine **What changed** and **Why it matters** into one paragraph or format them as bullets.
 - Publish at most three capability sections. Each must stay under 180 words excluding its prompt.
 - Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or a capability item after #3.
 - Each story has one product-specific prompt. The only allowed surfaces are Copilot CLI, Copilot App, and M365 Copilot (name the specific M365 app).
