@@ -288,6 +288,7 @@ colleague who has a *point of view*, not just information.
 **IMPORTANT formatting rules:**
 - SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
 - TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
+- Use neutral, factual headlines. Avoid loaded terms such as "finally" that imply a feature was overdue; prefer "now," "can now," or a direct description of the new capability.
 - Publish at most three capability sections. Each must stay under 180 words excluding its prompt.
 - Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or a capability item after #3.
 - Each story has one product-specific prompt. The only allowed surfaces are Copilot CLI, Copilot App, and M365 Copilot (name the specific M365 app).
