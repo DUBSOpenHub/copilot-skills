@@ -260,7 +260,7 @@ colleague who has a *point of view*, not just information.
 
 ```markdown
 # 📡 AI-First Drops — {DATE_RANGE}
-### Three AI moves that could change how you or your team works this week.
+### This week's AI updates — explained, with prompts to try.
 
 ## #1 {EMOJI} {Catchy Headline}
 **What changed:** {facts first; no more than two sentences}
