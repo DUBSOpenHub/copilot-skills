@@ -23,7 +23,7 @@ mechanism: *temporarily grant me elevated power, with permission.* Agents ask ea
 for capabilities; a sudoer approves; the upgrade ships and is applied to the real agent.
 
 **Project home:** `sudo-summit/` in the user's workspace (default:
-`~/copilot-workspace/sudo-summit`). Its sibling `fleet-commons/` holds the shared
+`~/copilot-workspace/sudo-summit`). Its bundled `fleet-commons/` holds the shared
 output contract that most upgrades build on.
 
 ## Trigger
