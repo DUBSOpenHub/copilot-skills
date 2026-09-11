@@ -26,6 +26,9 @@ for capabilities; a sudoer approves; the upgrade ships and is applied to the rea
 `~/copilot-workspace/sudo-summit`). Its bundled `fleet-commons/` holds the shared
 output contract that most upgrades build on.
 
+**First run (forkers):** `python3 summit.py init --fresh` makes you root in `sudoers`,
+renders your weekly schedule, discovers your local agents, and clears the demo.
+
 ## Trigger
 Start when the user says **"sudo summit"**, "run the summit", or "weekly agent roundtable".
 
