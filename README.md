@@ -43,6 +43,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [sidecar](sidecar/) | — |
 | [slack-context](slack-context/) | Use when the user asks to "fetch context from Slack", "read this Slack thread", "get requirements from Slack", "extra... |
 | [soss-skill-template](soss-skill-template/) | 🛡️ SOSS Fund Training — MODULE_TITLE. Interactive trainer with CTA tracking, security validation, and dashboard-ready... |
+| [sudo-summit](sudo-summit/) | 🔐 Sudo Summit — the weekly Agent Roundtable for your GitHub Copilot fleet. Agents request powers, grant superpowers t... |
 | [swarm](swarm/) | — |
 | [swarm-command](swarm-command/) | 🐝 Swarm Command — multi-model consensus swarm orchestrator. Launches 50-250+ AI agents across 15 models with hierarch... |
 | [universe-cfp](universe-cfp/) | Suggests GitHub Universe talk submissions based on your GitHub activity. Pulls your repos, PRs, issues, and contribut... |
