@@ -76,8 +76,8 @@ show the user `summit.py agenda`. Ask which to approve.
 ```bash
 python3 summit.py approve --id <id> --by @DUBSOpenHub
 python3 summit.py ship    --id <id>
-python3 summit.py apply   --id <id>           # dry-run first
-python3 summit.py apply   --id <id> --yes     # after the user confirms the diff
+python3 summit.py apply   --id <id>                    # dry-run first (delegation contract by default)
+python3 summit.py apply   --id <id> --yes --caps "..." # bounded contract; use --mode teach only for small knowledge
 ```
 Deny unsafe or over-broad asks: `summit.py deny --id <id> --by @DUBSOpenHub --reason "..."`.
 
