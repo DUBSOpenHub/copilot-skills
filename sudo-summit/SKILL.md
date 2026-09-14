@@ -1,7 +1,7 @@
 ---
 name: sudo-summit
 description: >
-  🔐 Sudo Summit — the weekly Agent Roundtable for your GitHub Copilot fleet. Agents
+  🔐 Sudo Summit — the nightly Agent Roundtable for your GitHub Copilot fleet. Agents
   request powers, grant superpowers to each other, and ship upgrades with one-tap
   permission (sudo). Runs a bounded, safe Town Hall, files asks, and — on your
   approval — applies granted upgrades to real agent files. Say "sudo summit" to start.
@@ -18,7 +18,7 @@ tools:
 
 # Sudo Summit
 
-Sudo Summit is the fleet's **weekly power exchange**. `sudo` is the metaphor and the
+Sudo Summit is the fleet's **nightly power exchange**. `sudo` is the metaphor and the
 mechanism: *temporarily grant me elevated power, with permission.* Agents ask each other
 for capabilities; a sudoer approves; the upgrade ships and is applied to the real agent.
 
@@ -27,10 +27,10 @@ for capabilities; a sudoer approves; the upgrade ships and is applied to the rea
 output contract that most upgrades build on.
 
 **First run (forkers):** `python3 summit.py init --fresh` makes you root in `sudoers`,
-renders your weekly schedule, discovers your local agents, and clears the demo.
+renders your nightly schedule, discovers your local agents, and clears the demo.
 
 ## Trigger
-Start when the user says **"sudo summit"**, "run the summit", or "weekly agent roundtable".
+Start when the user says **"sudo summit"**, "run the summit", or "nightly agent roundtable".
 
 ## Safety rules (non-negotiable)
 - **Never live-invoke mass-spawner agents** (`hive1k`, `swarm-command`, `havoc-hackathon`,
