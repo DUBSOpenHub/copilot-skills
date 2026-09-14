@@ -42,6 +42,13 @@ Start when the user says **"sudo summit"**, "run the summit", or "nightly agent 
 
 ## The ritual
 
+### 0. Refresh fleet context (read-first)
+```bash
+cd sudo-summit && python3 summit.py context
+```
+Read `fleet-context.md` — the fleet's current capabilities — before seating the roster
+and while judging asks. Encourage participating agents to read it too.
+
 ### 1. Open the week
 ```bash
 cd sudo-summit && python3 summit.py open
