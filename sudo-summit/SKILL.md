@@ -49,6 +49,9 @@ cd sudo-summit && python3 summit.py context
 Read `fleet-context.md` — the fleet's current capabilities — before seating the roster
 and while judging asks. Encourage participating agents to read it too.
 
+Once (or after adding agents), stamp a read-first pointer into every agent so they load
+it automatically: `python3 summit.py wire --yes` (idempotent, backed up; `--revert` undoes).
+
 ### 1. Open the week
 ```bash
 cd sudo-summit && python3 summit.py open
