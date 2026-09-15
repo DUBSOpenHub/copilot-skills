@@ -755,30 +755,29 @@ _Automatically refreshed from GitHub Docs. Last refresh: 2026-09-15._
 
 | Display Name | Model ID | Tier |
 |-------------|----------|------|
-| Claude Opus 5 | `claude-opus-5` | Premium |
-| Claude Opus 4.8 | `claude-opus-4.8` | Premium |
 | Claude Opus 4.7 | `claude-opus-4.7` | Premium |
-| GPT-6 Astra | `gpt-6-astra` | Premium |
-| GPT-5.6 Terra | `gpt-5.6-terra` | Premium |
-| GPT-5.5 | `gpt-5.5` | Premium |
+| Claude Opus 4.8 | `claude-opus-4.8` | Premium |
+| Claude Opus 5 | `claude-opus-5` | Premium |
 | GPT-5.4 | `gpt-5.4` | Premium |
-| Kimi K3 | `kimi-k3` | Premium |
+| GPT-5.5 | `gpt-5.5` | Premium |
+| GPT-5.6 Terra | `gpt-5.6-terra` | Premium |
+| GPT-6 Astra | `gpt-6-astra` | Premium |
 | Grok 4.6 | `grok-4.6` | Premium |
-| Claude Sonnet 5 | `claude-sonnet-5` | Standard |
+| Kimi K3 | `kimi-k3` | Premium |
 | Claude Haiku 4.5 | `claude-haiku-4.5` | Standard |
-| GPT-5.6 Sol | `gpt-5.6-sol` | Standard |
-| GPT-5.6 Sol Fast | `gpt-5.6-sol-fast` | Standard |
-| GPT-5.6 Luna | `gpt-5.6-luna` | Standard |
-| GPT-5.4 Mini | `gpt-5.4-mini` | Standard |
+| Claude Sonnet 5 | `claude-sonnet-5` | Standard |
+| GPT-5 mini | `gpt-5-mini` | Standard |
 | GPT-5.3-Codex | `gpt-5.3-codex` | Standard |
-| GPT-5 Mini | `gpt-5-mini` | Standard |
-| Gemini 3.8 Flash | `gemini-3.8-flash` | Standard |
-| Gemini 3.7 Flash | `gemini-3.7-flash` | Standard |
-| Gemini 3.6 Flash | `gemini-3.6-flash` | Standard |
+| GPT-5.4 mini | `gpt-5.4-mini` | Standard |
+| GPT-5.6 Luna | `gpt-5.6-luna` | Standard |
+| GPT-5.6 Sol | `gpt-5.6-sol` | Standard |
 | Gemini 3.5 Flash | `gemini-3.5-flash` | Standard |
-| MAI-Code-1.1-Flash | `mai-code-1.1-flash` | Standard |
-| Kimi K2.7 Code | `kimi-k2.7-code` | Standard |
+| Gemini 3.6 Flash | `gemini-3.6-flash` | Standard |
+| Gemini 3.7 Flash | `gemini-3.7-flash` | Standard |
+| Gemini 3.8 Flash | `gemini-3.8-flash` | Standard |
 | Grok 4.5 | `grok-4.5` | Standard |
+| Kimi K2.7 Code | `kimi-k2.7-code` | Standard |
+| MAI-Code-1.1-Flash | `mai-code-1.1-flash` | Standard |
 
 **Default contestants (Standard):** Claude Sonnet 5, GPT-5.6 Sol, Gemini 3.8 Flash ← STANDARD ⚡
 **Default contestants (Premium):** Claude Opus 5, GPT-6 Astra, GPT-5.6 Terra ← PREMIUM 👑
@@ -791,7 +790,7 @@ _Automatically refreshed from GitHub Docs. Last refresh: 2026-09-15._
 - **Pod Leads** → Claude Sonnet 5 (`claude-sonnet-5`)
 - **Specialists** → GPT-5.6 Terra (`gpt-5.6-terra`)
 - **Scouts / Canaries / Shadow Probes** → GPT-5.6 Luna (`gpt-5.6-luna`)
-- **Executors** → GPT-5.6 Sol Fast (`gpt-5.6-sol-fast`)
+- **Executors** → GPT-5.6 Sol (`gpt-5.6-sol`)
 
 ---
 
