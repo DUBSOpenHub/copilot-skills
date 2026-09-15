@@ -2,7 +2,7 @@
 name: havoc-hackathon
 description: >
   🏟️ Havoc Hackathon — a multi-model orchestration skill that turns your terminal into a competitive arena.
-  Dispatches up to 13 current full-size AI models in tournament elimination heats, scores them with sealed judge panels
+  Dispatches the current selectable GitHub Copilot model roster in tournament elimination heats, scores them with sealed judge panels
   and Shadow Spec hidden quality gates, evolves the best ideas between rounds via Convergence Broadcasts,
   and synthesizes the final output from collective intelligence.
   Say "run hackathon" to start. Say "run kiloagent" for 1,000-agent deep mode.
@@ -142,17 +142,20 @@ Classify the task and pick the mode automatically — do NOT ask the user which 
 | **Epic** | Tournament (all models) | rewrite, redesign, full-stack feature, cross-repo change, framework evaluation |
 
 **Rules:** Default to Classic unless the task clearly matches Complex/Epic patterns. When in doubt, choose Classic — speed matters more than coverage for most tasks. The user can always override: "quick"/"fast" → Classic, "tournament"/"full"/"all models" → Tournament.
-  - N ≥ 12: 4 heats × 3-4 → 4 finalists
+  - N ≥ 9: use `ceil(N / 4)` heats, targeting 3-4 contestants per heat
   - N = 9-11: 3 heats × 3 → 3 finalists
   - N = 7-8: 2 heats × 3-4 → 2 finalists
   - N = 5-6: 2 heats × 2-3 → 2 finalists
   - N ≤ 4: Classic mode (no heats, direct competition)
-  General rules: target heat size = 3, minimum 2 finalists. Distribute remainder models to lowest-ELO heats.
+  General rules: target heat size = 4, one finalist per heat, minimum 2 finalists. Distribute remainder models to lowest-ELO heats.
 
 **Bracket Distribution Table:**
 
 | Models | Heats | Distribution | Finalists | Notes |
 |--------|-------|-------------|-----------|-------|
+| 24 | 6 | 4-4-4-4-4-4 | 6 | Full current roster |
+| 20 | 5 | 4-4-4-4-4 | 5 | Even split |
+| 16 | 4 | 4-4-4-4 | 4 | Even split |
 | 14 | 4 | 4-4-3-3 | 4 | Extras to lowest-ELO heats |
 | 13 | 4 | 4-3-3-3 | 4 | Extra to lowest-ELO heat |
 | 12 | 4 | 3-3-3-3 | 4 | Even split |
@@ -176,9 +179,9 @@ When distributing uneven models, assign extras to heats containing the lowest-EL
 > "⚡ Model tier? Standard models work great for most tasks. Premium brings the heavy hitters."
 > Choices: **Standard (Recommended)**, **Premium**
 
-- **Standard tier** (default): Contestants = all Standard tier models (3 models). Judges = Claude Opus 4.8, GPT-5.6 Terra, Claude Opus 4.8 (Fast).
-- **Premium tier**: Contestants = all available current full-capability models  -  Premium + Standard (6 models). Judges = Claude Sonnet 5, GPT-5.6 Luna, Claude Opus 4.8 (Fast).
-- **Classic Mode** overrides tier selection: Standard = Claude Sonnet 5, GPT-5.6 Sol, GPT-5.6 Luna. Premium = Claude Opus 4.8, GPT-5.6 Terra, GPT-5.6 Sol.
+- **Standard tier** (default): Contestants = every Standard model in the generated roster. Judges use three non-competing Premium models.
+- **Premium tier**: Contestants = the full generated roster. Judges follow the judge-contestant separation rules.
+- **Classic Mode** overrides tier selection with the generated three-model defaults below.
 
 If the user names specific models (e.g., "use Opus 4.8, GPT-5.6 Terra, and Sonnet 5"), skip the tier prompt and use those models directly in Classic Mode. Show the selected tier badge (⚡ STANDARD or 👑 PREMIUM) in the opening ceremony next to each contestant.
 
@@ -747,26 +750,48 @@ CREATE TABLE IF NOT EXISTS hackathon_hot_signals (
 
 ## Available Models
 
+<!-- BEGIN GENERATED MODEL ROSTER -->
+_Automatically refreshed from GitHub Docs. Last refresh: 2026-09-15._
+
 | Display Name | Model ID | Tier |
 |-------------|----------|------|
+| Claude Opus 5 | `claude-opus-5` | Premium |
 | Claude Opus 4.8 | `claude-opus-4.8` | Premium |
-| Claude Opus 4.8 (Fast) | `claude-opus-4.8-fast` | Premium |
+| Claude Opus 4.7 | `claude-opus-4.7` | Premium |
+| GPT-6 Astra | `gpt-6-astra` | Premium |
 | GPT-5.6 Terra | `gpt-5.6-terra` | Premium |
+| GPT-5.5 | `gpt-5.5` | Premium |
+| GPT-5.4 | `gpt-5.4` | Premium |
+| Kimi K3 | `kimi-k3` | Premium |
+| Grok 4.6 | `grok-4.6` | Premium |
 | Claude Sonnet 5 | `claude-sonnet-5` | Standard |
+| Claude Haiku 4.5 | `claude-haiku-4.5` | Standard |
 | GPT-5.6 Sol | `gpt-5.6-sol` | Standard |
+| GPT-5.6 Sol Fast | `gpt-5.6-sol-fast` | Standard |
 | GPT-5.6 Luna | `gpt-5.6-luna` | Standard |
+| GPT-5.4 Mini | `gpt-5.4-mini` | Standard |
+| GPT-5.3-Codex | `gpt-5.3-codex` | Standard |
+| GPT-5 Mini | `gpt-5-mini` | Standard |
+| Gemini 3.8 Flash | `gemini-3.8-flash` | Standard |
+| Gemini 3.7 Flash | `gemini-3.7-flash` | Standard |
+| Gemini 3.6 Flash | `gemini-3.6-flash` | Standard |
+| Gemini 3.5 Flash | `gemini-3.5-flash` | Standard |
+| MAI-Code-1.1-Flash | `mai-code-1.1-flash` | Standard |
+| Kimi K2.7 Code | `kimi-k2.7-code` | Standard |
+| Grok 4.5 | `grok-4.5` | Standard |
+
+**Default contestants (Standard):** Claude Sonnet 5, GPT-5.6 Sol, Gemini 3.8 Flash ← STANDARD ⚡
+**Default contestants (Premium):** Claude Opus 5, GPT-6 Astra, GPT-5.6 Terra ← PREMIUM 👑
+**Default judges (Standard):** Claude Opus 5, GPT-5.6 Terra, Grok 4.6 ← STANDARD ⚡
+**Default judges (Premium):** Claude Sonnet 5, GPT-5.6 Luna, Gemini 3.8 Flash ← PREMIUM 👑
+<!-- END GENERATED MODEL ROSTER -->
 
 **Kiloagent Model Mapping:** In Kiloagent Mode, roles map to models as follows:
-- **Referees** → Claude Opus 4.8 (`claude-opus-4.8`)
+- **Referees** → Claude Opus 5 (`claude-opus-5`)
 - **Pod Leads** → Claude Sonnet 5 (`claude-sonnet-5`)
 - **Specialists** → GPT-5.6 Terra (`gpt-5.6-terra`)
 - **Scouts / Canaries / Shadow Probes** → GPT-5.6 Luna (`gpt-5.6-luna`)
-- **Executors** → GPT-5.6 Sol (`gpt-5.6-sol`)
-
-**Default contestants (Standard):** Claude Sonnet 5, GPT-5.6 Sol, GPT-5.6 Luna ← STANDARD ⚡
-**Default contestants (Premium):** Claude Opus 4.8, GPT-5.6 Terra, GPT-5.6 Sol ← PREMIUM 👑
-**Default judges (Standard):** Claude Opus 4.8, GPT-5.6 Terra, Claude Opus 4.8 (Fast) ← STANDARD ⚡
-**Default judges (Premium):** Claude Sonnet 5, GPT-5.6 Luna, Claude Opus 4.8 (Fast) ← PREMIUM 👑
+- **Executors** → GPT-5.6 Sol Fast (`gpt-5.6-sol-fast`)
 
 ---
 
