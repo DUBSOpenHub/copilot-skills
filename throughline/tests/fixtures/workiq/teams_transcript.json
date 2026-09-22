@@ -1,0 +1,12 @@
+{
+  "origin": "workiq",
+  "sourceType": "teams_transcript",
+  "uri": "teams://transcript/talk-kickoff-2026-01-10",
+  "owner": "producer@example.com",
+  "permissionState": "authorized",
+  "aclSnapshot": "team-shared:talk-prep-channel",
+  "sensitivityLabel": null,
+  "version": "2026-01-10T15:00:00Z",
+  "retrievedAt": "2026-01-10T15:05:00Z",
+  "content": "In the kickoff call the team agreed the talk should open with a concrete number rather than an abstract claim, and that the live demo needs a static-image fallback in case the venue Wi-Fi fails."
+}

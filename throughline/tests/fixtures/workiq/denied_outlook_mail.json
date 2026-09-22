@@ -1,0 +1,12 @@
+{
+  "origin": "workiq",
+  "sourceType": "outlook_mail",
+  "uri": "outlook://mail/AAMkAGI-denied-example",
+  "owner": "colleague@example.com",
+  "permissionState": "denied",
+  "aclSnapshot": "mailbox:not-shared",
+  "sensitivityLabel": null,
+  "version": "v1",
+  "retrievedAt": "2026-01-12T09:00:00Z",
+  "content": "This content must never be usable — the fetch was denied (FR-SRC-4/NFR-3): a denied permissionState means source ingest must reject this before any bytes are trusted, regardless of what 'content' says here."
+}

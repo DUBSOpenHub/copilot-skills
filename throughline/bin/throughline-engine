@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""Thin wrapper for `python3 -m engine.cli` (ARCH §3, §5).
+
+Backward-compatible alias for `bin/throughline` (the primary public CLI
+entry point). Both scripts delegate to the identical `engine.cli.main`,
+so every command and every scenario behaves identically regardless of
+which name invoked it; this name is kept installed so existing callers
+and documentation referencing `throughline-engine` keep working.
+
+Kept intentionally tiny: it only locates the repository root (so the
+`engine` package imports correctly regardless of the caller's current
+working directory) and delegates to `engine.cli.main`. All real logic
+lives in the `engine` package.
+"""
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from engine.cli import main  # noqa: E402
+
+if __name__ == "__main__":
+    sys.exit(main())

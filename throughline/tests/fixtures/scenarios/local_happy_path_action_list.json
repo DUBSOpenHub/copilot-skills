@@ -1,0 +1,210 @@
+[
+  {
+    "action": "set_actor",
+    "value": "Dr. Jamie Rivera"
+  },
+  {
+    "action": "set_talk_brief",
+    "audience": "Conference attendees",
+    "eventType": "keynote",
+    "durationMinutes": 20,
+    "takeaway": "Structured evidence review de-risks talks",
+    "proofPoints": [
+      "adoption stat"
+    ],
+    "excludedTopics": [],
+    "tone": "confident"
+  },
+  {
+    "action": "ingest_source",
+    "origin": "local",
+    "sourceType": "local_paste",
+    "uri": "paste:adoption-note",
+    "owner": "speaker@example.com",
+    "permissionState": "authorized",
+    "aclSnapshot": "owner-only",
+    "version": "v1",
+    "content": "Throughline adoption grew 42% quarter over quarter across pilot teams.\n\nSpeakers using structured evidence review reported higher confidence rehearsing Q&A."
+  },
+  {
+    "action": "propose_claim",
+    "type": "factual",
+    "text": "Throughline adoption grew 42% quarter over quarter.",
+    "evidenceLocators": [
+      "paste:adoption-note#p0"
+    ],
+    "approve": true
+  },
+  {
+    "action": "propose_claim",
+    "type": "interpretive",
+    "text": "This suggests structured evidence review meaningfully reduces talk-prep risk.",
+    "evidenceLocators": [
+      "paste:adoption-note#p1"
+    ],
+    "rationale": "Confidence increase correlates with the adoption stat across pilot teams.",
+    "approve": true
+  },
+  {
+    "action": "propose_claim",
+    "type": "aspirational",
+    "text": "We recommend every team adopt structured evidence review before their next talk.",
+    "aspirationalLabel": "RECOMMENDATION",
+    "approve": true
+  },
+  {
+    "action": "propose_throughline",
+    "value": "A stat that changes how you prep your next talk"
+  },
+  {
+    "action": "propose_throughline",
+    "value": "From scattered notes to a defensible narrative"
+  },
+  {
+    "action": "propose_throughline",
+    "value": "Why provenance beats persuasion"
+  },
+  {
+    "action": "select_throughline",
+    "value": 0
+  },
+  {
+    "action": "propose_route",
+    "label": "Primary route",
+    "beats": [
+      {
+        "role": "HOOK",
+        "headline": "A stat that changes the room",
+        "timeBudgetSeconds": 60,
+        "spokenTalkTrack": "Open cold with the number."
+      },
+      {
+        "role": "STAKES",
+        "headline": "Talks fail without provenance",
+        "timeBudgetSeconds": 90,
+        "spokenTalkTrack": "Stakes talk track.",
+        "visualDescription": "Cluttered desk photo"
+      },
+      {
+        "role": "TURN",
+        "headline": "What changes the outcome",
+        "timeBudgetSeconds": 90,
+        "spokenTalkTrack": "Turn talk track.",
+        "visualDescription": "Ledger flow diagram"
+      },
+      {
+        "role": "MECHANISM",
+        "headline": "How the ledger works end to end",
+        "timeBudgetSeconds": 120,
+        "spokenTalkTrack": "Mechanism walkthrough.",
+        "visualDescription": "Live CLI demo of the evidence ledger",
+        "isDemo": true
+      },
+      {
+        "role": "PROOF",
+        "headline": "Adoption grew 42% in one quarter",
+        "timeBudgetSeconds": 90,
+        "spokenTalkTrack": "Proof point talk track.",
+        "claimIds": [
+          0
+        ],
+        "visualDescription": "Bar chart of adoption growth"
+      },
+      {
+        "role": "OBJECTION",
+        "headline": "Is the overhead worth it",
+        "timeBudgetSeconds": 90,
+        "spokenTalkTrack": "Address the objection.",
+        "claimIds": [
+          1
+        ],
+        "visualDescription": "Quote from a skeptical reviewer"
+      },
+      {
+        "role": "ASK",
+        "headline": "Start your next talk this way",
+        "timeBudgetSeconds": 60,
+        "spokenTalkTrack": "Close with the ask.",
+        "claimIds": [
+          2
+        ],
+        "visualDescription": "Call to action graphic"
+      }
+    ]
+  },
+  {
+    "action": "propose_route",
+    "label": "Short route (unselected alternative)",
+    "beats": [
+      {
+        "role": "HOOK",
+        "headline": "Alt hook",
+        "timeBudgetSeconds": 60
+      },
+      {
+        "role": "ASK",
+        "headline": "Alt ask",
+        "timeBudgetSeconds": 60
+      }
+    ]
+  },
+  {
+    "action": "select_route",
+    "value": 0
+  },
+  {
+    "action": "set_demo_asset",
+    "slideRole": "MECHANISM",
+    "livePath": "cli-session://live-terminal",
+    "prerecordedAssetPath": "tests/fixtures/local/adoption-notes.txt",
+    "staticAssetPath": "tests/fixtures/local/adoption-notes.txt",
+    "verbalRecoveryScript": "I will narrate the ledger flow verbally if the live demo fails."
+  },
+  {
+    "action": "set_rehearsal_timing",
+    "slideRole": "HOOK",
+    "seconds": 58
+  },
+  {
+    "action": "set_rehearsal_timing",
+    "slideRole": "STAKES",
+    "seconds": 95
+  },
+  {
+    "action": "set_rehearsal_timing",
+    "slideRole": "TURN",
+    "seconds": 88
+  },
+  {
+    "action": "set_rehearsal_timing",
+    "slideRole": "MECHANISM",
+    "seconds": 130
+  },
+  {
+    "action": "set_rehearsal_timing",
+    "slideRole": "PROOF",
+    "seconds": 85
+  },
+  {
+    "action": "set_rehearsal_timing",
+    "slideRole": "OBJECTION",
+    "seconds": 92
+  },
+  {
+    "action": "set_rehearsal_timing",
+    "slideRole": "ASK",
+    "seconds": 55
+  },
+  {
+    "action": "record_qa",
+    "question": "What if adoption growth was seasonal?",
+    "answer": "The 42% figure is quarter-over-quarter across pilot teams, which controls for that.",
+    "claimIndices": [
+      0
+    ]
+  },
+  {
+    "action": "approve_stage",
+    "value": "Dr. Jamie Rivera"
+  }
+]

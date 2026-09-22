@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+.DS_Store
+
+# Runtime workspace data must never live inside the installed skill folder,
+# but ignore it defensively in case a developer colocates one for testing.
+/workspace/
+.throughline-workspace/
+
+# Local scratch/dev artifacts (ad hoc smoke-test scripts and outputs) — not
+# part of the shipped skill or the open test suite.
+.scratch/
+
+# Per-test isolated workspace roots created by tests/helpers.py.
+tests/.tmp_workspaces/

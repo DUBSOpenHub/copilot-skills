@@ -46,6 +46,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [sudo-summit](sudo-summit/) | 🔐 Sudo Summit — the nightly Agent Roundtable for your GitHub Copilot fleet. Agents request powers, grant superpowers ... |
 | [swarm](swarm/) | — |
 | [swarm-command](swarm-command/) | 🐝 Swarm Command — multi-model consensus swarm orchestrator. Launches 50-250+ AI agents across 15 models with hierarch... |
+| [throughline](throughline/) | GitHub Copilot Throughline — turns a curated, authorized source bundle into a defensible narrative, an editable Power... |
 | [universe-cfp](universe-cfp/) | Suggests GitHub Universe talk submissions based on your GitHub activity. Pulls your repos, PRs, issues, and contribut... |
 | [web-artifacts-builder](web-artifacts-builder/) | Create interactive HTML artifacts (dashboards, visualizations, org charts, network maps, trackers, comparisons) as se... |
 | [xlsx](xlsx/) | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants t... |

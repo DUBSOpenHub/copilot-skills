@@ -1,0 +1,37 @@
+schema_version: "1"
+id: throughline
+name: GitHub Copilot Throughline
+description: >
+  Turns one speaker's explicitly curated bundle of authorized sources into a
+  defensible narrative, an editable PowerPoint deck with native speaker
+  notes, a rehearsal plan, and a nine-artifact stage-recovery package for
+  one talk at a time. Say "throughline" to start.
+emoji: "🎤"
+codename: Narrative Before Slides
+category: specialist
+version: "1.0.0"
+tags:
+  - presentations
+  - powerpoint
+  - narrative
+  - evidence-provenance
+  - rehearsal
+  - accessibility
+  - stage-readiness
+  - copilot-cli
+platforms: [copilot-cli]
+input_format: free-text
+links:
+  skill_file: SKILL.md
+  install: install.sh
+  docs:
+    - README.md
+    - docs/engine-cli-reference.md
+    - docs/data-model.md
+    - docs/template-spec.md
+  engine:
+    - bin/throughline
+    - bin/throughline-engine
+    - engine/cli.py
+license: MIT
+owner: GitHub

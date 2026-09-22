@@ -1,0 +1,12 @@
+{
+  "origin": "github",
+  "sourceType": "github_release_notes",
+  "uri": "https://github.com/example-org/throughline-pilot/releases/tag/v1.4.0",
+  "owner": "example-org/throughline-pilot",
+  "permissionState": "authorized",
+  "aclSnapshot": "public-repo",
+  "sensitivityLabel": null,
+  "version": "v1.4.0",
+  "retrievedAt": "2026-01-11T12:00:00Z",
+  "content": "v1.4.0 release notes: added the readiness gate, which blocked three talks last quarter from shipping with unsupported factual claims until the speaker added verified evidence."
+}

@@ -1,0 +1,12 @@
+{
+  "origin": "workiq",
+  "sourceType": "sharepoint_doc",
+  "uri": "https://contoso.sharepoint.com/sites/talks/Shared%20Documents/adoption-report.docx",
+  "owner": "data-team@example.com",
+  "permissionState": "authorized",
+  "aclSnapshot": "site:talks-members",
+  "sensitivityLabel": "internal",
+  "version": "v3",
+  "retrievedAt": "2026-01-12T09:00:00Z",
+  "content": "Quarterly adoption report: pilot teams using structured evidence review saw a 42% quarter-over-quarter increase in completed talk-prep workspaces."
+}
