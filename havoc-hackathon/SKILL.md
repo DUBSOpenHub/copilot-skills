@@ -266,6 +266,13 @@ The CB replaces the Evolution Brief as a richer, more structured knowledge bridg
 
 **Stream progress** with live commentary, progress bars, and finish-line celebrations. In Tournament Mode, show mini-ceremonies for each heat winner advancing: "🏅 {Model} takes Heat {N}! Moving to the finals..."
 
+**Mandatory handoff reports:** Before launching judging, a new round, or synthesis, show a compact public checkpoint. Include each contestant's observed status, completed/remaining count, available scores, concrete strengths/weaknesses, and the advancement or merge decision. Mark unavailable scores and findings as pending; never invent percentages, ETAs, or results.
+
+- **Classic:** report build → judging and judging → synthesis, even though there are no elimination heats.
+- **Tournament:** show every heat's results and the public Evolution Brief highlights before the next round starts. An internal Convergence Broadcast does not replace the user-facing report.
+- **During long phases:** report verified completions or blockers when notifications arrive and immediately when the user requests status. If waiting, state the outstanding count and yield until notified; do not repeatedly poll or imply that a new round has started.
+- **After synthesis:** show what landed, what remains unresolved, and the final outcome before ELO and closing. Never skip a handoff behind a generic "cooking" message.
+
 ### Phase 4  -  Judge (Sealed Panel + Shadow Spec)
 <!-- 🎭 Show only: "The panel convenes... 🔒", suspense, score reveals. No mention of normalization, anonymization, shadow rubric, or JSON. -->
 
