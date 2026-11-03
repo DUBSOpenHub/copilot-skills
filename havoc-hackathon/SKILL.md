@@ -751,38 +751,38 @@ CREATE TABLE IF NOT EXISTS hackathon_hot_signals (
 ## Available Models
 
 <!-- BEGIN GENERATED MODEL ROSTER -->
-_Automatically refreshed from GitHub Docs. Last refresh: 2026-09-15._
+_Automatically refreshed from GitHub Docs. Last refresh: 2026-11-03._
 
 | Display Name | Model ID | Tier |
 |-------------|----------|------|
-| Claude Opus 4.7 | `claude-opus-4.7` | Premium |
 | Claude Opus 4.8 | `claude-opus-4.8` | Premium |
 | Claude Opus 5 | `claude-opus-5` | Premium |
-| GPT-5.4 | `gpt-5.4` | Premium |
-| GPT-5.5 | `gpt-5.5` | Premium |
+| Claude Opus 5.5 | `claude-opus-5.5` | Premium |
 | GPT-5.6 Terra | `gpt-5.6-terra` | Premium |
 | GPT-6 Astra | `gpt-6-astra` | Premium |
+| GPT-6 Luna | `gpt-6-luna` | Premium |
+| GPT-6 Sol | `gpt-6-sol` | Premium |
+| GPT-6.1 Sol | `gpt-6.1-sol` | Premium |
+| GPT-6.1 Terra | `gpt-6.1-terra` | Premium |
 | Grok 4.6 | `grok-4.6` | Premium |
+| Grok 4.7 | `grok-4.7` | Premium |
 | Kimi K3 | `kimi-k3` | Premium |
 | Claude Haiku 4.5 | `claude-haiku-4.5` | Standard |
+| Claude Haiku 5.5 | `claude-haiku-5.5` | Standard |
 | Claude Sonnet 5 | `claude-sonnet-5` | Standard |
-| GPT-5 mini | `gpt-5-mini` | Standard |
+| Claude Sonnet 5.5 | `claude-sonnet-5.5` | Standard |
 | GPT-5.3-Codex | `gpt-5.3-codex` | Standard |
-| GPT-5.4 mini | `gpt-5.4-mini` | Standard |
 | GPT-5.6 Luna | `gpt-5.6-luna` | Standard |
 | GPT-5.6 Sol | `gpt-5.6-sol` | Standard |
-| Gemini 3.5 Flash | `gemini-3.5-flash` | Standard |
-| Gemini 3.6 Flash | `gemini-3.6-flash` | Standard |
-| Gemini 3.7 Flash | `gemini-3.7-flash` | Standard |
 | Gemini 3.8 Flash | `gemini-3.8-flash` | Standard |
+| Gemini 4 Argon | `gemini-4-argon` | Standard |
 | Grok 4.5 | `grok-4.5` | Standard |
-| Kimi K2.7 Code | `kimi-k2.7-code` | Standard |
 | MAI-Code-1.1-Flash | `mai-code-1.1-flash` | Standard |
 
-**Default contestants (Standard):** Claude Sonnet 5, GPT-5.6 Sol, Gemini 3.8 Flash ← STANDARD ⚡
-**Default contestants (Premium):** Claude Opus 5, GPT-6 Astra, GPT-5.6 Terra ← PREMIUM 👑
-**Default judges (Standard):** Claude Opus 5, GPT-5.6 Terra, Grok 4.6 ← STANDARD ⚡
-**Default judges (Premium):** Claude Sonnet 5, GPT-5.6 Luna, Gemini 3.8 Flash ← PREMIUM 👑
+**Default contestants (Standard):** Claude Sonnet 5.5, GPT-5.6 Sol, Gemini 4 Argon ← STANDARD ⚡
+**Default contestants (Premium):** Claude Opus 5.5, GPT-6.1 Sol, GPT-6.1 Terra ← PREMIUM 👑
+**Default judges (Standard):** Claude Opus 5.5, GPT-6.1 Terra, Grok 4.7 ← STANDARD ⚡
+**Default judges (Premium):** Claude Sonnet 5.5, GPT-5.6 Luna, Gemini 4 Argon ← PREMIUM 👑
 <!-- END GENERATED MODEL ROSTER -->
 
 **Kiloagent Model Mapping:** In Kiloagent Mode, roles map to models as follows:
