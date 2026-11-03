@@ -258,7 +258,7 @@ The CB replaces the Evolution Brief as a richer, more structured knowledge bridg
 
 **Build mode:** Each model commits to `hackathon/{model-name}`. Independent work. Scope boundaries.
 
-**Failure Recovery:** Poll via `read_agent` every 15s. Adaptive timeouts (300-900s). Retry once on failure. DQ after 2 failures. If an entire heat is DQ'd, highest-scoring eliminated model from another heat gets a wildcard entry.
+**Failure Recovery:** Use runtime completion notifications, then retrieve each result once with `read_agent`; do not poll while waiting. Adaptive timeouts (300-900s). Retry once on failure. DQ after 2 failures. If an entire heat is DQ'd, highest-scoring eliminated model from another heat gets a wildcard entry.
 
 **Stall Detection:** If a contestant produces no output after 180 seconds, pause and ask the user via `ask_user`: "⏳ {Model} has been silent for 3 minutes. Want to keep waiting or DQ and continue with the others?" Choices: **Keep waiting (60s more)**, **DQ and continue**. If the user extends and it stalls again, auto-DQ with commentary: "💀 {Model} went AFK. No mercy in this arena."
 
