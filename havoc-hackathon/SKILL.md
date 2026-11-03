@@ -923,7 +923,7 @@ stampede.sh \
   "kind": "commander",
   "havoc_role": "contestant",
   "contestant_label": "Contestant A",
-  "model": "claude-opus-4.8",
+  "model": "claude-opus-5.5",
   "objective": "User challenge",
   "repo_path": "/abs/path",
   "profile": "metaswarm",
