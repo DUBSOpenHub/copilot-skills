@@ -1,14 +1,13 @@
 ---
-name: ralph-loop
+name: looper
 description: >
   GitHub Copilot turns any request into small, testable steps, implements and
   validates them, repairs failures, and resumes from project-local files after
   context resets. Stops only with verified acceptance, a genuine blocker, or
-  the hard limit of 20 passes. Say "ralph loop", "ralph-loop", or
-  "run a Ralph loop" to start or resume.
+  the hard limit of 20 passes. Say "looper" or "run looper" to start or resume.
 ---
 
-# Ralph Loop
+# Looper
 
 Execute the request, not just a plan. Repeat **read state → reserve → implement
 → validate → repair → revalidate → checkpoint**. Disk is the source of truth.
@@ -25,6 +24,11 @@ Never equate a successful edit, a green subset, or exhausted effort with success
 2. Resolve `SKILL_DIR` to the directory containing this skill, **not** the project
    directory. Use `STATE=<project-root>/.ralph-loop`. Keep all loop state inside
    the target project. Do not follow state-directory symlinks outside it.
+   The skill is named `looper`: canonical `skills/looper/`, installed
+   `~/.copilot/skills/looper/`. Retain the existing
+   `.ralph-loop/` state directory and `ralph-loop-pass-ledger-v1` protocol marker
+   for backward compatibility. Renaming the skill never migrates state, resets
+   the budget, or discards prior histories.
 3. Before initialization, look for `STATE`. If it exists, read `state.md`,
    `progress.md`, and the pass ledger. If `STATE` is missing but prior loop
    evidence, logs, or temporary state remain, stop and reconcile them; never
@@ -76,6 +80,21 @@ Update it via a sibling `state.md.new` followed by same-directory rename; append
 progress before closing a pass. Stop on persistence errors: do not continue
 untracked. Never put secrets in state, commands, or logs.
 
+Before **any** state read/write, verify containment in the selected project and
+reject symlink components, including inherited parent links and trailing-slash
+aliases. Check `state.md`, `progress.md`, evidence output paths, and all staging
+destinations: existing files must be regular, not symlinks or directories.
+Never append through a multiply linked progress file. Create sibling candidates
+exclusively; never truncate or reuse an existing `.new` file. Write the full
+candidate, check write/rename exits, and recheck the destination before rename
+so a directory cannot absorb the candidate. Preserve existing progress bytes.
+On partial append/publication, retain the partial bytes and candidates as
+evidence; reconcile before retrying. Preserve an obstructing candidate's contents
+before safely moving it aside; never promote uncertain evidence to passing.
+These checks assume cooperating local writers, not malicious concurrent pathname
+replacement. Individual renames are not a multi-file transaction or a guarantee
+against power loss.
+
 ## 2. Count passes mechanically
 
 A **pass** is one durably reserved attempt at one selected step, or one final
@@ -109,6 +128,10 @@ bash "$SKILL_DIR/scripts/pass-ledger.sh" "$STATE" reserve work S01
   Final verification may succeed in pass 20; otherwise the run is exhausted.
 - One active writer only. A second reservation is rejected while a pass is open.
   The helper's short-lived `.lock` guards ledger mutations, not project edits.
+  Record the active GitHub Copilot writer's host/process/session identity and
+  associated command identities, start times, and liveness observations in state.
+  No `.lock` does **not** mean no active writer; never take over an open pass
+  until both its writer and associated commands are demonstrably inactive.
   On a lock conflict, inspect its owner and stop; never steal a live lock.
   Remove only a demonstrably abandoned `.lock/owner` and empty `.lock` after
   proving the recorded process/host and any associated commands are inactive.
@@ -126,7 +149,13 @@ is uncertain, mark all criteria stale. Preserve the old evidence as history.
 If a previous pass is open and no writer/command is alive, append a recovery
 entry and close it `interrupted`, even if it appeared almost finished. Its
 reservation remains spent; continue with the next number. Missing metadata
-does not refund a pass. Corrupt/gapped ledgers must be investigated, not rebuilt.
+does not refund a pass and permits only an `interrupted` close. Malformed
+published metadata, impossible open-pass ordering, and corrupt/gapped ledgers
+must be investigated, not rewritten or rebuilt. Preserve immutable results even
+when later timestamp, cleanup, or checkpoint work fails. Check the helper's exit
+status, not stdout alone: a nonzero exit may follow a committed reservation or
+result. Inspect disk before deciding the recovery action; never retry as fresh
+work, overwrite the outcome, or refund the reservation.
 
 Treat cached passing evidence as stale after reset or relevant project/environment
 changes. Historical completion is not fresh verification. Resume remaining work,
@@ -156,6 +185,10 @@ pretend this skill runs while no GitHub Copilot session is active.
    writing “verified” as proof. Set a finite deadline suitable for each command;
    a tool's wait interval is not a process timeout. Monitor/stop a hung command
    using its specific process ID if no runner timeout is available.
+   Identify the implementation attempt, initial validation phase, and optional
+   repair/revalidation phase separately. Record the repair-batch count (0 or 1),
+   each check's execution number/count within its phase, and all flaky failures
+   and no-progress history; a new evidence filename does not reset these limits.
 5. **Repair once:** diagnose any failure from evidence, make one bounded repair
    batch, and rerun the failing and impacted regression checks. Further failures
    become the next pass, not an unlimited retry loop inside this pass.
@@ -183,8 +216,10 @@ criterion has preliminary passing evidence, with no unresolved blockers.
 1. Reserve `final ALL`. Freeze deliverables. Record the criterion revision,
    environment/configuration, and a content fingerprint covering tracked,
    untracked, and non-Git deliverables. A commit SHA alone misses dirty changes.
-   Save the exact snapshot command and manifest; exclude loop logs and disposable
-   caches, never actual deliverables.
+   Save the exact snapshot command and manifest, relevant input paths/content
+   and environment/configuration identifiers, and explicit exclusion reasons.
+   Exclude loop logs and disposable caches, never actual deliverables or relevant
+   inputs. Use the same saved recipe on resume and before/after the final gate.
 2. Run **all** criterion verifiers and the relevant full test/lint/build suite,
    not just the last changed tests. For non-code requests, run the complete
    equivalent verification matrix. Recheck baseline failures: a required check
@@ -194,16 +229,23 @@ criterion has preliminary passing evidence, with no unresolved blockers.
    Previously flaky checks require **three fresh consecutive passes** here;
    any failure fails this final attempt. Skipped, unavailable, interrupted, or
    inconclusive checks are not passes.
-4. Recompute the deliverable fingerprint and check for regressions. If anything
-   relevant changed, invalidate the final evidence. Do not repair deliverables
+4. Recompute the deliverable fingerprint and relevant-input/environment snapshot
+   and check for regressions. If anything relevant changed, invalidate the final
+   evidence; invalidate all criteria when the impact is uncertain. Do not repair deliverables
    inside this read-only gate: checkpoint/close `failed`, then return to a work
-   pass if budget remains. Any later deliverable, criterion, or environment
+   pass only if capacity remains for both repair work and another separate final
+   reservation; otherwise checkpoint incomplete. Any later deliverable, criterion, or environment
    change invalidates this gate and requires another counted final pass.
-5. Only when the full matrix passes on the unchanged result: checkpoint the
-   AC-to-evidence matrix and final fingerprint, close the final pass `passed`,
-   and atomically set `state.md` to `complete` with its pass/evidence references.
+5. Only when the full matrix passes on the unchanged result: append/persist the
+   AC-to-evidence matrix, final fingerprint, and relevant-input/environment
+   snapshots **while state is still not complete**. Then close the final pass
+   `passed`, check its exit, and atomically publish `state.md` as `complete` with
+   its pass/evidence references. Verify successful completion publication.
    **Only now may you declare completion or call `task_complete`.** If any
-   persistence operation fails, do not announce completion.
+   persistence operation fails, do not announce completion. A persisted `passed`
+   result with a missing or failed completion checkpoint is not success on
+   resume: retain it, reconcile the failure and freshness, and use a new final
+   reservation if evidence was invalidated. Never change an immutable result.
 
 ## 5. Stop truthfully
 
@@ -227,7 +269,8 @@ reservations and the budget, **not acceptance correctness**; the final gate abov
 is mandatory. Exit codes: `2` exhausted, `3` open/already closed pass, `4` locked,
 `5` invalid state, `64` invalid usage. Any unexpected I/O failure is also a stop.
 
-From this skill directory, run `bash -n scripts/pass-ledger.sh` and
+From `skills/looper/` (or the installed `looper` skill directory), run
+`/bin/bash -n scripts/pass-ledger.sh` and
 `python3 -B scripts/test_pass_ledger.py`; optionally run
 `shellcheck scripts/pass-ledger.sh`. Python 3 is needed only for these
 standard-library self-tests, which create and remove fixtures inside this directory.

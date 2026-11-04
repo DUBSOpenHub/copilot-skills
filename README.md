@@ -34,12 +34,12 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [headcount-zero](headcount-zero/) | — |
 | [hive1k](hive1k/) | 🐝 Hive1K — recursive multi-model swarm orchestrator. Launches 250-1,000+ AI agents across 16 models with Division Com... |
 | [loop](loop/) | Edit Microsoft Loop documents in the browser using Playwright automation. Use when the user wants to create, edit, or... |
+| [looper](looper/) | GitHub Copilot turns any request into small, testable steps, implements and validates them, repairs failures, and res... |
 | [m365-easy-button](m365-easy-button/) | Translate Google Workspace habits into Microsoft 365 steps, app mappings, troubleshooting, and power-user guidance. |
 | [my-issue-builder](my-issue-builder/) | Start when the user types issue, then turn dictated or typed notes and pasted links into a principal-level GitHub iss... |
 | [octofund](octofund/) | 🐙 OctoFund — data-driven funding allocator for underfunded open source projects. Takes a budget, scores critical proj... |
 | [pitch-master](pitch-master/) | 🎤 Pitch Master — transforms ANY concept, repo README, or about section into a world-class Y Combinator / TechStars 60... |
 | [pptx](pptx/) | 'Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating sli... |
-| [ralph-loop](ralph-loop/) | GitHub Copilot turns any request into small, testable steps, implements and validates them, repairs failures, and res... |
 | [reflect](reflect/) | Helps any Hubber write their FY26 performance reflection. Pulls GitHub activity for the review period, reads the org ... |
 | [sidecar](sidecar/) | — |
 | [slack-context](slack-context/) | Use when the user asks to "fetch context from Slack", "read this Slack thread", "get requirements from Slack", "extra... |
