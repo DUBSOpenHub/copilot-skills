@@ -26,8 +26,10 @@ Never equate a successful edit, a green subset, or exhausted effort with success
    directory. Use `STATE=<project-root>/.ralph-loop`. Keep all loop state inside
    the target project. Do not follow state-directory symlinks outside it.
 3. Before initialization, look for `STATE`. If it exists, read `state.md`,
-   `progress.md`, and the pass ledger. **Resume; never recopy templates, clear
-   history, reset the budget, or start a second loop to escape the limit.**
+   `progress.md`, and the pass ledger. If `STATE` is missing but prior loop
+   evidence, logs, or temporary state remain, stop and reconcile them; never
+   assume a fresh budget. **Resume; never recopy templates, clear history,
+   reset the budget, or start a second loop to escape the limit.**
    A different request does not authorize discarding the existing goal:
    resolve the conflict with the user, or checkpoint it as blocked.
 4. For a new loop, initialize with the bundled helper:
@@ -117,6 +119,10 @@ bash "$SKILL_DIR/scripts/pass-ledger.sh" "$STATE" reserve work S01
 Read the goal, complete criteria/task table, checkpoints, ledger, recent logs,
 and current working changes before doing anything. Run `status`. Reconcile
 partial edits and side effects; never blindly repeat a deployment or migration.
+Compare current tracked and untracked deliverables, relevant inputs, and
+environment/configuration with the saved snapshot recipe. Mark affected
+criteria stale and revoke any completion claim when they differ; if the impact
+is uncertain, mark all criteria stale. Preserve the old evidence as history.
 If a previous pass is open and no writer/command is alive, append a recovery
 entry and close it `interrupted`, even if it appeared almost finished. Its
 reservation remains spent; continue with the next number. Missing metadata
