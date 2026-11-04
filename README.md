@@ -39,6 +39,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [octofund](octofund/) | 🐙 OctoFund — data-driven funding allocator for underfunded open source projects. Takes a budget, scores critical proj... |
 | [pitch-master](pitch-master/) | 🎤 Pitch Master — transforms ANY concept, repo README, or about section into a world-class Y Combinator / TechStars 60... |
 | [pptx](pptx/) | 'Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating sli... |
+| [ralph-loop](ralph-loop/) | GitHub Copilot turns any request into small, testable steps, implements and validates them, repairs failures, and res... |
 | [reflect](reflect/) | Helps any Hubber write their FY26 performance reflection. Pulls GitHub activity for the review period, reads the org ... |
 | [sidecar](sidecar/) | — |
 | [slack-context](slack-context/) | Use when the user asks to "fetch context from Slack", "read this Slack thread", "get requirements from Slack", "extra... |
