@@ -22,14 +22,18 @@ Never equate a successful edit, a green subset, or exhausted effort with success
    essential ambiguity, permission, credential, or decision; if unavailable,
    persist a blocker rather than guess.
 2. Resolve `SKILL_DIR` to the directory containing this skill, **not** the project
-   directory. Use `STATE=<project-root>/.ralph-loop`. Keep all loop state inside
-   the target project. Do not follow state-directory symlinks outside it.
+   directory. Use `STATE=<project-root>/.ralph-loop` for the default loop, or
+   `STATE=<project-root>/.ralph-loop-<name>` for a named loop (see below). Keep
+   all loop state inside the target project. Do not follow state-directory
+   symlinks outside it.
    The skill is named `looper`: canonical `skills/looper/`, installed
    `~/.copilot/skills/looper/`. Retain the existing
    `.ralph-loop/` state directory and `ralph-loop-pass-ledger-v1` protocol marker
    for backward compatibility. Renaming the skill never migrates state, resets
    the budget, or discards prior histories.
-3. Before initialization, look for `STATE`. If it exists, read `state.md`,
+3. Before initialization, list existing loops with
+   `bash "$SKILL_DIR/scripts/pass-ledger.sh" <project-root> loops`, then look
+   for `STATE`. If it exists, read `state.md`,
    `progress.md`, and the pass ledger. If `STATE` is missing but prior loop
    evidence, logs, or temporary state remain, stop and reconcile them; never
    assume a fresh budget. **Resume; never recopy templates, clear history,
@@ -50,13 +54,29 @@ Never equate a successful edit, a green subset, or exhausted effort with success
    output, and a failure condition. Include requested behavior, edge cases,
    compatibility, and relevant quality requirements. Existence-only checks are
    insufficient for semantic requirements. Do not mark untested items passed.
+   Record the count with `pass-ledger.sh "$STATE" criteria COUNT`. The count can
+   only grow, so criteria cannot be dropped to make the final gate easier.
 6. Break criteria into small **S01, S02, …** steps, each with dependencies,
    affected criteria, and a check that can fail independently. Preserve stable
    IDs. Do not remove, weaken, skip, or redefine a criterion to obtain green
    results. Record necessary additions; material scope changes need user approval.
 
 Initial read-only discovery and planning do not consume a pass. Every subsequent
-deliverable edit or acceptance/baseline test run must belong to a reserved pass.
+deliverable edit belongs to a reserved pass, and every baseline, validation, and
+snapshot command runs through the helper's `run` action so its evidence is
+recorded mechanically.
+
+### Named loops for independent goals
+
+One project may hold several loops when the user has genuinely independent
+goals, for example `looper as docs: refresh the README` alongside the default
+loop. Each named loop has its own state directory, budget, and evidence.
+Names match `^[a-z0-9][a-z0-9-]{0,39}$`; `default` is reserved for
+`.ralph-loop`. `looper list` maps to the `loops` command; `looper resume NAME`
+resumes that loop. Never create a named loop for the same goal, a subset of it,
+or a rephrasing of it to gain passes; that is the same as resetting the budget.
+Loops that edit the same files must not run at once. For concurrent work, give
+each loop its own git worktree; otherwise run them one after another.
 Use `bash`, `view`, `edit`, `create`, `grep`, and `glob` as available. Session
 `sql` todos may mirror the plan, but are never the durable authority. Do not
 rely on conversation memory, background self-invocation, or recursive delegation.
@@ -64,14 +84,17 @@ rely on conversation memory, background self-invocation, or recursive delegation
 ### State layout and authority
 
 ```text
-.ralph-loop/
+.ralph-loop/             # or .ralph-loop-<name>/ for a named loop
   format                 # helper protocol marker
+  criteria               # acceptance-criteria count; may only grow
   state.md               # goal, criteria, task graph, latest evidence, next action
   progress.md            # append-only decisions, failures, checkpoints
   passes/01..20/
     reservation          # immutable mode, target, reservation time
+    runs/001..           # helper-recorded command, cwd, meta, output, exit
+    repair               # present once a work pass has used its repair batch
+    criteria             # count proven by a passed final gate
     result               # immutable passed / failed / blocked / interrupted
-    ...                  # exact commands, outputs, exit codes, snapshots
 ```
 
 The **highest reserved directory** is the authoritative number of passes used.
@@ -112,6 +135,19 @@ bash "$SKILL_DIR/scripts/pass-ledger.sh" "$STATE" reserve work S01
 # For final verification instead: reserve final ALL
 ```
 
+Run every check through the helper so the ledger records the exact command,
+working directory, output, and exit status (`--` separates the command):
+
+```bash
+bash "$SKILL_DIR/scripts/pass-ledger.sh" "$STATE" run 01 --label unit --ac AC01,AC02 --timeout 600 -- npm test
+bash "$SKILL_DIR/scripts/pass-ledger.sh" "$STATE" repair 01   # once, after a failed initial run
+```
+
+`run` releases the ledger lock while the command executes, kills the whole
+process group on timeout or interruption, prints the last 200 output lines and
+`run=NN/NNN phase=P exit=N output=PATH`, and exits `7` when the command fails.
+Read the recorded output; never retype or summarize it as evidence instead.
+
 - Creating `passes/NN` consumes pass NN immediately, even if a crash interrupts
   writing its metadata. Failures, blockers, interruptions, and final verification
   all count. The helper has no reset or configurable-limit operation.
@@ -123,6 +159,10 @@ bash "$SKILL_DIR/scripts/pass-ledger.sh" "$STATE" reserve work S01
   ```
 
   `passed` means this attempt passed its checks, **not** that the request is done.
+  The helper refuses `passed` (exit `6`) unless recorded runs prove it: every
+  run finished, and every run in the deciding phase (initial, or revalidate
+  after `repair`) exited 0, including a rerun of each initially failing check.
+  `failed`, `blocked`, and `interrupted` never need passing evidence.
 - Never allocate pass 21. Plan to leave room for final verification: a successful
   implementation in pass 20 cannot substitute for a later full verification.
   Final verification may succeed in pass 20; otherwise the run is exhausted.
@@ -169,33 +209,34 @@ pretend this skill runs while no GitHub Copilot session is active.
    highest-impact remaining criterion. Pick one small step. Record its ID,
    acceptance mapping, hypothesis, planned commands, and expected results.
    In the first reserved work pass, run available relevant baseline test/lint/build
-   commands **before the first deliverable edit**. Record existing failures
-   separately, or explicitly record that no baseline validation exists.
+   commands with `run NN --baseline` **before the first deliverable edit**.
+   Record existing failures separately, or explicitly record that no baseline
+   validation exists. Baseline runs never decide the pass outcome.
 2. **Implement:** make the smallest complete change, preserving unrelated work.
    Add focused regression/behavior checks. Never mislabel pre-existing failures
    fixed without fresh evidence.
 3. **Validate:** run the selected checks and affected previously passing checks,
    plus the project's cheap regression/smoke checks. Observe actual output;
    verify that tests executed, assertions matched, and none were silently skipped.
-4. **Capture evidence:** for every command save the exact invocation, working
-   directory, start/end time, output, actual exit code, relevant test counts,
-   observations, and AC IDs in the reserved directory. Use separate files for
-   each attempt. Capture the underlying command's status, not `tee`'s; use
-   `pipefail` for pipelines. Never use `|| true`, fabricated logs, or merely
-   writing “verified” as proof. Set a finite deadline suitable for each command;
-   a tool's wait interval is not a process timeout. Monitor/stop a hung command
-   using its specific process ID if no runner timeout is available.
-   Identify the implementation attempt, initial validation phase, and optional
-   repair/revalidation phase separately. Record the repair-batch count (0 or 1),
-   each check's execution number/count within its phase, and all flaky failures
-   and no-progress history; a new evidence filename does not reset these limits.
-5. **Repair once:** diagnose any failure from evidence, make one bounded repair
-   batch, and rerun the failing and impacted regression checks. Further failures
-   become the next pass, not an unlimited retry loop inside this pass.
+4. **Capture evidence:** run every check with `run NN --label NAME --ac IDS
+   --timeout SECONDS -- COMMAND`. The helper records the invocation, working
+   directory, times, output, actual exit code, phase, and AC IDs under
+   `passes/NN/runs/`; it enforces the timeout and allows at most three
+   executions of the same command per phase. Note test counts and observations
+   in `progress.md`. For pipelines, run them as `bash -o pipefail -c '…'` so the
+   underlying status is captured. Never use `|| true`, fabricated logs, or merely
+   writing “verified” as proof. Record flaky failures and no-progress history;
+   a new label does not reset these limits.
+5. **Repair once:** diagnose any failure from evidence, run `repair NN`, make one
+   bounded repair batch, and rerun every failing check plus impacted regression
+   checks. The helper refuses a second repair. Further failures become the next
+   pass, not an unlimited retry loop inside this pass.
 6. **Checkpoint:** append changes, all evidence paths/results, failure signature,
    decisions, blockers, and the precise next action to `progress.md`; update
-   `state.md` atomically; then close the pass. Continue immediately if actionable
-   work remains and budget permits. Do not ask “shall I continue?” each pass.
+   `state.md` atomically; then close the pass. If `close passed` exits `6`,
+   the evidence does not support it: close `failed` instead. Continue
+   immediately if actionable work remains and budget permits. Do not ask
+   “shall I continue?” each pass.
 
 ### Exceptional cases
 
@@ -220,16 +261,19 @@ criterion has preliminary passing evidence, with no unresolved blockers.
    and environment/configuration identifiers, and explicit exclusion reasons.
    Exclude loop logs and disposable caches, never actual deliverables or relevant
    inputs. Use the same saved recipe on resume and before/after the final gate.
+   Run the recipe first with `run NN --snapshot -- <recipe command>`; it must
+   print a non-empty, deterministic fingerprint.
 2. Run **all** criterion verifiers and the relevant full test/lint/build suite,
-   not just the last changed tests. For non-code requests, run the complete
-   equivalent verification matrix. Recheck baseline failures: a required check
-   still failing is not green because it was already broken.
+   not just the last changed tests, each as `run NN --ac <IDs> -- <command>`.
+   For non-code requests, run the complete equivalent verification matrix.
+   Recheck baseline failures: a required check still failing is not green
+   because it was already broken.
 3. Map each AC ID to fresh commands, outputs, exit codes, and observed assertions
    from this final pass. All required checks must actually run and pass.
    Previously flaky checks require **three fresh consecutive passes** here;
    any failure fails this final attempt. Skipped, unavailable, interrupted, or
    inconclusive checks are not passes.
-4. Recompute the deliverable fingerprint and relevant-input/environment snapshot
+4. Rerun the identical snapshot command with `run NN --snapshot` as the last run
    and check for regressions. If anything relevant changed, invalidate the final
    evidence; invalidate all criteria when the impact is uncertain. Do not repair deliverables
    inside this read-only gate: checkpoint/close `failed`, then return to a work
@@ -240,7 +284,11 @@ criterion has preliminary passing evidence, with no unresolved blockers.
    AC-to-evidence matrix, final fingerprint, and relevant-input/environment
    snapshots **while state is still not complete**. Then close the final pass
    `passed`, check its exit, and atomically publish `state.md` as `complete` with
-   its pass/evidence references. Verify successful completion publication.
+   its pass/evidence references. The helper refuses this close (exit `6`) unless
+   every run finished with exit 0, the first and last runs are the same snapshot
+   command with identical non-empty output, and every AC01..ACnn up to the
+   recorded criteria count is covered by a check. Then run `verdict`; it must
+   print `complete=yes`. Verify successful completion publication.
    **Only now may you declare completion or call `task_complete`.** If any
    persistence operation fails, do not announce completion. A persisted `passed`
    result with a missing or failed completion checkpoint is not success on
@@ -265,12 +313,17 @@ Use “GitHub Copilot” in full whenever naming the assistant.
 ## Helper contract and self-test
 
 The helper requires Bash and a writable local project directory. It enforces
-reservations and the budget, **not acceptance correctness**; the final gate above
-is mandatory. Exit codes: `2` exhausted, `3` open/already closed pass, `4` locked,
-`5` invalid state, `64` invalid usage. Any unexpected I/O failure is also a stop.
+reservations, the budget, one repair per work pass, three executions per check
+per phase, command timeouts, and recorded-evidence gates for `close passed` and
+`verdict`. It cannot judge whether a verifier truly tests its criterion; the
+policy above still governs that. Exit codes: `2` exhausted, `3` open/already
+closed pass, `4` locked, `5` invalid state, `6` refused by an evidence gate or
+rule, `7` the recorded command failed, `64` invalid usage. Any unexpected I/O
+failure is also a stop. `verdict` prints `complete=yes final=NN criteria=N` or
+`complete=no reason=…`; `PROJECT_ROOT loops` lists every loop in a project.
 
 From `skills/looper/` (or the installed `looper` skill directory), run
 `/bin/bash -n scripts/pass-ledger.sh` and
-`python3 -B scripts/test_pass_ledger.py`; optionally run
+`python3 -B scripts/test_pass_ledger.py` (37 tests); optionally run
 `shellcheck scripts/pass-ledger.sh`. Python 3 is needed only for these
 standard-library self-tests, which create and remove fixtures inside this directory.

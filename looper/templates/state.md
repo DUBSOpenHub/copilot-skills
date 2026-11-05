@@ -1,12 +1,15 @@
 # Looper state
 
 Protocol: 1
-Durable state: <project-root>/.ralph-loop/ (retained for backward compatibility; never migrate/reset history)
+Loop: <default, or the name from .ralph-loop-<name>>
+Durable state: <project-root>/.ralph-loop[-<name>]/ (retained for backward compatibility; never migrate/reset history)
 Status: running
 Project root: <absolute target project root>
 Criteria revision: 1
+Criteria count: <N, recorded with pass-ledger.sh criteria N; may only grow>
 Passes used: <derive from pass-ledger.sh status; never edit the budget>
 Last closed pass: none
+Verdict: <latest pass-ledger.sh verdict output; complete=yes is required before reporting success>
 Next action: <one precise executable action, including step ID>
 
 ## Original request (preserve verbatim)
@@ -67,9 +70,9 @@ Every row must have a concrete assertion and expected observable result.
 - Consecutive no-progress failures: <step, count, signature, prior pass references>
 - Re-plan after two: <new hypothesis/approach/dependencies; unchanged acceptance>
 
-| Pass / phase (baseline, initial, repair, final) | Check / execution number and phase count (max 3) | Invocation / cwd / deadline / start-end | Output / actual exit / executed-skipped counts / observations | AC IDs / flaky failure history |
+| Pass / phase (baseline, initial, revalidate, final) | Recorded run (passes/NN/runs/NNN) / label / execution count in phase (max 3) | Invocation / cwd / timeout | Output path / actual exit / executed-skipped counts / observations | AC IDs / flaky failure history |
 |---|---|---|---|---|
-| <NN / phase> | <check / attempt / total> | <exact values or evidence reference> | <observed values or evidence reference> | <IDs / retained failures and diagnosis> |
+| <NN / phase> | <NNN / label / attempt> | <from the run record> | <from the run record> | <IDs / retained failures and diagnosis> |
 
 ## Blockers and decisions
 
@@ -80,6 +83,7 @@ Every row must have a concrete assertion and expected observable result.
 
 - Final pass: none
 - Criteria revision and environment: not verified
+- Opening/closing snapshot runs (same command, identical output): not verified
 - Before/after deliverable fingerprint and manifest: not verified
 - Before/after relevant-input and environment snapshots: not verified
 - Full suite commands, outputs, exit codes, executed/skipped counts: not verified
@@ -90,6 +94,7 @@ Every row must have a concrete assertion and expected observable result.
 - Evidence/progress and not-complete checkpoint publication: <paths and actual exits>
 - Immutable final close result and command exit: <pending; passed is accounting, not completion>
 - Separate complete-state publication and verification: <pending; report complete only after all persistence succeeds>
+- Verdict after close: <pending; must print complete=yes>
 - Publication failure/recovery: <retained result/evidence, blocker, freshness decision and next action>
 
 ## Handoff
