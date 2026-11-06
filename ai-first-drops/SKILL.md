@@ -1,331 +1,196 @@
 ---
 name: ai-first-drops
-description: >
-  📡 AI-First Drops — researches frontier model releases from the past week,
-  stack-ranks new capabilities by power/impact, and generates ready-to-use prompts
-  for each. Outputs both a markdown report and a CSV on your Desktop.
-  Say "weekly ai report" to start.
-metadata:
-  version: 1.1.0
-license: MIT
+description: Research and publish exactly three verified GitHub and Microsoft AI stories with practical prompts, through the validated weekly runner.
 ---
 
 # AI-First Drops
 
-**UTILITY SKILL** — Weekly scanner for new AI model releases and frontier capabilities.
-INVOKES: `web_search`, `web_fetch`, `workiq` (Work IQ), `slack`, `create`, `bash`, `sql`
-USE FOR: generating a stack-ranked report of new AI capabilities released in the past week
-DO NOT USE FOR: general AI questions, model comparison without a "this week" focus, tutorials
+The canonical implementation is `~/copilot-workspace/ai-first-drops`.
+Read this file and `scripts/drop_quality.py` there for the executable contract.
+Do not use the retired `~/weekly-ai-frontier-report` checkout.
 
-## How This Skill Works
+## Trigger and publication boundary
 
-The user says "weekly ai report" (or a variation). The skill researches all major AI model
-releases from the past 7 days, identifies the frontier capabilities that are newly possible,
-stack-ranks them from most to least powerful, and publishes only the three worth a busy
-reader's attention.
+For "weekly ai report", "ai-first drops", or "run the drop", execute:
 
-Single trigger. Autonomous research. Two outputs (markdown + CSV). Every time.
-
-## Personality
-
-You are a **staff AI researcher and strategist** — thorough, opinionated about rankings,
-and intensely practical. You don't just list models — you identify what's *newly possible*
-that wasn't before. You write prompts people can copy-paste and use immediately.
-
-Tone: Confident, concise, high-signal. Think senior analyst briefing the CTO.
-
-## Behavior
-
-### On Trigger ("ai-first drops", "ai first drops", "aifirstdrops", "weekly ai report", "run the drop")
-
-Execute the following research pipeline autonomously — do NOT ask the user questions:
-
-#### Phase 1 — Discovery (parallel — public + internal)
-
-Pull from BOTH public and internal sources. This is an internal report, so internal signal
-matters as much as public announcements — do NOT rely on the GitHub Changelog alone.
-
-**Public web searches (run in parallel) — GitHub *and* Microsoft AI. Because non-developer impact is weighted 50% in ranking (Phase 3), deliberately cover the surfaces non-developers actually use, not just GitHub developer tooling:**
-1. `"Microsoft 365 Copilot new features Word Excel PowerPoint Outlook Teams [CURRENT_MONTH] [CURRENT_YEAR]"`
-2. `"Microsoft Copilot Studio agents business users no-code [CURRENT_MONTH] [CURRENT_YEAR]"`
-3. `"GitHub Copilot new features releases [CURRENT_MONTH] [CURRENT_YEAR]"`
-4. `"Microsoft AI MAI models image voice creative Copilot [CURRENT_MONTH] [CURRENT_YEAR]"`
-5. `"GitHub changelog [CURRENT_MONTH] [CURRENT_YEAR] new features"`
-
-⚖️ **Non-dev-first rule:** A drop that *leads* with coding models, IDE/CLI tooling, or admin/governance metrics has mis-ranked. Lead with what helps PMs, marketing, revenue, partnerships, events/DevRel, ops, and community — typically **M365 Copilot (Word/Excel/PowerPoint/Outlook/Teams), Copilot Studio, Copilot Chat, and MAI creative models (image/voice/transcription)**. Developer/admin items belong in the *tail* of the ranking, not the head.
-
-**Internal sources (review on EVERY run — first-class, not just fact-check helpers):**
-5. **Work IQ** — query for this week's internal updates, ship posts, rollouts, and DRIs related
-   to Copilot / GitHub / Microsoft AI (e.g. "What shipped or changed in Copilot this week?",
-   "Any AI launches or rollout changes this week?"). Use it to surface stories the public
-   changelog hasn't captured yet and to add internal context.
-6. **Slack** — search relevant internal channels for ship announcements, feature discussions,
-   rollout notes, and corrections from the past week. Capture anything that adds context or
-   surfaces a story that isn't yet (or only) in the public changelog.
-
-Treat Work IQ and Slack as primary discovery inputs alongside the web searches. The GitHub
-Changelog is one input among several — a drop should not be a changelog digest.
-
-#### Phase 2 — Deep Dive (parallel per feature)
-
-For each feature/update discovered in Phase 1, search for:
-- What specifically shipped and when
-- How it works and who it's available to
-- What it enables that wasn't possible before
-- How non-developer roles (PM, marketing, revenue, partnerships, events/DevRel, operations) can use it
-
-#### Phase 3 — Stack Ranking
-
-Rank capabilities from most to least powerful using these criteria (weighted):
-1. **Non-developer impact** (50%) — How useful is this to PMs, marketing, events, ops, DevRel, community?
-2. **Practical impact** (25%) — How many people/workflows does this change?
-3. **Accessibility** (15%) — Can anyone use it, or is it restricted?
-4. **Threshold crossing** (10%) — First of its kind? New capability that didn't exist before?
-
-**Stack rank order: most impactful for non-developers first, most developer-focused last.**
-
-**Publication limit:** Select and publish exactly the top three verified capabilities. If fewer
-than three qualify, publish fewer rather than padding the edition. Do not include honorable
-mentions, a long tail, or a separate roundup.
-
-#### Phase 4 — Prompt Generation
-
-For each selected capability, write one concise, **ready-to-use prompt** that:
-- Demonstrates the specific frontier skill (not generic)
-- Can be copy-pasted into the model's interface or API
-- Includes context and instructions so it works standalone
-- Pushes the model to its limits on that specific capability
-
-When an edition has three items, use each approved product surface exactly once:
-**Copilot CLI**, **Copilot App**, and **M365 Copilot**. Do not add multiple prompt variants to
-one item. If fewer than three items qualify, use one approved surface per item.
-
-#### Phase 5 — Internal Verification Scan
-
-Before generating outputs, run a verification + enrichment pass. Work IQ and Slack are required
-every run — use them both to confirm accuracy AND to pull in internal context. This is the
-fact-check gate; it must not reduce to checking the changelog.
-
-**Review ALL of these every run — Work IQ and Slack are required (don't lean on the changelog alone):**
-
-1. **Work IQ** — query for any internal context on the features covered:
-   - "What's on my Work IQ about [feature name]?"
-   - Check if any covered features have internal launch dates, rollout status, or known issues
-     that differ from public sources
-
-2. **Slack** — scan relevant internal channels for:
-   - Corrections or clarifications on any features covered in the report
-   - Internal announcements that add context not in public sources
-   - Any features that were pulled, delayed, or changed since the public announcement
-
-3. **GitHub Internal Docs** — search internal documentation sources:
-   - Check internal Hubber docs, ship posts, and internal repos for feature details
-   - Verify rollout percentages, feature flags, and plan-tier availability
-   - Look for internal FAQs, known limitations, or workarounds not in public docs
-
-4. **GitHub Changelog** — verify each story against the official changelog:
-   - Confirm ship dates, availability (GA/preview/beta), and plan requirements
-   - Check for any updates or errata published after the initial announcement
-
-**What to do with findings:**
-- If internal sources confirm the public info → no change needed
-- If internal sources add useful context → update the "What changed" or "Why it matters" line
-- If internal sources contradict public info → correct the report and note the discrepancy
-- If a feature was pulled or delayed → remove it or flag it clearly
-
-**⚠️ Safety — publishing rule (keep this):** Do NOT publish a story if it is confidential,
-embargoed, security-sensitive, or otherwise not established internal knowledge. Internal context
-that is non-confidential and safe to share internally MAY be included (this is an internal
-report). When in doubt — especially on unreleased/embargoed items, security details,
-customer/revenue data, or PII — leave it out or keep it high-level. Reminder: an unlisted gist
-is NOT access-controlled, so treat the report as shareable.
-
-**🚫 Hard rule:** Internal sources come first. Actively mine Work IQ and Slack for stories and
-context on every run — the GitHub Changelog is a cross-check, NOT the primary source, and a drop
-must never collapse into a changelog digest. Every published story must be backed by internal
-knowledge (confirmed via Work IQ, Slack, or internal docs). If a story is not internal knowledge,
-or it is confidential, do NOT publish it.
-
-#### Phase 6 — Output Generation
-
-Generate FOUR outputs:
-
-**0. Banner Image** — EVERY drop MUST have a horizontal banner. Generate it with `asset-generator-create_email_banner` (1320×568).
-
-**Fixed for every drop (do NOT change these):**
-1. Tool: `asset-generator-create_email_banner` ONLY. **Never** use the tall/social formats (`create_social_banner`, `create_social_portrait`, `create_social_square`) — they crop awkwardly and stamp a "Copilot" wordmark across the top.
-2. `pillar` = `copilot`
-3. `heading` = "AI-First Drops"
-4. `eyebrow` = the **date range** (e.g. "June 16–23, 2026")
-5. `description` = "This week's AI updates — explained, with prompts to try."
-
-**Weekly variety comes from the `theme` only — rotate through all 12 themes (light → grey → dark), then repeat:**
-```
-copilot-email-light-1, copilot-email-light-2, copilot-email-light-3, copilot-email-light-4,
-copilot-email-grey-1,  copilot-email-grey-2,  copilot-email-grey-3,  copilot-email-grey-4,
-copilot-email-dark-1,  copilot-email-dark-2,  copilot-email-dark-3,  copilot-email-dark-4
-```
-Pick by edition number N (the drop you're publishing is the Nth): `theme = themes[(N - 1) % 12]`.
-To get N, count existing AI-First Drops edition issues and add 1. **Never reuse the previous edition's theme.**
-
-Embed the resulting image URL at the top of the markdown report, right after the title.
-
-**1. Markdown Report** — Save to the session research folder:
-```
-~/.copilot/session-state/{SESSION_ID}/research/ai-first-drops-{DATE}.md
-```
-
-Include:
-- Exactly three concise capability sections (or fewer when fewer than three are verified)
-- A final "Quick Summary" grid with one row per selected capability
-- One bottom-line sentence beneath the grid
-- Inline source URLs and confidence for each capability
-
-**Do NOT include cost-per-token or pricing data anywhere in the report.**
-
-**2. CSV on Desktop** — Save to:
-```
-~/Desktop/ai-first-drops-{DATE}.csv
-```
-
-Columns: Rank, Capability, Model, Developer, Key Breakthrough, Benchmark, Access, Prompt
-
-Then open the CSV with: `open ~/Desktop/ai-first-drops-{DATE}.csv`
-
-**3. Auto-publish GitHub Issues** — Publish the identical report to both repositories. Before
-creating either issue, search that repository for the exact edition title. If it already exists,
-do not create a duplicate; create only the missing copy.
-
-**New edition policy:** Create a new issue in each repository every Friday; never append a new
-week's report to an older issue. The exact-title lookup exists only to make retry attempts
-idempotent.
-
-**Retry parity:** If the exact edition exists in one repository but is missing from the other,
-fetch the existing issue body and use it unchanged for the missing copy. Do not regenerate,
-append to, or edit the existing issue during a retry; both repositories must receive the same
-report body.
-
-**Internal distribution:**
 ```bash
-gh issue create \
-  --repo github/dmo-ai \
-  --title "📡 AI-First Drops — {DATE_RANGE}" \
-  --body-file {path to markdown report}
+bash ~/copilot-workspace/ai-first-drops/scripts/weekly-report.sh
 ```
 
-**Canonical project archive:**
-```bash
-gh issue create \
-  --repo DUBSOpenHub/ai-first-drops \
-  --title "📡 AI-First Drops — {DATE_RANGE}" \
-  --body-file {path to markdown report} \
-  --label "weekly-report,frontier-models,published"
+The runner prepares on Friday from **06:00 America/Los_Angeles**, publishes at
+**09:00 Pacific**, retries every five minutes, and catches up through Sunday.
+On other days it does nothing. To explicitly prepare a future Friday without
+publishing, use `--prepare YYYY-MM-DD`. Never bypass the 09:00 publication gate.
+The LaunchAgent uses this same runner. Do not separately create issues or releases.
+No GUI apps are opened in scheduled runs.
+
+**Exactly three verified stories are required.** A two-story edition is a failed
+draft, not a publishable result. Research more candidates when a story fails.
+Never invent, recycle an old launch as new, or pad a weak third item to meet
+the quota. If three cannot be verified, record the missing evidence and fail
+closed so the runner can retry and alert. Do not claim guaranteed availability
+of a Mac, authentication, news sources, or remote services.
+
+## Draft-only mode (invoked by the runner)
+
+When asked to write `draft.json`, research and write only the requested JSON.
+Do not recursively invoke the runner, publish, generate images, create releases,
+send messages, open apps, or alter the installed skill.
+
+### Research and verify
+
+1. Cover the seven days ending on the requested Friday. Research at least six
+   distinct candidates where possible across M365 apps (Word, Excel, PowerPoint,
+   Outlook, Teams), Microsoft AI, GitHub Copilot App, GitHub Copilot CLI, and
+   GitHub Changelog. Microsoft Copilot's consumer app is **not** GitHub Copilot App.
+2. Read official announcements and release notes. Distinguish original ship dates
+   from recap publication dates; exclude roadmap promises and inaccessible private
+   previews presented as available features. Identify actual availability and limits.
+3. Check Work IQ and Slack every run for corroboration and corrections. Respect
+   source access policies; do not work around a blocked tool. A missing required
+   discovery source is a blocker, not permission to pretend it was checked.
+   If the hosted Work IQ connection has a transport or expired-token failure,
+   the supported, project-pinned Microsoft client provides a normal sign-in path:
+   `~/copilot-workspace/ai-first-drops/node_modules/.bin/workiq ask --json -q "..."`
+   Use its authenticated result only when `isError` is false. Do not clear shared
+   credentials, bypass policy denials, or claim the hosted connection was repaired.
+   Keep references and sensitivity labels local; published claims need public
+   evidence regardless of the internal source. Reuse authorized discovery evidence
+   already gathered for the same edition, with its original provenance; do not
+   claim that cached evidence is a fresh query. Never background-scan Slack or read
+   unapproved threads; only use specifically authorized links/evidence.
+4. Internal corroboration remains in the local draft only. Every publishable
+   claim must also be supported by a public official GitHub/Microsoft URL.
+   Never publish private links, internal quotations, unreleased/embargoed material,
+   customer data, personal data or confidential facts to the canonical archive.
+5. Rank non-developer impact (50%), practical impact (25%), accessibility (15%)
+   and threshold crossing (10%). Lead with useful business workflows, not admin
+   metrics or coding-model trivia. Explain what actually changed and why it matters.
+
+### Write
+
+- Three distinct, neutral, readable headlines; no hype, "finally", fabricated
+  benchmark or pricing claims. Keep each story under 180 words excluding its prompt.
+- Plain English paragraphs, not serialized tool output, JSON fragments, escaped
+  Unicode, placeholders, raw HTML, markup, broken encodings or missing descriptions.
+- One standalone, actionable prompt per story, accessible to a non-developer.
+  Exactly one each: **GitHub Copilot CLI**, **GitHub Copilot App**, and
+  **M365 Copilot (specific app)**. Do not force a feature onto a surface where it
+  does not work. The independent editor checks this against the cited source.
+- State access/preview requirements explicitly. Prompts must demonstrate the
+  specific new capability, not just ask for a generic summary. Use supplied inputs,
+  flag missing evidence, and require approval before consequential actions.
+- Always use "GitHub Copilot" in full for GitHub products and "M365 Copilot" for
+  Microsoft 365. Preserve the actual identity of other Microsoft products.
+
+### JSON contract
+
+The draft is UTF-8 JSON, with this shape (the example describes fields, not news):
+
+```json
+{
+  "edition_date": "2026-11-06",
+  "research": {
+    "workiq": "checked",
+    "slack": "checked",
+    "candidate_count": 6
+  },
+  "stories": [
+    {
+      "headline": "A neutral headline for a verified capability",
+      "what_changed": "What shipped, its real date, and what the feature does.",
+      "why_it_matters": "The concrete practical change for a non-developer.",
+      "access": "Actual availability, licenses, preview status and known limits.",
+      "surface": "M365 Copilot (Word)",
+      "prompt": "A complete standalone prompt of at least sixty characters that demonstrates this specific capability on this surface.",
+      "source_url": "https://learn.microsoft.com/official-source-path",
+      "source_date": "2026-11-02",
+      "confidence": "High",
+      "internal_evidence": {
+        "system": "workiq",
+        "reference": "A local-only verifiable source reference",
+        "public_safe": true
+      }
+    }
+  ],
+  "bottom_line": "One memorable, factual sentence connecting all three stories."
+}
 ```
 
-The `github/dmo-ai` destination does not use the source repository's `weekly-report`,
-`frontier-models`, or `published` labels, so do not add or assume labels there. Add
-`open-source` or `policy` labels to the canonical project issue when relevant. The original
-project repository is canonical for edition numbering, banner-theme rotation, and releases.
+Supply **three** objects in `stories`, with distinct headlines and specific
+source URLs; use the other two approved surfaces exactly once. `confidence` is
+High or Medium. `internal_evidence.system` is workiq, slack, or internal-docs.
+Dates must be in the requested seven-day window; never invent future dates.
+If blocked, write `research-blocker.txt` alongside the draft with the exact gap.
 
-**4. Auto-tag a GitHub Release** — After the issue is published, cut a matching release:
-```bash
-# Edition N = total count of published AI-First Drops edition issues in
-# DUBSOpenHub/ai-first-drops (this one is the Nth).
-# Versioning: Edition N -> tag vN.0.0 (Edition 1 = v1.0.0, Edition 2 = v2.0.0, ...).
-gh release create v{N}.0.0 \
-  --repo DUBSOpenHub/ai-first-drops \
-  --title "🚀 AI-First Drops v{N}.0.0 — Edition {N}" \
-  --target main \
-  --latest \
-  --notes "<short summary + a link to the edition issue — do NOT paste the full report>"
-```
-If that exact tag already exists, skip creating it.
+## Independent editorial review
 
-#### Phase 7 — Summary
+The runner starts a fresh, separate CLI invocation after schema validation.
+It reads the official sources, verifies dates, product identity, access, prompt
+compatibility, public safety, plain-English descriptions and ranking. Its
+`review.json` must name the exact SHA-256 of the current draft and pass all six
+checks in `drop_quality.REVIEW_CHECKS`. Rejected drafts are retained for diagnosis,
+then researched again; stale approvals cannot authorize changed content.
+An automated review reduces risk; it is not proof every factual claim is infallible.
 
-Print a concise summary to the terminal:
-- The top 3 most important things from this week
-- The single most surprising finding
-- Where both files were saved
-- URLs for both published issues and the matching release
+## Graphics and output
 
-## Output Format
+The runner calls the **official Asset Generator** `create_email_banner` endpoint,
+the same tool exposed by the companion. No generative typography or substitute
+social graphic. Fixed properties:
 
-### Markdown Report Structure
+- `pillar`: `copilot`
+- `heading`: `AI-First Drops`
+- `eyebrow`: the actual edition date range
+- `description`: `This week's AI updates — explained, with prompts to try.`
+- `theme`: rotate through all 12 light, grey and dark email themes using
+  `(canonical edition number - 1) % 12`
 
-The report is written for an internal team member who wants to stay current on AI.
-Tone: Opinionated, practical, memorable. Not a summary — a take. Every section should
-have at least one line worth screenshotting. Frame each item as news from a smart
-colleague who has a *point of view*, not just information.
+Download and verify the 1320x568 PNG; macOS Vision OCR must read the title,
+date range and exact description. Service, dimensions, or text failures block
+publication. The image is checked **before**, not injected after, publishing.
+The verified PNG is archived in a **draft edition release**, downloaded again
+and byte-checked. It is also uploaded as a GitHub image attachment associated with
+the internal distribution repository. Reports use that stable attachment URL,
+not a temporary image-service URL or a private release-download URL.
+Verify the image through GitHub Markdown rendering in **both repositories**;
+private image URLs are signed during rendering, so a raw anonymous URL check is
+not the reader's actual path. Do not persist expiring signed URLs.
+The draft release is published only at publication time; final notes link to the
+edition issue. Never overwrite another edition's release/asset or change repository
+visibility to make a retry pass.
 
-```markdown
-# 📡 AI-First Drops — {DATE_RANGE}
-### This week's AI updates — explained, with prompts to try.
+The renderer—not the model—writes the title, banner, subtitle, three story
+sections with separated **🆕 What changed**, **🎯 Why it matters**,
+**🧪 Try it in**, **🔗 Source** blocks, then the final three-column Quick Summary
+and bottom line. There is no TL;DR, honorable mention, or fourth story.
 
-## #1 {EMOJI} {Catchy Headline}
-**🆕 What changed:** {facts first; no more than two sentences}
+Local outputs and private research evidence:
+`~/.copilot/ai-first-drops/YYYY-MM-DD/`.
+CSV also goes to `~/Desktop/ai-first-drops-YYYY-MM-DD.csv` with columns
+Rank, Capability, Model, Developer, Key Breakthrough, Benchmark, Access, Prompt.
+Never invent model names or benchmark results for product features.
 
-**🎯 Why it matters:** {practical, non-hyped implication; no more than two sentences}
+## Publication and recovery
 
-**🧪 Try it in {Copilot CLI | Copilot App | M365 Copilot (specific app)}:** `⚡ 1 min`
-\```
-{one task-specific, copy-pasteable prompt}
-\```
+The deterministic runner owns all writes:
 
-**🔗 Source:** {linked source} · Confidence: **{High/Medium}**
+1. Exact-title lookup in **DUBSOpenHub/ai-first-drops** and **github/dmo-ai**.
+   API errors are not absence. Never append a new edition to an old issue.
+2. Reuse an existing valid issue body unchanged on partial retry. Reject mismatches
+   and invalid historical partial editions rather than silently overwrite them.
+3. Create only missing copies with identical report bodies. Canonical labels:
+   weekly-report, frontier-models, published. Never add those labels internally.
+4. Assign the internal issue to DUBSOpenHub and add it to GitHub Project 20236;
+   verify both persisted. Do not modify the project's view filters.
+5. Cut canonical release `vN.0.0`, target main, mark latest; concise notes link
+   to the canonical issue. Verify release and issue parity before recording success.
+6. Lock against overlapping runs. Each CLI attempt has a 30-minute process-group
+   timeout. Preserve logs, rejected drafts and failure reasons; alert after failure.
+   Persist at most four expensive attempts per Pacific day per edition **per phase**;
+   preparation failures cannot consume the 09:00 publication budget. A missing
+   three-story research set waits an hour before another attempt; five-minute
+   polling must not become an unlimited loop of paid research. Cooldown is not success.
 
-{...repeat for each story...}
-
-## Quick Summary
-| # | What Shipped | Why It Matters | Try It In |
-|---|---|---|---|
-| 1 | {capability} | {sharp, practical takeaway} | {specific product} |
-| 2 | {capability} | {sharp, practical takeaway} | {specific product} |
-| 3 | {capability} | {sharp, practical takeaway} | {specific product} |
-
-**Bottom line:** {one memorable sentence connecting the three updates.}
-```
-
-**IMPORTANT formatting rules:**
-- SCOPE: GitHub and Microsoft AI only. No coverage of Anthropic, Google, Meta, or other labs unless directly relevant to a GitHub/Microsoft feature.
-- TONE: Informative, not celebratory. Don't hype — explain. Write like a smart colleague sharing useful news, not a press release.
-- Use neutral, factual headlines. Avoid loaded terms such as "finally" that imply a feature was overdue; prefer "now," "can now," or a direct description of the new capability.
-- Use the same four visual labels for every capability: **🆕 What changed**, **🎯 Why it matters**, **🧪 Try it in**, and **🔗 Source**.
-- Put a blank line between each labeled block; do not combine **What changed** and **Why it matters** into one paragraph or format them as bullets.
-- Publish at most three capability sections. Each must stay under 180 words excluding its prompt.
-- Do not include a TL;DR, a separate takeaway section, a confidence assessment, footnotes, honorable mentions, or a capability item after #3.
-- Each story has one product-specific prompt. The only allowed surfaces are Copilot CLI, Copilot App, and M365 Copilot (name the specific M365 app).
-- Always identify Microsoft 365 features as **M365 Copilot** in headlines and body text; never shorten them to generic "Copilot."
-- When three items are published, use Copilot CLI, Copilot App, and M365 Copilot exactly once each. Never use GitHub Copilot Chat as a "Try it" surface.
-- Prompts must be accessible to non-developers and specific enough to produce an actionable result.
-- No cost/pricing data anywhere in the report
-- "Quick Summary" is the final section. Its grid uses: What Shipped, Why It Matters, Try It In (3 columns).
-
-### CSV Structure
-
-```
-Rank,Capability,Model,Developer,Key Breakthrough,Benchmark,Access,Prompt
-```
-
-## Error Handling
-
-- If web search returns no results for a model, note it as "unverified" and move on
-- If fewer than 3 verified capabilities are found, report only the verified capabilities; never pad the edition
-- If a benchmark number appears in only one source, flag confidence as "single-source"
-- Always generate both outputs even if research is incomplete
-
-## Example Interaction
-
-**User:** weekly ai report
-
-**Assistant:** *[Runs full research pipeline autonomously, ~60-90 seconds]*
-
-📡 **AI-First Drops — April 7-10, 2026**
-
-Top 3 this week:
-1. **Repository overview** makes unfamiliar projects easier to assess before a deeper review.
-2. **Copilot app availability** makes an agent-workspace pilot accessible to more people.
-3. **Model routing** turns the choice between depth and speed into a repeatable team practice.
-
-📄 Full report: `~/.copilot/session-state/.../research/ai-first-drops-2026-04-10.md`
-📊 CSV opened on Desktop: `~/Desktop/ai-first-drops-2026-04-10.csv`
+Run `--preflight` for live auth/repository/project/banner-service checks and
+`--status` for schedule/checkout information. Neither publishes.

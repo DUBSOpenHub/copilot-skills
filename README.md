@@ -11,7 +11,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [agent-orchestra](agent-orchestra/) | Multi-agent fleet conductor for the GitHub Copilot CLI. Launches exactly five visible Terminal Stampede commander gro... |
 | [agent-pulse](agent-pulse/) | — |
 | [ai-engineering-coach](ai-engineering-coach/) | AI Engineering Coach - opens a private local dashboard that analyzes AI coding sessions, practice patterns, output, a... |
-| [ai-first-drops](ai-first-drops/) | 📡 AI-First Drops — researches frontier model releases from the past week, stack-ranks new capabilities by power/impac... |
+| [ai-first-drops](ai-first-drops/) | Research and publish exactly three verified GitHub and Microsoft AI stories with practical prompts, through the valid... |
 | [cli-mastery](cli-mastery/) | Interactive training for the GitHub Copilot CLI. Guided lessons, quizzes, scenario challenges, and a full reference c... |
 | [codeql-mastery](codeql-mastery/) | 🛡️ CodeQL Mastery — SOSS Fund expert on GitHub CodeQL and code scanning. Ask any question about CodeQL, code scanning... |
 | [context-compass](context-compass/) | Context Compass — your guide to bringing GitHub, Slack, and WorkIQ context into Copilot CLI. Runs beginner onboarding... |
@@ -27,6 +27,7 @@ A collection of skills for [GitHub Copilot CLI](https://docs.github.com/copilot/
 | [evo-forge](evo-forge/) | 🧬 Evo Forge — breeds better agents through evolutionary selection. Mutates agent prompts, tournaments them, selects s... |
 | [excalidraw](excalidraw/) | Generate Excalidraw diagrams from descriptions. Creates .excalidraw JSON files that can be opened in https://aka.ms/e... |
 | [expense-report](expense-report/) | Create and fill out Microsoft Dynamics 365 MyExpense expense reports from receipts using visible browser automation. ... |
+| [fde](fde/) | Forward-deployed AI workflow engineer. Turn a workflow need into a custom GitHub Copilot skill through discovery, Hav... |
 | [first-agent](first-agent/) | 🎓 First Agent — live training skill that guides non-developers from zero to building their first AI agent in three se... |
 | [fleet-scorecard](fleet-scorecard/) | Fleet Scorecard — turns any multi-agent CLI run into a clear outcome decision. Scores what changed, what won, what fa... |
 | [gdoc-converter](gdoc-converter/) | Converts Google Docs, Slides, and Sheets to Microsoft Office formats (Word, PowerPoint, Excel). Paste a Google URL an... |
