@@ -46,6 +46,11 @@ send messages, open apps, or alter the installed skill.
 2. Read official announcements and release notes. Distinguish original ship dates
    from recap publication dates; exclude roadmap promises and inaccessible private
    previews presented as available features. Identify actual availability and limits.
+   Check the Microsoft Copilot Blog directly as well as Microsoft Learn release
+   notes: the release-note feed can lag an original announcement. Include Chat
+   inside the Microsoft 365 Copilot app as a specific M365 app surface when the
+   source supports it. Do not restrict discovery to the five Office/Teams apps,
+   or claim that Chat capabilities are already available inside those apps.
 3. Check Work IQ and Slack every run for corroboration and corrections. Respect
    source access policies; do not work around a blocked tool. A missing required
    discovery source is a blocker, not permission to pretend it was checked.
