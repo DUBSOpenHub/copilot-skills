@@ -147,13 +147,16 @@ social graphic. Fixed properties:
 - `pillar`: `copilot`
 - `heading`: `AI-First Drops`
 - `eyebrow`: the actual edition date range
-- `description`: `AI updates explained, with prompts to try.` (must fit on one line)
+- `description`: `This week's AI updates explained, with prompts to try.` (one line, no em dash)
 - `theme`: rotate through all 12 light, grey and dark email themes using
   `(canonical edition number - 1) % 12`
 
 Download and verify the 1320x568 PNG; macOS Vision OCR must read the title,
 date range and exact description. Service, dimensions, or text failures block
 publication. The image is checked **before**, not injected after, publishing.
+If the service wraps this exact copy, `banner_fit.swift` joins and fits only the
+original subtitle glyphs onto one line. It preserves the official artwork and
+font, does not generate typography, and is verified by OCR after fitting.
 The verified PNG is archived in a **draft edition release**, downloaded again
 and byte-checked. It is also uploaded as a GitHub image attachment associated with
 the internal distribution repository. Reports use that stable attachment URL,
