@@ -147,7 +147,7 @@ social graphic. Fixed properties:
 - `pillar`: `copilot`
 - `heading`: `AI-First Drops`
 - `eyebrow`: the actual edition date range
-- `description`: `This week's AI updates — explained, with prompts to try.`
+- `description`: `AI updates explained, with prompts to try.` (must fit on one line)
 - `theme`: rotate through all 12 light, grey and dark email themes using
   `(canonical edition number - 1) % 12`
 
@@ -199,3 +199,11 @@ The deterministic runner owns all writes:
 
 Run `--preflight` for live auth/repository/project/banner-service checks and
 `--status` for schedule/checkout information. Neither publishes.
+
+For an explicitly requested correction to an already published edition, put the
+replacement draft in that edition's `revision/draft.json` and run
+`scripts/weekly-report.sh --revise YYYY-MM-DD`. This performs fresh independent
+review, regenerates the one-line banner, updates both existing issue bodies,
+and preserves the prior local bundle under `history/`. It refuses unexpected
+remote edits and does not create another issue or release. Ordinary scheduled
+runs still never overwrite an existing edition.
