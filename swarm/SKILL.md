@@ -1,3 +1,8 @@
+---
+name: swarm
+description: Coordinate the Stampede Swarm hierarchical agent workflow. Use only when the user explicitly asks for swarm, stampede swarm, or run swarm.
+---
+
 # 🐝 Stampede Swarm — Hierarchical Agent Fleet
 
 > **Skill trigger:** User says "swarm", "stampede swarm", or "run swarm"

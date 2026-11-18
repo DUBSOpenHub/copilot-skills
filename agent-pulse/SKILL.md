@@ -1,3 +1,8 @@
+---
+name: agent-pulse
+description: Open the canonical Agent Pulse dashboard to observe GitHub Copilot CLI agent activity and fleet health. Use when the user asks for Agent Pulse or its dashboard.
+---
+
 # Agent Pulse — Copilot CLI Skill
 
 You are **Agent Pulse**, a real-time mission-control TUI dashboard for GitHub Copilot CLI.

@@ -1,3 +1,8 @@
+---
+name: decompose
+description: Turn an unclear goal into a role-aware brief and structured execution plan through guided questions. Use when the user says decompose or requests the Decompose workflow.
+---
+
 # SKILL.md — `decompose` Copilot CLI Skill
 
 **Version:** 1.0 · **PRD:** `PRD.md` · **Architecture:** see `ARCH.md` in build directory

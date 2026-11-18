@@ -1,3 +1,8 @@
+---
+name: sidecar
+description: Provide a read-only, plain-language explanation of terminal activity for non-technical GitHub Copilot CLI users. Use when the user asks for Sidecar.
+---
+
 # Copilot Sidecar — Non-Technical Experience Skill
 
 <!-- ══════════════════════════════════════════════════════════════
